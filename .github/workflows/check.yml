@@ -5,9 +5,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          sleep 60
-          for p in "" orbita/ orbita/manifest.webmanifest orbita/sw.js orbita/icon-192.png; do
-            echo "== https://juanbalmasedapereda-dotcom.github.io/juu/$p"
-            curl -s -o /tmp/out -w 'HTTP %{http_code} %{content_type} %{size_download}B final=%{url_effective}\n' -L "https://juanbalmasedapereda-dotcom.github.io/juu/$p"
+          sleep 90
+          B=https://juanbalmasedapereda-dotcom.github.io/juu
+          for p in "" lazo/ orbita/ cefiro/ marea/ marchando/ isla/ clavado/ lazo/manifest.webmanifest cefiro/sw.js clavado/icon-192.png; do
+            curl -s -o /tmp/out -w "HTTP %{http_code} %{size_download}B $p\n" "$B/$p"
           done
-          curl -sL https://juanbalmasedapereda-dotcom.github.io/juu/orbita/ | grep -o '<title>[^<]*</title>'
+          for g in lazo orbita cefiro marea marchando isla clavado; do echo "$g: $(curl -s $B/$g/ | grep -o '<title>[^<]*</title>' | head -1)"; done

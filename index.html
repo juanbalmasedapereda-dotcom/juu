@@ -1,2 +1,52 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Juegos de Juan</title></head>
-<body style="background:#060816;color:#fff;font-family:system-ui;padding:24px"><h1>Juegos</h1><ul><li><a style="color:#9cf" href="orbita/">Órbita</a></li></ul></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0d1f">
+<title>Los juegos de Juan</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    min-height: 100dvh; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #f3f1ff;
+    background: radial-gradient(120% 70% at 50% -10%, #3a2a7a 0%, #141133 45%, #07081a 100%) fixed;
+    padding: max(28px, env(safe-area-inset-top)) 18px max(28px, env(safe-area-inset-bottom));
+  }
+  header { text-align: center; margin: 10px 0 26px; animation: up .7s cubic-bezier(.2,.8,.2,1) both; }
+  h1 { font-size: clamp(30px, 9vw, 44px); letter-spacing: -.02em; line-height: 1.05; }
+  header p { opacity: .7; margin-top: 8px; font-size: 15px; }
+  ul { list-style: none; padding: 0; display: grid; gap: 14px; max-width: 520px; margin: 0 auto; }
+  li { animation: up .6s cubic-bezier(.2,.8,.2,1) both; }
+  li:nth-child(1){animation-delay:.08s} li:nth-child(2){animation-delay:.14s} li:nth-child(3){animation-delay:.2s}
+  li:nth-child(4){animation-delay:.26s} li:nth-child(5){animation-delay:.32s} li:nth-child(6){animation-delay:.38s} li:nth-child(7){animation-delay:.44s}
+  a {
+    display: flex; align-items: center; gap: 16px; padding: 14px; border-radius: 22px; text-decoration: none; color: inherit;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--c) 55%, transparent), rgba(255,255,255,.04));
+    border: 1px solid rgba(255,255,255,.12); box-shadow: 0 10px 30px -12px var(--c);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  a:active { transform: scale(.97); }
+  @media (hover:hover) { a:hover { transform: translateY(-3px); box-shadow: 0 16px 36px -10px var(--c); } }
+  img { width: 72px; height: 72px; border-radius: 18px; flex: none; box-shadow: 0 6px 16px rgba(0,0,0,.45); }
+  b { display: block; font-size: 19px; margin-bottom: 3px; }
+  small { display: block; font-size: 13.5px; opacity: .78; line-height: 1.35; }
+  footer { max-width: 520px; margin: 28px auto 0; font-size: 13.5px; opacity: .7; line-height: 1.5; text-align: center; }
+  @keyframes up { from { opacity: 0; transform: translateY(18px); } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<header><h1>Los juegos de Juan</h1><p>Toca un juego para jugar</p></header>
+<ul>
+  <li><a href="lazo/" style="--c:#2bd9ff"><img src="lazo/icon-192.png" alt=""><span><b>Lazo de Neón</b><small>Cierra lazos de luz con tu estela para atrapar enemigos.</small></span></a></li>
+  <li><a href="orbita/" style="--c:#7a6cff"><img src="orbita/icon-192.png" alt=""><span><b>Órbita</b><small>Curva el vuelo del cometa con la gravedad de los planetas.</small></span></a></li>
+  <li><a href="cefiro/" style="--c:#ff8a4c"><img src="cefiro/icon-192.png" alt=""><span><b>Céfiro</b><small>Pilota un planeador en 3D por cañones, fiordos y volcanes.</small></span></a></li>
+  <li><a href="marea/" style="--c:#3f8cff"><img src="marea/icon-192.png" alt=""><span><b>Marea</b><small>Aventura de puzles: devuelve las cuatro llamas al Faro Mayor.</small></span></a></li>
+  <li><a href="marchando/" style="--c:#ff5a3c"><img src="marchando/icon-192.png" alt=""><span><b>¡Marchando!</b><small>Manolo, camarero torpe, y una torre de comida que grita.</small></span></a></li>
+  <li><a href="isla/" style="--c:#6fd6a0"><img src="isla/icon-192.png" alt=""><span><b>Isla Celeste</b><small>Une paisajes y construye tu isla flotante entre las nubes.</small></span></a></li>
+  <li><a href="clavado/" style="--c:#ffc63d"><img src="clavado/icon-192.png" alt=""><span><b>¡Clavado!</b><small>Adivina gráficas y datos reales.</small></span></a></li>
+</ul>
+<footer>Para instalar uno como app: ábrelo y, en Android (Chrome), menú ⋮ → «Instalar aplicación»; en iPhone (Safari), botón Compartir → «Añadir a pantalla de inicio».</footer>
+</body>
+</html>

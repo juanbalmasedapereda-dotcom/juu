@@ -615,6 +615,12 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 .safepick .btn[data-safe]{flex-direction:column;gap:0}
 .spor{text-align:center;color:var(--muted);font-size:16px}
 .srev{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.srev .btn{flex:1 1 45%;font-size:15px;padding:10px 8px}.srev .btn svg{width:16px;height:16px}
+.sopts{display:grid!important;grid-template-columns:1fr 1fr;gap:8px;padding:6px 12px 0 40px;flex:none!important}
+.sopts .ans{min-height:58px;padding:6px 8px;font-size:15px;line-height:1.1;margin:0}
+.sopts .ans .k{display:none}.sopts .ans .t{overflow-wrap:anywhere;hyphens:none}
+.screen.done .sopts{display:none!important}
+.sopts .ans{display:flex!important;align-items:center;justify-content:center;text-align:center;grid-template-columns:none}
+.sopts .ans .mark{display:none}.sopts .ans .t{flex:1;min-width:0;overflow-wrap:break-word;word-break:normal}
 </style>
 </head>
 <body>
@@ -838,7 +844,7 @@ const MODES=[
   {id:'orden',nu:1,t:'Ordénalos',p:'Pon 4 cosas en orden: años, habitantes, Ligas…',ic:'updown',c:'var(--yel)',tape:'rgba(244,255,61,.7)'},
   {id:'bote',nu:1,t:'El bote',p:'Más o menos con multiplicador: ¿sigues o te plantas?',ic:'trophy',c:'var(--yel)',tape:'rgba(244,255,61,.7)'},
   {hide:1,id:'suena',nu:1,t:'¿Qué suena?',p:'Como Songless: 1, 2, 4, 8 o 16 segundos de la canción real',ic:'mic',c:'var(--pink)',tape:'rgba(255,94,168,.5)',wide:1},
-  {id:'cancion',nu:1,t:'Adivina la canción',p:'Pista a pista, como un Songless pero sin audio',ic:'note',c:'var(--cyan)',tape:'rgba(69,227,255,.55)'},
+  {id:'cancion',nu:1,t:'Adivina la canción',p:'Pista a pista y 4 opciones: cuanto antes, más puntos',ic:'note',c:'var(--cyan)',tape:'rgba(69,227,255,.55)'},
   {id:'escribe',nu:1,t:'Escríbelo raro',p:'Sin opciones: escribe la respuesta más rara que se te ocurra',ic:'book',c:'var(--lila)',tape:'rgba(180,140,255,.5)'},
   {id:'raro',nu:1,t:'Lo más raro',p:'Cuanto menos obvia tu respuesta, más puntos',ic:'target',c:'var(--pink)',tape:'rgba(255,94,168,.5)'},
   {id:'trivia',t:'Trivia musical',p:'Latin Grammy, Eurovisión (desde 1956) y Spotify',ic:'note',c:'var(--cyan)',tape:'rgba(69,227,255,.55)'},
@@ -1401,25 +1407,23 @@ function songPool(){const P=[];
 const maskT=t=>t.split(' ').map(w=>w.split('').map((ch,i)=>i===0||!/[a-záéíóúñüçàèìòùâêîôûäëïöß0-9]/i.test(ch)?ch:'_').join(''));
 function genSongs(n){const P=shuffle(songPool()),seen=new Set(),out=[];for(const s of P){const k=norm(s.t);if(seen.has(k))continue;seen.add(k);out.push({type:'song',s:Object.assign({},s,{c:[...s.c,`El título tiene ${s.t.split(' ').length} palabra${s.t.split(' ').length>1?'s':''}: ${maskT(s.t).map(w=>`<span class="mask">${esc(w)}</span>`).join(' ')}`,`La canta <b>${esc(s.a)}</b>.`]})});if(out.length>=n)break}return out}
 const SONGPTS=[100,70,45,25,10];
+function songOpts(s){if(s.o)return s.o;const P=songPool(),key=norm(s.t),seen=new Set([key]);let c=shuffle(P.filter(x=>Math.abs(x.y-s.y)<=4));c=c.concat(shuffle(P));const o=[];for(const x of c){const k=norm(x.t);if(seen.has(k))continue;seen.add(k);o.push({t:x.t});if(o.length>=3)break}s.o=shuffle([{t:s.t,ok:true},...o]);return s.o}
 function roundSong(r){
-  const s=r.s;let k=0;r.done=0;
+  const s=r.s;let k=0;r.done=0;const opts=songOpts(s);s.c=s.c.filter(x=>!x.includes('class="mask"'));
   const el=show(`${topbar()}<div class="card qcard"><span class="tape" style="--tape:rgba(69,227,255,.55)"></span><span class="tag" style="--tag:var(--cyan)">${IC.note.replace('<svg','<svg width="16" height="16" style="vertical-align:-3px"')} Adivina la canción</span><h2 class="qtitle">¿Qué canción es?</h2><div class="clues"></div></div>
-  <form class="wbox" autocomplete="off"><input class="winp" type="text" enterkeyhint="done" autocapitalize="sentences" spellcheck="false" placeholder="Título de la canción…" aria-label="Título"><button class="btn" type="submit" style="background:var(--cyan)">${IC.check}</button></form>
-  <div class="srow"><span class="sval hand">Ahora vale <b class="num">+${SONGPTS[0]}</b></span><button class="sbtn" data-more type="button">Otra pista</button><button class="sbtn" data-give type="button">Me rindo</button></div><div class="wres"></div><div class="bottom"></div>`,'raro');
+  <div class="srow"><span class="sval hand">Si aciertas ahora: <b class="num">+${SONGPTS[0]}</b></span><button class="sbtn" data-more type="button">Otra pista (vale menos)</button></div>
+  <div class="answers sopts">${opts.map((o,j)=>`<button class="ans" data-k="${j}"><span class="k">${'ABCD'[j]}</span><span class="t">${esc(o.t)}</span><span class="mark"></span></button>`).join('')}</div><div class="wres"></div><div class="bottom"></div>`,'raro');
   bindQuit(el);$$('.tag svg *',el).forEach(p=>{p.style.fill=p.classList.contains('f')?'#16295e':'none';p.style.stroke='#16295e';p.style.strokeWidth=2.6});
-  const inp=$('.winp',el),cl=$('.clues',el);kbFit(el,inp);
+  const cl=$('.clues',el);
   const addClue=()=>{const d=document.createElement('div');d.className='clue';d.innerHTML=`<i>${k+1}</i><span>${s.c[k]}</span>`;cl.appendChild(d);$('.sval b',el).textContent='+'+SONGPTS[Math.min(k,4)];if(k>=s.c.length-1)$('[data-more]',el).disabled=true};
-  addClue();setTimeout(()=>inp.focus(),450);
-  const end=(ok,v)=>{r.done=1;inp.disabled=true;inp.blur();$$('.srow button',el).forEach(b=>b.disabled=true);const pts=ok?SONGPTS[Math.min(k,4)]:0;G.pts=(G.pts||0)+pts;finishRound(pts/10);ok?(SFX.ok(),vib(15)):(SFX.bad(),vib([30,40,30]));if(ok&&k===0)award('oido');
+  addClue();
+  const end=(ok,j)=>{r.done=1;$$('.srow button,.ans',el).forEach(b=>b.disabled=true);const pts=ok?SONGPTS[Math.min(k,4)]:0;G.pts=(G.pts||0)+pts;finishRound(pts/10);ok?(SFX.ok(),vib(15)):(SFX.bad(),vib([30,40,30]));if(ok&&k===0)award('oido');
+    $$('.ans',el).forEach((b,i)=>{if(opts[i].ok)b.classList.add('ok');else if(i===j)b.classList.add('no')});
     while(k<s.c.length-1){k++;addClue()}
     setTimeout(()=>{const st=$('.streak',el);if(st)st.firstChild.textContent=G.pts;
-      $('.bottom',el).innerHTML=`<div class="verdict rv"><div><h3>${ok?(pts>=70?'¡Qué oído!':'¡Acertaste!'):'¡Era esta!'} <span class="rpts ${pts>=70?'top':''}">${pts?'+'+pts:'0'}</span></h3><p><b>«${esc(s.t)}»</b>, de ${esc(s.a)}.${v&&!ok?` Escribiste «${esc(v)}».`:''}</p><span class="src">Fuente: <a href="${s.url}" target="_blank" rel="noopener">${esc(s.src)}</a></span></div></div>${nextBtn()}`;SFX.stamp();$('[data-next]',el).onclick=next},500)};
+      $('.bottom',el).innerHTML=`<div class="verdict rv"><div><h3>${ok?(pts>=70?'¡Qué oído!':'¡Acertaste!'):'¡Era esta!'} <span class="rpts ${pts>=70?'top':''}">${pts?'+'+pts:'0'}</span></h3><p><b>«${esc(s.t)}»</b>, de ${esc(s.a)}.</p><span class="src">Fuente: <a href="${s.url}" target="_blank" rel="noopener">${esc(s.src)}</a></span></div></div>${nextBtn()}`;SFX.stamp();$('[data-next]',el).onclick=next},600)};
   $('[data-more]',el).onclick=()=>{if(r.done||k>=s.c.length-1)return;SFX.page();k++;addClue()};
-  $('[data-give]',el).onclick=()=>{if(!r.done)end(false)};
-  $('.wbox',el).onsubmit=e=>{e.preventDefault();if(r.done)return;const v=inp.value.trim();if(!v)return;
-    const nv=norm(v).replace(/[:?!¿¡]/g,'').replace(/\s+/g,' ').trim(),nt=norm(s.t).replace(/[:?!¿¡]/g,'').replace(/\s+/g,' ').trim(),ok=nv===nt||lev(nv,nt)<=(nt.length>12?2:nt.length>5?1:0);if(ok)return end(true,v);
-    r.miss=(r.miss||0)+1;inp.value='';inp.placeholder=`«${v}» no es…`;inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');SFX.bad();vib(20);
-    if(k<s.c.length-1){k++;addClue()}else if(r.miss>=3)end(false,v)};
+  $$('.ans',el).forEach((b,j)=>b.onclick=()=>{if(r.done)return;end(!!opts[j].ok,j)});
 }
 
 
@@ -1650,7 +1654,7 @@ function startMillon(mode){
 function topbarM(){
   const r=G.rounds[G.i],nd=needFor(r,G.i),L=G.life;
   const lb=(k,lbl,ok)=>`<button class="life ${L[k]&&ok?'':'used'}" data-life="${k}" ${L[k]&&ok?'':'disabled'} aria-label="${lbl}">${k==='fifty'?'<b>50:50</b>':k==='hint'?'<svg viewBox="0 0 24 24"><path d="M9 3h6v4H9zM9 7h6v10l-3 5-3-5z"/></svg>Pista':k==='pub'?'<svg viewBox="0 0 24 24"><path d="M4 20V12M10 20V6M16 20v-9M21 20H3"/></svg>Público':IC.redo+'Cambiar'}</button>`;
-  return `${SPIRAL}<div class="topbar"><button class="iconbtn" data-quit aria-label="Salir">${IC.x}</button><div class="grow"><div class="prize num">${euro(LADDER[G.i])}</div><div class="roundlbl">Pregunta ${G.i+1} de 15${r.type==='raro'||r.type==='raroW'?` · <b class="needc">mín. ${nd*10} pts</b>`:r.type==='song'?` · <b class="needc">acierta</b>`:r.type==='vf'?` · <b class="needc">3 de 3</b>`:nd<10?` · <b class="needc">necesitas un ${nota(nd)}</b>`:''}</div></div></div><div class="lifes">${lb('fifty','Comodín 50:50',r.type==='trivia'||r.type==='raro')}${lb('pub','Comodín del público',r.type==='trivia'||r.type==='vs'||r.type==='raro'||r.type==='vf')}${lb('hint','Pista de Lapi',r.type!=='vs')}${lb('swap','Cambiar pregunta',true)}</div>`;
+  return `${SPIRAL}<div class="topbar"><button class="iconbtn" data-quit aria-label="Salir">${IC.x}</button><div class="grow"><div class="prize num">${euro(LADDER[G.i])}</div><div class="roundlbl">Pregunta ${G.i+1} de 15${r.type==='raro'||r.type==='raroW'?` · <b class="needc">mín. ${nd*10} pts</b>`:r.type==='song'?` · <b class="needc">acierta</b>`:r.type==='vf'?` · <b class="needc">3 de 3</b>`:nd<10?` · <b class="needc">necesitas un ${nota(nd)}</b>`:''}</div></div></div><div class="lifes">${lb('fifty','Comodín 50:50',r.type==='trivia'||r.type==='raro'||r.type==='song')}${lb('pub','Comodín del público',r.type==='trivia'||r.type==='vs'||r.type==='raro'||r.type==='vf')}${lb('hint','Pista de Lapi',r.type!=='vs')}${lb('swap','Cambiar pregunta',true)}</div>`;
 }
 let quitArmed=0;
 function confirmQuit(el){if(Date.now()-quitArmed<2500)return true;quitArmed=Date.now();lapiSays(el,'¿Te vas? Si sales ahora no cobras nada. Toca la X otra vez para salir.','sad');return false}
@@ -1663,6 +1667,7 @@ function bindLife(el){
     G.life[k]--;if(!G.life[k]){b.classList.add('used');b.disabled=true}vib(12);
     if(k==='swap'){const t=r.type;G.rounds[G.i]=G.spares[t]&&G.spares[t]!==r?G.spares[t]:genType(t,G.i);G.spares[t]=null;SFX.page();return playRound()}
     if(k==='fifty'&&r.type==='raro'){shuffle(r.tiles.map((t,j)=>t.ok?-1:j).filter(j=>j>=0)).slice(0,3).forEach(j=>{const a=$(`.rtile[data-k="${j}"]`,el);a.classList.add('gone');a.disabled=true});SFX.ok();return}
+    if(k==='fifty'&&r.type==='song'){const o=r.s.o||[];shuffle(o.map((x,j)=>x.ok?-1:j).filter(j=>j>=0)).slice(0,2).forEach(j=>{const a=$(`.ans[data-k="${j}"]`,el);a.classList.add('gone');a.disabled=true});SFX.ok();return}
     if(k==='fifty'){const okK=r.q.opts.findIndex(o=>o.ok);shuffle([0,1,2,3].filter(j=>j!==okK)).slice(0,2).forEach(j=>{const a=$(`.ans[data-k="${j}"]`,el);a.classList.add('gone');a.disabled=true});SFX.ok();return}
     if(k==='pub'){G.pubUsed=G.i;SFX.scribble&&SFX.scribble();
       if(r.type==='raro'){const v=r.tiles.filter(t=>t.ok).sort((a,b)=>a.pts-b.pts)[0];return lapiSays(el,`La mayoría de la clase ha votado <b>«${esc(v.t)}»</b>.`,'cool',3800)}
@@ -1858,7 +1863,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v49</div></div>`);
+  <div class="foot">¡Clavado! v50</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

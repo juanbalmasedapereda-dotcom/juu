@@ -599,6 +599,15 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 .oitem.ok{background:#e7fbe9}.oitem.no{background:#fbe9ea}
 .screen.done .olist{gap:6px;padding-top:10px}.screen.done .oitem{min-height:48px}
 .screen.done .oitem{min-height:0;padding:4px 8px;grid-template-columns:22px 1fr}.screen.done .oitem .on{font-size:19px}.screen.done .oitem .ot{font-size:14px}.screen.done .oitem .ot small{display:inline;margin-left:6px;font-size:13px}.screen.done .olist{gap:4px}
+
+.vft{height:10px;border-radius:5px;background:#e9e3d6;overflow:hidden;margin-bottom:4px}.vft i{display:block;height:100%;transform-origin:left;background:var(--green)}
+.vfwrap{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 16px 0 44px;gap:10px}
+.vfcard{padding:26px 18px;min-height:190px;display:flex;flex-direction:column;justify-content:center}
+.vfcard.in{animation:vfin .35s var(--ease) both}@keyframes vfin{from{transform:translateX(40px) rotate(3deg);opacity:0}}
+.vfcard.good{box-shadow:0 0 0 4px #18a957,var(--shadow-1)}.vfcard.bad{box-shadow:0 0 0 4px var(--red),var(--shadow-1);animation:shake .35s}
+.vfs{font-size:23px;font-weight:700;line-height:1.2}
+.vfw{margin-top:10px;font-size:16px;color:var(--red);min-height:20px}
+.vfrun{text-align:center;color:var(--red);font-size:18px;min-height:24px}.vfrun svg{width:18px;height:18px;vertical-align:-3px}
 </style>
 </head>
 <body>
@@ -812,11 +821,12 @@ function show(html,cls=''){
 const SPIRAL='<div class="spiral"></div>';
 
 /* ================= menú ================= */
-const NM={concurso:'Concurso',diario:'Reto del día',dibuja:'Dibuja la gráfica',trivia:'Trivia musical',anio:'¿En qué año?',aojo:'Calcula a ojo',futbol:'Trivia de fútbol',cine:'Trivia de cine',masmenos:'¿Más o menos?',geo:'Capitales',jjoo:'Juegos Olímpicos',bote:'El bote',raro:'Lo más raro',escribe:'Escríbelo raro',cancion:'Adivina la canción',suena:'¿Qué suena?',orden:'Ordénalos'};
+const NM={concurso:'Concurso',diario:'Reto del día',dibuja:'Dibuja la gráfica',trivia:'Trivia musical',anio:'¿En qué año?',aojo:'Calcula a ojo',futbol:'Trivia de fútbol',cine:'Trivia de cine',masmenos:'¿Más o menos?',geo:'Capitales',jjoo:'Juegos Olímpicos',bote:'El bote',raro:'Lo más raro',escribe:'Escríbelo raro',cancion:'Adivina la canción',suena:'¿Qué suena?',orden:'Ordénalos',vf:'Verdadero o falso'};
 
 const MODES=[
   {id:'dibuja',t:'Dibuja la gráfica',p:'Traza con el dedo cómo siguió',ic:'chart',c:'var(--pink)',tape:'rgba(255,94,168,.5)'},
   {id:'masmenos',t:'¿Más o menos?',p:'Racha hasta que falles',ic:'updown',c:'var(--green)',tape:'rgba(88,240,138,.55)'},
+  {id:'vf',nu:1,t:'Verdadero o falso',p:'60 segundos: ¿cuántas aciertas?',ic:'bolt',c:'var(--green)',tape:'rgba(88,240,138,.55)'},
   {id:'orden',nu:1,t:'Ordénalos',p:'Pon 4 cosas en orden: años, habitantes, Ligas…',ic:'updown',c:'var(--yel)',tape:'rgba(244,255,61,.7)'},
   {id:'bote',nu:1,t:'El bote',p:'Más o menos con multiplicador: ¿sigues o te plantas?',ic:'trophy',c:'var(--yel)',tape:'rgba(244,255,61,.7)'},
   {hide:1,id:'suena',nu:1,t:'¿Qué suena?',p:'Como Songless: 1, 2, 4, 8 o 16 segundos de la canción real',ic:'mic',c:'var(--pink)',tape:'rgba(255,94,168,.5)',wide:1},
@@ -833,7 +843,7 @@ const MODES=[
   {id:'duelo',t:'Duelo a dos',p:'Pasaos el móvil: 5 preguntas cada uno, gana quien sume más',ic:'flame',c:'var(--red)',tape:'rgba(255,94,168,.5)',wide:1}
 ];
 const QUIPS=['¡Sin chuletas!','Examen sorpresa: hoy toca gráficas.','Dibuja con fe. Y con el dedo.','Yo siempre saco un 10. Bueno, casi.','¿A que no clavas la del oro?','Todo es real. Lo he mirado yo.','¿Te atreves con un duelo? Pásale el móvil a alguien.','El público casi siempre acierta. Casi.','La pregunta 15 da miedo. Avisado quedas.','¿Sabes qué peli ganó el Óscar en 2020?','Plantarse también es de listos.'];
-function bestTxt(id){const b=S.best[id];if(id==='duelo')return '<span>2 jugadores · 1 móvil</span>';if(id==='millon')return b==null?'<span>Aún no has cobrado nada</span>':`Tu récord <span class="ring">${euro(b)}</span>`;if(b==null)return '<span>Sin nota todavía</span>';if(id==='bote')return `Mejor bote <span class="ring">${fmt(b)}</span>`;if(id==='raro'||id==='escribe'||id==='cancion'||id==='suena')return `Récord <span class="ring">${b} pts</span>`;return id==='masmenos'?`Mejor racha <span class="ring">${b}</span>`:`Mejor nota <span class="ring">${nota(b)}</span>`}
+function bestTxt(id){const b=S.best[id];if(id==='duelo')return '<span>2 jugadores · 1 móvil</span>';if(id==='millon')return b==null?'<span>Aún no has cobrado nada</span>':`Tu récord <span class="ring">${euro(b)}</span>`;if(b==null)return '<span>Sin nota todavía</span>';if(id==='vf')return b==null?'<span>Sin récord todavía</span>':`Récord <span class="ring">${b} aciertos</span>`;if(id==='bote')return `Mejor bote <span class="ring">${fmt(b)}</span>`;if(id==='raro'||id==='escribe'||id==='cancion'||id==='suena')return `Récord <span class="ring">${b} pts</span>`;return id==='masmenos'?`Mejor racha <span class="ring">${b}</span>`:`Mejor nota <span class="ring">${nota(b)}</span>`}
 function factHTML(){const sr=SERIES.filter(x=>!/temp|mar/.test(x.id));const x=pick(sr);const n=x.v.length,v0=x.v[0],v1=x.v[n-1],d=Math.abs(v1)>=100?0:1;
   const r=v0>0?v1/v0:0;
   return `<div class="fact-k hand">¿Sabías que…?</div><div class="fact-t"><b>${esc(x.t)}</b>: de ${fmt(v0,d)} a ${fmt(v1,d)} ${esc(x.u)} entre ${x.y[0]} y ${x.y[n-1]}${r>=1.5?`: se multiplicó por ${fmt(Math.round(r*10)/10,1)}.`:r>0&&r<=.1?`: cayó más de un 90 %.`:r>0&&r<=.6?`: bajó a menos de la mitad.`:'.'}</div><div class="fact-s">Fuente: ${esc(x.src)} · toca para otro dato</div>`}
@@ -912,6 +922,7 @@ function start(mode){
   usedQ.clear();
   if(mode==='millon'||mode==='diario')return startMillon(mode);
   if(mode==='suena')return suenaMenu();
+  if(mode==='vf')return startVF();
   if(mode==='diario'){R=rngFrom(todayKey()*7919);usedSeries.clear()}else R=rngFrom((Date.now()^(Math.random()*1e9))>>>0);
   let types;
   if(mode==='concurso'||mode==='diario')types=shuffle(['draw','draw','draw','trivia','trivia','year','vs','guess']);
@@ -1500,6 +1511,37 @@ function roundOrd(r){
     setTimeout(()=>{$('.bottom',el).innerHTML=`<div class="verdict">${stampHTML(nt)}<div><h3>${nt>=10?'¡Perfecto!':nt>=7?'Casi':nt>=5?'Regular':'Al revés'}</h3><p>${good} de 6 parejas bien colocadas. En verde, las que están en su sitio.</p><span class="src">Fuente: <a href="${d.url}" target="_blank" rel="noopener">${esc(d.src)}</a></span></div></div>${nextBtn()}`;SFX.stamp();$('[data-next]',el).onclick=next},500)};
 }
 
+
+/* ================= VERDADERO O FALSO (60 s) ================= */
+const VF=[
+ ()=>{const r=pick(WC),t=R()<.5;return{s:`${t?r[1]:r[3]} ganó el <b>Mundial de ${r[0]}</b>.`,t,why:`Ganó ${r[1]} (final: ${wcS(r)}).`}},
+ ()=>{const r=pick(LIGA),t=R()<.5;return{s:`El ${t?r[1]:r[2]} ganó <b>la Liga ${r[0]}</b>.`,t,why:`Campeón: ${r[1]}; segundo: ${r[2]}.`}},
+ ()=>{const c=pick(CAPS3),t=R()<.5,o=pick(CAPS3.filter(x=>x[2]===c[2]&&x!==c));return{s:`La capital de <b>${esc(c[0])}</b> es ${esc(t?c[1]:o[1])}.`,t,why:`Es ${c[1]}.`}},
+ ()=>{const r=pick(OSC_ALL),t=R()<.5,o=pick(OSC_ALL.filter(x=>x!==r&&Math.abs(x[0]-r[0])<=6));return{s:`«${esc(t?r[1]:o[1])}» ganó el <b>Óscar a mejor película</b> en ${r[0]}.`,t,why:`Ganó «${r[1]}».`}},
+ ()=>{const all=[...EURO_OLD,...EURO],r=pick(all),t=R()<.5,o=pick(all.filter(x=>x[1]!==r[1]));return{s:`${t?r[1]:o[1]} ganó <b>Eurovisión ${r[0]}</b>.`,t,why:`Ganó ${r[1]} con «${r[2]}».`}},
+ ()=>{const ps=PAISES.filter(p=>p.pop);let a,b;for(let i=0;i<30;i++){a=pick(ps);b=pick(ps);if(a!==b&&Math.max(a.pop,b.pop)/Math.min(a.pop,b.pop)>1.15)break}return{s:`<b>${esc(a.n)}</b> tiene más habitantes que ${esc(b.n)}.`,t:a.pop>b.pop,why:`${a.n}: ${popFmt(a.pop)}; ${b.n}: ${popFmt(b.pop)} (2024).`}},
+ ()=>{const S_=OLY.filter(x=>x[0]==='S'),r=pick(S_),t=R()<.5,o=pick(S_.filter(x=>x[2]!==r[2]));return{s:`Los <b>Juegos Olímpicos de verano de ${r[1]}</b> fueron en ${t?r[2]:o[2]}.`,t,why:`Fueron en ${r[2]}.`}},
+ ()=>{const r=pick(BAL_ALL),t=R()<.5;return{s:`${t?r[1]:r[3]} ganó el <b>Balón de Oro ${r[0]}</b>.`,t,why:`Ganó ${r[1]}; segundo, ${r[3]}.`}},
+ ()=>{const r=pick(UCL),t=R()<.5;return{s:`El ${t?r[1]:r[3]} ganó la <b>${uclN(r)} ${r[0]}</b>.`,t,why:`Final: ${ucl(r)}.`}}
+];
+function startVF(){usedQ.clear();R=rngFrom((Date.now()^(Math.random()*1e9))>>>0);G={mode:'vf',rounds:[],i:0,notes:[],ok:0,n:0,run:0,bestRun:0};const T=60000;
+  const el=show(`${SPIRAL}<div class="topbar"><button class="iconbtn" data-quit aria-label="Salir">${IC.x}</button><div class="grow"><div class="vft"><i></i></div><div class="roundlbl">Verdadero o falso · <b data-tl>60</b> s</div></div><div class="streak pot"><span data-sc>0</span><small>aciertos</small></div></div>
+  <div class="vfwrap"><div class="card vfcard"><span class="tape" style="--tape:rgba(88,240,138,.55)"></span><div class="vfs"></div><div class="vfw hand"></div></div><div class="vfrun hand"></div></div>
+  <div class="bottom"><div class="row"><button class="btn green" data-a="1">${IC.check} Verdadero</button><button class="btn pink" data-a="0">${IC.x} Falso</button></div></div>`);
+  $('[data-quit]',el).onclick=()=>{SFX.tap();done=1;menu()};
+  let cur1=null,done=0,lock=0;const t0=performance.now(),bar=$('.vft i',el),tl=$('[data-tl]',el);
+  const nextQ=()=>{let q;for(let i=0;i<30;i++){q=pick(VF)();if(!usedQ.has(q.s))break}usedQ.add(q.s);cur1=q;const c=$('.vfcard',el);c.classList.remove('in','good','bad');void c.offsetWidth;c.classList.add('in');$('.vfs',el).innerHTML=q.s;$('.vfw',el).textContent='';lock=0};
+  const fin=()=>{if(done)return;done=1;const s=G.ok;S.games++;award('primera');const prev=S.best.vf;if(prev==null||s>prev)S.best.vf=s;if(s>=20)award('rayo20');save();
+    const el2=show(`${SPIRAL}<div class="scroll"><div class="report"><span class="tape" style="--tape:rgba(88,240,138,.55)"></span><h2>Verdadero o falso</h2><div class="who">60 segundos${prev!=null&&s>prev?' · <span class="hlword">¡nuevo récord!</span>':''}</div>
+    <div class="final"><div class="stamp ${s>=15?'top':''}"><div><b class="num">${s}</b><small>aciertos</small></div></div><div class="comment">${s>=20?'¡Eres una máquina!':s>=12?'Rápido y certero.':s>=6?'Nada mal para un minuto.':'Calentando…'}<br><span style="color:var(--muted);font-size:15px">${G.n} respuestas · mejor racha ${G.bestRun} · récord ${S.best.vf}</span></div></div></div>
+    <div class="row" style="margin-top:18px"><button class="btn" data-again>${IC.redo} Otra</button><button class="btn white" data-menu>Menú</button></div></div>`);
+    setTimeout(()=>{SFX.stamp();if(s>=15){SFX.fanfare();confetti()}},400);$('[data-again]',el2).onclick=startVF;$('[data-menu]',el2).onclick=menu};
+  (function tk(t){if(done||!el.isConnected)return;const left=Math.max(0,T-(t-t0));bar.style.transform=`scaleX(${left/T})`;bar.style.background=left<10000?'var(--pink)':'var(--green)';const sl=Math.ceil(left/1000);if(tl.textContent!=sl){tl.textContent=sl;if(sl<=5)SFX.tick()}if(left<=0)return fin();requestAnimationFrame(tk)})(t0);
+  $$('[data-a]',el).forEach(b=>b.onclick=()=>{if(lock||done)return;lock=1;const ans=b.dataset.a==='1',ok=ans===cur1.t;G.n++;const c=$('.vfcard',el);
+    if(ok){G.ok++;G.run++;G.bestRun=Math.max(G.bestRun,G.run);SFX.ok();vib(10);c.classList.add('good')}else{G.run=0;SFX.bad();vib([25,30,25]);c.classList.add('bad');$('.vfw',el).textContent=(cur1.t?'Era verdad. ':'Era falso. ')+cur1.why}
+    $('[data-sc]',el).textContent=G.ok;$('.vfrun',el).innerHTML=G.run>=3?`${IC.flame} ${G.run} seguidas`:'';setTimeout(()=>{if(!done)nextQ()},ok?350:1500)});
+  nextQ()}
+
 /* ================= EL BOTE ================= */
 function coins(el){const pe=$('.streak',el),src=$('[data-v]',el);if(!pe||!src)return;const a=src.getBoundingClientRect(),b=pe.getBoundingClientRect();for(let i=0;i<9;i++){const c=document.createElement('i');c.className='coin';c.style.left=(a.left+a.width/2-11+(i-4)*9)+'px';c.style.top=(a.top+a.height/2-11)+'px';c.style.setProperty('--dx',(b.left+b.width/2-a.left-a.width/2-(i-4)*9)+'px');c.style.setProperty('--dy',(b.top+b.height/2-a.top-a.height/2)+'px');c.style.animationDelay=(i*55)+'ms';document.body.appendChild(c);setTimeout(()=>{c.parentNode&&c.parentNode.removeChild(c);if(i%3===0)SFX.tick()},800+i*55)}}
 function genBote(){const r=genVS();const q=Math.max(r.a.v,r.b.v)/Math.min(r.a.v,r.b.v);r.mult=q<1.3?3:q<1.8?2:1.5;return r}
@@ -1690,6 +1732,7 @@ const STK=[
   ['racha3','Tres seguidos','Juega el millón de hoy 3 días seguidos','flame','var(--yel)'],
   ['arriesgado','Sangre fría','Plántate en El bote con 1.000 puntos o más','trophy','var(--yel)'],
   ['rarito','Bicho raro','Saca 100 puntos en un tablero de Lo más raro','target','var(--pink)'],
+  ['rayo20','Rayo','20 aciertos en Verdadero o falso','bolt','var(--green)'],
   ['ordenado','Todo en su sitio','Ordena 4 cosas sin un solo fallo','updown','var(--yel)'],
   ['pincha','Pinchadiscos','Acierta 5 canciones seguidas en ¿Qué suena?','mic','var(--yel)'],
   ['oido1s','Al primer segundo','Acierta en ¿Qué suena? con solo 1 segundo','mic','var(--pink)'],
@@ -1720,17 +1763,17 @@ function stats(){
    <div><b class="num">${S.triviaN?Math.round(S.triviaOk/S.triviaN*100)+'%':'–'}</b><span>aciertos en música</span></div>
    <div><b class="num">${S.bestStreak||0}</b><span>mejor racha en ¿Más o menos?</span></div>
    <div><b class="num">${S.exactYears||0}</b><span>años clavados</span></div></div>
-   <div class="sheet" style="margin-top:16px"><h3>Mejores notas</h3>${['dibuja','orden','trivia','cancion','futbol','cine','geo','jjoo','anio','aojo','raro','escribe','bote'].map(m=>`<div class="toggle"><span>${NM[m]}</span><span class="brush" style="font-size:26px;color:var(--red)">${S.best[m]==null?'–':m==='raro'||m==='escribe'||m==='cancion'||m==='suena'?S.best[m]+' pts':m==='bote'?fmt(S.best[m]):nota(S.best[m])}</span></div>`).join('')}</div>${statsM()}</div>`);
+   <div class="sheet" style="margin-top:16px"><h3>Mejores notas</h3>${['dibuja','vf','orden','trivia','cancion','futbol','cine','geo','jjoo','anio','aojo','raro','escribe','bote'].map(m=>`<div class="toggle"><span>${NM[m]}</span><span class="brush" style="font-size:26px;color:var(--red)">${S.best[m]==null?'–':m==='vf'?S.best[m]+' aciertos':m==='raro'||m==='escribe'||m==='cancion'||m==='suena'?S.best[m]+' pts':m==='bote'?fmt(S.best[m]):nota(S.best[m])}</span></div>`).join('')}</div>${statsM()}</div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
 }
 function ajustes(){
   const srcs=[...new Map(SERIES.map(s=>[s.src,s.url])).entries()];
   const el=show(`${pageHead('Ajustes')}<div class="scroll">
   <div class="sheet"><div class="toggle"><span>Sonido</span><button class="sw ${S.sound?'on':''}" data-t="sound" aria-label="Sonido"></button></div><div class="toggle"><span>Música de tensión (en el millón)</span><button class="sw ${S.music?'on':''}" data-t="music" aria-label="Música"></button></div><div class="toggle" style="border:0"><span>Vibración</span><button class="sw ${S.vib?'on':''}" data-t="vib" aria-label="Vibración"></button></div></div>
-  <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
+  <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v42</div></div>`);
+  <div class="foot">¡Clavado! v43</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

@@ -588,6 +588,17 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 
 .srun{display:inline-flex;align-items:center;gap:3px;color:var(--red);font-size:15px}.srun svg{width:16px;height:16px}
 .scat .best{display:block;margin-top:8px;font-size:14px}
+
+.olist{display:flex;flex-direction:column;gap:10px;padding:16px 14px 0 40px;flex:1;overflow:auto}
+.oitem{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;min-height:64px;padding:8px 8px 8px 10px;border-radius:10px;background:#fffdf6;box-shadow:var(--shadow-1);animation:pop .35s var(--d,0s) var(--ease) both}
+.oitem .on{font-family:var(--brush);font-size:26px;color:var(--red);text-align:center}
+.oitem .ot{font-weight:700;line-height:1.15}.oitem .ot small{display:block;font-weight:400;font-family:var(--hand);color:var(--muted);font-size:14px}
+.oitem .ot small.ov{color:var(--ink-soft);font-size:15px}
+.oarr{display:flex;flex-direction:column;gap:4px}.oarr button{width:40px;height:30px;border:2px solid var(--ink);border-radius:8px;background:#fff;display:grid;place-items:center;padding:0}
+.oarr button svg{width:18px;height:18px}.oarr button:disabled{opacity:.2}.oarr button:active{transform:scale(.9)}
+.oitem.ok{background:#e7fbe9}.oitem.no{background:#fbe9ea}
+.screen.done .olist{gap:6px;padding-top:10px}.screen.done .oitem{min-height:48px}
+.screen.done .oitem{min-height:0;padding:4px 8px;grid-template-columns:22px 1fr}.screen.done .oitem .on{font-size:19px}.screen.done .oitem .ot{font-size:14px}.screen.done .oitem .ot small{display:inline;margin-left:6px;font-size:13px}.screen.done .olist{gap:4px}
 </style>
 </head>
 <body>
@@ -801,11 +812,12 @@ function show(html,cls=''){
 const SPIRAL='<div class="spiral"></div>';
 
 /* ================= menú ================= */
-const NM={concurso:'Concurso',diario:'Reto del día',dibuja:'Dibuja la gráfica',trivia:'Trivia musical',anio:'¿En qué año?',aojo:'Calcula a ojo',futbol:'Trivia de fútbol',cine:'Trivia de cine',masmenos:'¿Más o menos?',geo:'Capitales',jjoo:'Juegos Olímpicos',bote:'El bote',raro:'Lo más raro',escribe:'Escríbelo raro',cancion:'Adivina la canción',suena:'¿Qué suena?'};
+const NM={concurso:'Concurso',diario:'Reto del día',dibuja:'Dibuja la gráfica',trivia:'Trivia musical',anio:'¿En qué año?',aojo:'Calcula a ojo',futbol:'Trivia de fútbol',cine:'Trivia de cine',masmenos:'¿Más o menos?',geo:'Capitales',jjoo:'Juegos Olímpicos',bote:'El bote',raro:'Lo más raro',escribe:'Escríbelo raro',cancion:'Adivina la canción',suena:'¿Qué suena?',orden:'Ordénalos'};
 
 const MODES=[
   {id:'dibuja',t:'Dibuja la gráfica',p:'Traza con el dedo cómo siguió',ic:'chart',c:'var(--pink)',tape:'rgba(255,94,168,.5)'},
   {id:'masmenos',t:'¿Más o menos?',p:'Racha hasta que falles',ic:'updown',c:'var(--green)',tape:'rgba(88,240,138,.55)'},
+  {id:'orden',nu:1,t:'Ordénalos',p:'Pon 4 cosas en orden: años, habitantes, Ligas…',ic:'updown',c:'var(--yel)',tape:'rgba(244,255,61,.7)'},
   {id:'bote',nu:1,t:'El bote',p:'Más o menos con multiplicador: ¿sigues o te plantas?',ic:'trophy',c:'var(--yel)',tape:'rgba(244,255,61,.7)'},
   {hide:1,id:'suena',nu:1,t:'¿Qué suena?',p:'Como Songless: 1, 2, 4, 8 o 16 segundos de la canción real',ic:'mic',c:'var(--pink)',tape:'rgba(255,94,168,.5)',wide:1},
   {id:'cancion',nu:1,t:'Adivina la canción',p:'Pista a pista, como un Songless pero sin audio',ic:'note',c:'var(--cyan)',tape:'rgba(69,227,255,.55)'},
@@ -911,12 +923,13 @@ function start(mode){
   else if(mode==='cine')types=Array(8).fill('cine');
   else if(mode==='masmenos')types=['vs'];
   else if(mode==='geo')types=Array(10).fill('geo');
+  else if(mode==='orden')types=Array(6).fill('ord');
   else if(mode==='jjoo')types=Array(10).fill('jjoo');
   else if(mode==='bote')types=['bote'];
   else if(mode==='raro'||mode==='escribe'||mode==='cancion')types=[];
   else if(mode==='duelo')types=shuffle(['draw','trivia','year','vs','guess']).flatMap(t=>[t,t]);
   if(mode==='duelo'){const tg=pick(['Cine','Fútbol','Geografía','JJ. OO.','Música']);types=types.map(t=>t==='trivia'&&tg!=='Música'?'tag:'+tg:t)}
-  let rounds=types.map(t=>t.startsWith('tag:')?genTag(t.slice(4)):t==='geo'?genTag('Geografía'):t==='jjoo'?genTag('JJ. OO.'):t==='bote'?genBote():t==='cine'?genCine():t==='fut'?genFut():t==='draw'?genDraw():t==='trivia'?genTrivia():t==='year'?genYear():t==='guess'?genGuess():genVS());
+  let rounds=types.map(t=>t==='ord'?genOrd():t.startsWith('tag:')?genTag(t.slice(4)):t==='geo'?genTag('Geografía'):t==='jjoo'?genTag('JJ. OO.'):t==='bote'?genBote():t==='cine'?genCine():t==='fut'?genFut():t==='draw'?genDraw():t==='trivia'?genTrivia():t==='year'?genYear():t==='guess'?genGuess():genVS());
   if(mode==='raro')rounds=shuffle(RARO).slice(0,5).map(genRaro);
   if(mode==='escribe')rounds=genWset();
   if(mode==='cancion')rounds=genSongs(6);
@@ -942,7 +955,7 @@ function duelTot(p){return G.notes.reduce((a,n,k)=>a+(k%2===p&&n!=null?n:0),0)}
 function duelHand(go){const p=G.i%2,c=p?'var(--pink)':'var(--cyan)';G.handShown=G.i;
   const el=show(`${SPIRAL}<div class="hand-off" style="--pc:${c}"><div class="ho-k hand">Ronda ${Math.floor(G.i/2)+1} de 5</div><div class="ho-p brush">Jugador ${p+1}</div><div class="ho-l">${lapi(p?'cool':'happy')}</div><div class="ho-s hand">${G.i?`Pásale el móvil a J${p+1}. ¡Sin mirar la respuesta de antes!`:'Empieza J1. J2, mira para otro lado.'}</div><div class="ho-sc"><span style="--pc:var(--cyan)">J1 <b class="num">${nota(Math.round(duelTot(0)*10)/10)}</b></span><span style="--pc:var(--pink)">J2 <b class="num">${nota(Math.round(duelTot(1)*10)/10)}</b></span></div><button class="btn wide" data-go>¡Listo! ${IC.arrow}</button></div>`);
   vib(20);$('[data-go]',el).onclick=()=>{SFX.tap();go()}}
-function playRound(){if(G.millon&&G.i===14&&!G.finalShown){G.finalShown=1;return finalIntro(playRound)}if(G.duel&&G.handShown!==G.i)return duelHand(playRound);const r=G.rounds[G.i];({draw:roundDraw,trivia:roundTrivia,vs:roundVS,year:roundYear,guess:roundGuess,raro:roundRaro,raroW:roundRaroW,song:roundSong,suena:roundSuena})[r.type](r);if(G.millon){musicStart(G.i);document.body.classList.toggle('final',G.i===14)}}
+function playRound(){if(G.millon&&G.i===14&&!G.finalShown){G.finalShown=1;return finalIntro(playRound)}if(G.duel&&G.handShown!==G.i)return duelHand(playRound);const r=G.rounds[G.i];({draw:roundDraw,trivia:roundTrivia,vs:roundVS,year:roundYear,guess:roundGuess,raro:roundRaro,raroW:roundRaroW,song:roundSong,suena:roundSuena,ord:roundOrd})[r.type](r);if(G.millon){musicStart(G.i);document.body.classList.toggle('final',G.i===14)}}
 function finishRound(n,extra){
   musicStop();
   if(cur)cur.classList.add('done');
@@ -1458,6 +1471,35 @@ function roundSuena(r){
   $('[data-skip]',el).onclick=()=>{if(!r.done){addTry('— saltada —');up()}};$('[data-give]',el).onclick=()=>end(false);
 }
 
+
+/* ================= ORDÉNALOS ================= */
+const ORDS=[
+ ()=>{const s4=shuffle(ANIOS).slice(0,4),it0=s4[0];const it=s4.map(e=>({t:e[0],v:e[1],f:String(e[1])}));return{q:'Ordena del <b>más antiguo</b> al más reciente',it,asc:1,src:'Wikipedia (fecha de cada suceso)',url:/^https?:/.test(it0[2])?it0[2]:wiki(it0[2])}},
+ ()=>{const it=shuffle(PAISES.filter(p=>p.pop)).slice(0,4).map(p=>({t:p.n,v:p.pop,f:popFmt(p.pop)}));return{q:'Ordena de <b>más a menos habitantes</b> (2024)',it,asc:0,src:'Banco Mundial',url:'https://github.com/datasets/population'}},
+ ()=>{const it=shuffle(SPOT_TOP).slice(0,4).map(s=>({t:'«'+s[0]+'»',sub:s[1],v:s[2],f:fmt(s[2],2)+' mil millones'}));return{q:'Ordena de <b>más a menos escuchada</b> en Spotify',it,asc:0,src:'Wikipedia: récords de Spotify (octubre de 2026)',url:SPW}},
+ ()=>{const it=shuffle(OSC_ALL).slice(0,4).map(r=>({t:'«'+r[1]+'»',v:r[0],f:'gala de '+r[0]}));return{q:'Ordena estas ganadoras del Óscar de la <b>más antigua</b> a la más reciente',it,asc:1,src:'ABC7: ganadoras del Óscar a mejor película',url:OW}},
+ ()=>{const it=shuffle(PROV).slice(0,4).map(p=>({t:p[0],v:p[1],f:habF(p[1])}));return{q:'Ordena estas provincias de <b>más a menos habitantes</b>',it,asc:0,src:'INE 2025 (vía Wikipedia)',url:wiki('Ranked_lists_of_Spanish_provinces')}},
+ ()=>{const m=cnt(LIGA.map(r=>r[1]));const it=shuffle([...m]).slice(0,4).map(([t,c])=>({t,v:c,f:c+(c>1?' Ligas':' Liga')}));return{q:'Ordena de <b>más a menos Ligas</b> ganadas',it,asc:0,src:'Wikipedia: campeones de Liga',url:LGW}},
+ ()=>{const it=shuffle(OLY.filter(r=>r[0]==='S')).slice(0,4).map(r=>({t:'JJ. OO. de '+r[2],v:r[1],f:String(r[1])}));return{q:'Ordena estos Juegos Olímpicos de verano del <b>más antiguo</b> al más reciente',it,asc:1,src:'Wikipedia: sedes olímpicas',url:OLW}}
+];
+function genOrd(){for(let i=0;i<40;i++){const d=pick(ORDS)();const vs=d.it.map(x=>x.v);if(new Set(vs).size===vs.length&&new Set(d.it.map(x=>x.t)).size===4)return{type:'ord',d}}return{type:'ord',d:ORDS[1]()}}
+function roundOrd(r){
+  const d=r.d;let cur4=shuffle(d.it.map((x,i)=>i));const right=d.it.map((x,i)=>i).sort((a,b)=>d.asc?d.it[a].v-d.it[b].v:d.it[b].v-d.it[a].v);
+  if(cur4.join()===right.join())cur4=[cur4[1],cur4[0],cur4[3],cur4[2]];
+  const el=show(`${topbar()}<div class="card qcard"><span class="tape" style="--tape:rgba(244,255,61,.7)"></span><span class="tag" style="--tag:var(--yel)">${IC.updown.replace('<svg','<svg width="16" height="16" style="vertical-align:-3px"')} Ordénalos</span><h2 class="qtitle">${d.q}</h2></div>
+  <div class="olist"></div><div class="bottom"><button class="btn wide" data-ok style="background:var(--yel)">Así está bien ${IC.check}</button></div>`);
+  bindQuit(el);$$('.tag svg *',el).forEach(p=>{p.style.fill='none';p.style.stroke='#16295e';p.style.strokeWidth=2.6});
+  const L=$('.olist',el);let locked=false;
+  const paint=(res)=>{L.innerHTML=cur4.map((ix,pos)=>{const x=d.it[ix];const ok=res&&right[pos]===ix;return `<div class="oitem ${res?(ok?'ok':'no'):''}" style="--d:${pos*.05}s"><b class="on">${pos+1}</b><div class="ot">${esc(x.t)}${x.sub?`<small>${esc(x.sub)}</small>`:''}${res?`<small class="ov">${esc(x.f)}</small>`:''}</div>${res?'':`<div class="oarr"><button data-u="${pos}" ${pos?'':'disabled'} aria-label="Subir">${IC.up}</button><button data-d="${pos}" ${pos<3?'':'disabled'} aria-label="Bajar">${IC.down}</button></div>`}</div>`}).join('');
+    $$('[data-u]',L).forEach(b=>b.onclick=()=>{const p=+b.dataset.u;[cur4[p-1],cur4[p]]=[cur4[p],cur4[p-1]];SFX.tick();vib(5);paint()});
+    $$('[data-d]',L).forEach(b=>b.onclick=()=>{const p=+b.dataset.d;[cur4[p+1],cur4[p]]=[cur4[p],cur4[p+1]];SFX.tick();vib(5);paint()})};
+  paint();
+  $('[data-ok]',el).onclick=()=>{if(locked)return;locked=true;SFX.tap();
+    let good=0;for(let a=0;a<4;a++)for(let b=a+1;b<4;b++)if(right.indexOf(cur4[a])<right.indexOf(cur4[b]))good++;
+    const nt=Math.round(good/6*100)/10;finishRound(nt);paint(true);nt>=10?SFX.ok():nt<5&&SFX.bad();if(nt>=10)award('ordenado');
+    setTimeout(()=>{$('.bottom',el).innerHTML=`<div class="verdict">${stampHTML(nt)}<div><h3>${nt>=10?'¡Perfecto!':nt>=7?'Casi':nt>=5?'Regular':'Al revés'}</h3><p>${good} de 6 parejas bien colocadas. En verde, las que están en su sitio.</p><span class="src">Fuente: <a href="${d.url}" target="_blank" rel="noopener">${esc(d.src)}</a></span></div></div>${nextBtn()}`;SFX.stamp();$('[data-next]',el).onclick=next},500)};
+}
+
 /* ================= EL BOTE ================= */
 function coins(el){const pe=$('.streak',el),src=$('[data-v]',el);if(!pe||!src)return;const a=src.getBoundingClientRect(),b=pe.getBoundingClientRect();for(let i=0;i<9;i++){const c=document.createElement('i');c.className='coin';c.style.left=(a.left+a.width/2-11+(i-4)*9)+'px';c.style.top=(a.top+a.height/2-11)+'px';c.style.setProperty('--dx',(b.left+b.width/2-a.left-a.width/2-(i-4)*9)+'px');c.style.setProperty('--dy',(b.top+b.height/2-a.top-a.height/2)+'px');c.style.animationDelay=(i*55)+'ms';document.body.appendChild(c);setTimeout(()=>{c.parentNode&&c.parentNode.removeChild(c);if(i%3===0)SFX.tick()},800+i*55)}}
 function genBote(){const r=genVS();const q=Math.max(r.a.v,r.b.v)/Math.min(r.a.v,r.b.v);r.mult=q<1.3?3:q<1.8?2:1.5;return r}
@@ -1588,7 +1630,7 @@ function cheque(amount,kind){
 }
 
 /* ================= boletín final ================= */
-function subject(r){if(r.type==='raro')return['Lo más raro',r.d.q.replace(/<[^>]+>/g,'')];if(r.type==='trivia'&&['Cine','Fútbol','Geografía','JJ. OO.'].includes(r.q.tag))return[r.q.tag,r.q.q.replace(/<[^>]+>/g,'')];return r.type==='guess'?['Geografía','Habitantes de '+r.c.n]:r.type==='draw'?['Gráficas',r.s.t]:r.type==='trivia'?['Música',r.q.tag]:r.type==='year'?['Historia',r.e[0]]:['Más o menos',r.m.lbl]}
+function subject(r){if(r.type==='ord')return['Ordénalos',r.d.q.replace(/<[^>]+>/g,'')];if(r.type==='raro')return['Lo más raro',r.d.q.replace(/<[^>]+>/g,'')];if(r.type==='trivia'&&['Cine','Fútbol','Geografía','JJ. OO.'].includes(r.q.tag))return[r.q.tag,r.q.q.replace(/<[^>]+>/g,'')];return r.type==='guess'?['Geografía','Habitantes de '+r.c.n]:r.type==='draw'?['Gráficas',r.s.t]:r.type==='trivia'?['Música',r.q.tag]:r.type==='year'?['Historia',r.e[0]]:['Más o menos',r.m.lbl]}
 const COMMENTS=[[9.5,'Matrícula de honor. ¿Has hecho trampas?'],[9,'Sobresaliente. Que te pongan un marco.'],[7,'Notable. El profe está orgulloso.'],[6,'Bien. Se nota que has estudiado un poco.'],[5,'Aprobado raspado. ¡Por los pelos!'],[3,'Suspenso. Hay que repasar en verano.'],[0,'Muy deficiente. Lapi se ha comido el boli del disgusto.']];
 function duelEnd(){S.games++;award('primera');award('duelo');save();
   const a=Math.round(duelTot(0)*10)/10,b=Math.round(duelTot(1)*10)/10,w=a>b?0:b>a?1:-1;
@@ -1648,6 +1690,7 @@ const STK=[
   ['racha3','Tres seguidos','Juega el millón de hoy 3 días seguidos','flame','var(--yel)'],
   ['arriesgado','Sangre fría','Plántate en El bote con 1.000 puntos o más','trophy','var(--yel)'],
   ['rarito','Bicho raro','Saca 100 puntos en un tablero de Lo más raro','target','var(--pink)'],
+  ['ordenado','Todo en su sitio','Ordena 4 cosas sin un solo fallo','updown','var(--yel)'],
   ['pincha','Pinchadiscos','Acierta 5 canciones seguidas en ¿Qué suena?','mic','var(--yel)'],
   ['oido1s','Al primer segundo','Acierta en ¿Qué suena? con solo 1 segundo','mic','var(--pink)'],
   ['oido','Oído absoluto','Adivina una canción con la primera pista','note','var(--cyan)'],
@@ -1677,17 +1720,17 @@ function stats(){
    <div><b class="num">${S.triviaN?Math.round(S.triviaOk/S.triviaN*100)+'%':'–'}</b><span>aciertos en música</span></div>
    <div><b class="num">${S.bestStreak||0}</b><span>mejor racha en ¿Más o menos?</span></div>
    <div><b class="num">${S.exactYears||0}</b><span>años clavados</span></div></div>
-   <div class="sheet" style="margin-top:16px"><h3>Mejores notas</h3>${['dibuja','trivia','cancion','futbol','cine','geo','jjoo','anio','aojo','raro','escribe','bote'].map(m=>`<div class="toggle"><span>${NM[m]}</span><span class="brush" style="font-size:26px;color:var(--red)">${S.best[m]==null?'–':m==='raro'||m==='escribe'||m==='cancion'||m==='suena'?S.best[m]+' pts':m==='bote'?fmt(S.best[m]):nota(S.best[m])}</span></div>`).join('')}</div>${statsM()}</div>`);
+   <div class="sheet" style="margin-top:16px"><h3>Mejores notas</h3>${['dibuja','orden','trivia','cancion','futbol','cine','geo','jjoo','anio','aojo','raro','escribe','bote'].map(m=>`<div class="toggle"><span>${NM[m]}</span><span class="brush" style="font-size:26px;color:var(--red)">${S.best[m]==null?'–':m==='raro'||m==='escribe'||m==='cancion'||m==='suena'?S.best[m]+' pts':m==='bote'?fmt(S.best[m]):nota(S.best[m])}</span></div>`).join('')}</div>${statsM()}</div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
 }
 function ajustes(){
   const srcs=[...new Map(SERIES.map(s=>[s.src,s.url])).entries()];
   const el=show(`${pageHead('Ajustes')}<div class="scroll">
   <div class="sheet"><div class="toggle"><span>Sonido</span><button class="sw ${S.sound?'on':''}" data-t="sound" aria-label="Sonido"></button></div><div class="toggle"><span>Música de tensión (en el millón)</span><button class="sw ${S.music?'on':''}" data-t="music" aria-label="Música"></button></div><div class="toggle" style="border:0"><span>Vibración</span><button class="sw ${S.vib?'on':''}" data-t="vib" aria-label="Vibración"></button></div></div>
-  <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
+  <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v41</div></div>`);
+  <div class="foot">¡Clavado! v42</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

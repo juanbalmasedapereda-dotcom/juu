@@ -5,9 +5,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          sleep 90
-          B=https://juanbalmasedapereda-dotcom.github.io/juu
-          for p in "" lazo/ orbita/ cefiro/ marea/ marchando/ isla/ clavado/ lazo/manifest.webmanifest cefiro/sw.js clavado/icon-192.png; do
-            curl -s -o /tmp/out -w "HTTP %{http_code} %{size_download}B $p\n" "$B/$p"
-          done
-          for g in lazo orbita cefiro marea marchando isla clavado; do echo "$g: $(curl -s $B/$g/ | grep -o '<title>[^<]*</title>' | head -1)"; done
+          T="https://itunes.apple.com/search?media=music&entity=song&limit=3&country=ES&term=Blinding%20Lights%20The%20Weeknd"
+          echo "== iTunes JSONP"; curl -s "$T&callback=cbx" | head -c 400; echo
+          echo "== iTunes CORS header"; curl -s -D - -o /dev/null -H "Origin: https://juanbalmasedapereda-dotcom.github.io" "$T" | grep -i "access-control\|content-type\|HTTP/"
+          U=$(curl -s "$T" | grep -o '"previewUrl":"[^"]*"' | head -1 | cut -d'"' -f4); echo "preview: $U"; curl -s -I "$U" | grep -i "HTTP/\|content-type\|content-length"
+          echo "== Deezer JSONP"; curl -s "https://api.deezer.com/search?output=jsonp&callback=cbd&q=artist:%22The%20Weeknd%22%20track:%22Blinding%20Lights%22" | head -c 300; echo
+      - run: |
+          sleep 60
+          mkdir t && cd t && npm init -y >/dev/null && npm i -s playwright@1.49.1 >/dev/null && npx playwright install chromium >/dev/null
+          cat > t.js <<'JS'
+          const {chromium}=require('playwright');
+          (async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:375,height:667}});const e=[];p.on('pageerror',x=>e.push(x.message));
+          await p.goto('https://juanbalmasedapereda-dotcom.github.io/juu/clavado/?v='+Date.now());await p.waitForTimeout(1500);
+          console.log('version', await p.evaluate(()=>document.body.innerText.match(/v\d+/g)));
+          await p.evaluate(()=>__clv.start('suena'));await p.waitForTimeout(800);await p.click('[data-cat="mix"]');
+          for(let i=0;i<40;i++){await p.waitForTimeout(1000);const ok=await p.evaluate(()=>!!(window.__clv&&__clv.G()&&__clv.G().mode==='suena'));if(ok)break}
+          console.log(await p.evaluate(()=>{const G=__clv.G();return JSON.stringify({nonet:G.nonet,rounds:G.rounds.map(r=>[r.type,r.s.t,r.s.a,r.h&&r.h.src,r.h&&r.h.u])},null,1)}));
+          const r=await p.evaluate(async()=>{const a=new Audio(__clv.G().rounds[0].h.u);return await new Promise(res=>{a.oncanplay=()=>res('canplay '+a.duration);a.onerror=()=>res('error '+(a.error&&a.error.code));setTimeout(()=>res('timeout'),10000);a.load()})});console.log('audio',r);
+          console.log('ERR',JSON.stringify(e));await b.close()})();
+          JS
+          node t.js

@@ -56,8 +56,8 @@ button:focus-visible{outline:3px dashed var(--ink);outline-offset:3px;border-rad
 .screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden}
 .screen.enter{animation:pageIn .55s var(--ease) both}
 .screen.leave{animation:pageOut .35s ease-in both;pointer-events:none}
-@keyframes pageIn{from{transform:translateX(34px) rotate(.6deg);opacity:0;filter:blur(3px)}to{transform:none;opacity:1;filter:none}}
-@keyframes pageOut{to{transform:translateX(-24px) scale(.985);opacity:0;filter:blur(2px)}}
+@keyframes pageIn{from{transform:translateX(34px) rotate(.6deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes pageOut{to{transform:translateX(-24px) scale(.985);opacity:0}}
 .scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:0 16px calc(24px + var(--safe-b)) 44px}
 .scroll::-webkit-scrollbar{width:6px}.scroll::-webkit-scrollbar-thumb{background:var(--grid-strong);border-radius:6px}
 
@@ -94,7 +94,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .doodle path{fill:none;stroke:var(--ink);stroke-linecap:round;stroke-linejoin:round}
 .lapi-wrap{position:absolute;right:-6px;top:4px;width:112px;height:170px}
 .lapi{width:100%;height:100%;overflow:visible}
-.lapi .body{animation:bob 3.2s ease-in-out infinite;transform-origin:56px 160px}
+.lapi{animation:bob 3.2s ease-in-out infinite;transform-origin:50% 94%;will-change:transform}
 @keyframes bob{50%{transform:rotate(5deg) translateY(-4px)}}
 .lapi .eye{animation:blink 4.6s infinite;transform-box:fill-box;transform-origin:center}
 @keyframes blink{0%,46%,50%,100%{transform:scaleY(1)}48%{transform:scaleY(.1)}}
@@ -138,9 +138,10 @@ h1,h2,h3{margin:0;text-wrap:balance}
   box-shadow:inset 0 -6px 10px rgba(0,0,0,.16),inset 0 4px 8px rgba(255,255,255,.55)}
 .sticker::after{content:"";position:absolute;inset:4px;border-radius:50%;
   background:conic-gradient(from var(--a,0deg),rgba(255,255,255,0) 0 18%,rgba(255,255,255,.75) 24%,rgba(255,255,255,0) 32% 62%,rgba(160,255,255,.5) 68%,rgba(255,180,255,.45) 72%,rgba(255,255,255,0) 80%);
-  mix-blend-mode:soft-light;animation:holo 5s linear infinite}
+  mix-blend-mode:soft-light;animation:holoR 5s linear infinite;will-change:transform}
 @property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
 @keyframes holo{to{--a:360deg}}
+@keyframes holoR{to{transform:rotate(360deg)}}
 .sticker svg{position:relative;z-index:1;width:58%;height:58%;overflow:visible}
 .sticker svg *{fill:none;stroke:var(--ink-2);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
 .sticker svg .f{fill:var(--ink-2);stroke:none}
@@ -685,6 +686,18 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 .pk:active{transform:translateY(2px);box-shadow:none}
 .pk.g{background:#58c97f;color:#fff}.pk.y{background:#ffd34d;color:#3a2a00}.pk.x{background:#d9d3c3;color:#8a826e}
 @media (prefers-reduced-motion:reduce){.pt.pop,.pt.flip,.palrow.win .pt,.palrow.shake,.palmsg.in{animation:none}}
+
+/* v67 rendimiento */
+.screen.enter,.screen.leave{will-change:transform,opacity}
+.scroll{contain:layout paint}
+.card.mode{content-visibility:auto;contain-intrinsic-size:auto 150px}
+/* v67 palabra en el millón */
+.palq{text-align:center;color:var(--graphite);font-size:17px;margin:2px 12px 0}
+.palq svg{display:none}
+.palhost.m .palrow{grid-template-columns:repeat(5,min(11vw,44px,5.4vh))}
+.palhost.m .pt{font-size:min(6.5vw,24px)}
+.palhost.m .pk{height:min(42px,5.6vh)}
+.palhost.m .palgrid{gap:4px;margin-top:4px}.palhost.m .palrow{gap:5px}
 </style>
 </head>
 <body>
@@ -1078,7 +1091,7 @@ function duelTot(p){return G.notes.reduce((a,n,k)=>a+(k%2===p&&n!=null?n:0),0)}
 function duelHand(go){const p=G.i%2,c=p?'var(--pink)':'var(--cyan)';G.handShown=G.i;
   const el=show(`${SPIRAL}<div class="hand-off" style="--pc:${c}"><div class="ho-k hand">Ronda ${Math.floor(G.i/2)+1} de 5</div><div class="ho-p brush">Jugador ${p+1}</div><div class="ho-l">${lapi(p?'cool':'happy')}</div><div class="ho-s hand">${G.i?`Pásale el móvil a J${p+1}. ¡Sin mirar la respuesta de antes!`:'Empieza J1. J2, mira para otro lado.'}</div><div class="ho-sc"><span style="--pc:var(--cyan)">J1 <b class="num">${nota(Math.round(duelTot(0)*10)/10)}</b></span><span style="--pc:var(--pink)">J2 <b class="num">${nota(Math.round(duelTot(1)*10)/10)}</b></span></div><button class="btn wide" data-go>¡Listo! ${IC.arrow}</button></div>`);
   vib(20);$('[data-go]',el).onclick=()=>{SFX.tap();go()}}
-function playRound(){if(G.millon&&G.i===14&&!G.finalShown){G.finalShown=1;return finalIntro(playRound)}if(G.duel&&G.handShown!==G.i)return duelHand(playRound);const r=G.rounds[G.i];({draw:roundDraw,trivia:roundTrivia,vs:roundVS,year:roundYear,guess:roundGuess,raro:roundRaro,raroW:roundRaroW,song:roundSong,suena:roundSuena,ord:roundOrd,vf:roundVFm})[r.type](r);if(G.millon){musicStart(G.i);document.body.classList.toggle('final',G.i===14)}}
+function playRound(){if(G.millon&&G.i===14&&!G.finalShown){G.finalShown=1;return finalIntro(playRound)}if(G.duel&&G.handShown!==G.i)return duelHand(playRound);const r=G.rounds[G.i];({draw:roundDraw,trivia:roundTrivia,vs:roundVS,year:roundYear,guess:roundGuess,raro:roundRaro,raroW:roundRaroW,song:roundSong,suena:roundSuena,ord:roundOrd,vf:roundVFm,pal:roundPal})[r.type](r);if(G.millon){musicStart(G.i);document.body.classList.toggle('final',G.i===14)}}
 function finishRound(n,extra){
   musicStop();
   if(cur)cur.classList.add('done');
@@ -1748,6 +1761,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v67','Más fluido: las pegatinas brillantes, Lapi y los cambios de página ya no obligan al móvil a redibujar la pantalla entera en cada fotograma, y los marcadores ya no hacen recálculos en bucle. No se ha quitado nada. Además, «Palabra oculta» ya sale en Llega al millón (pregunta 14), con su pista de Lapi.'],
  ['v66','Juego nuevo: «Palabra oculta». Adivina una palabra de 5 letras en 6 intentos (verde: en su sitio; amarillo: está en otro sitio). Tres temas: palabras de todos los días, apellidos de deportistas y Pokémon. Lleva racha y una pegatina nueva.'],
  ['v65','«Capitales» pasa a llamarse «Geografía»: además de capitales, qué país tiene más habitantes, qué provincia española tiene más o menos gente (INE 2025) y qué país produce más electricidad renovable. También salen en el millón.'],
  ['v64','Cada tarjeta del menú dice cuántos temas, gráficas o sucesos tiene ese juego (se cuentan solos, así siempre están al día). Las pegatinas de las tarjetas se mueven un poco al tocarlas.'],
@@ -1826,7 +1840,7 @@ RARO.push(
 
 
 /* ================= v57: animaciones ================= */
-const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+const RMQ=matchMedia('(prefers-reduced-motion: reduce)');const RM=()=>RMQ.matches;
 function fxResult(n){if(RM()||!cur)return;const good=n>=7,bad=n<3;
   const lp=$('.lapimini,.lapi-wrap',cur);
   if(good){const b=document.createElement('div');b.className='fxburst';const cols=['var(--yel)','var(--pink)','var(--green)','var(--cyan)','var(--lila)'];
@@ -1923,33 +1937,46 @@ function palMenu(){const C=palCats();SFX.page();const el=show(`${pageHead('Palab
 function palScore(g,ans){const r=Array(5).fill('x'),a=ans.split(''),used=Array(5).fill(false);
   for(let i=0;i<5;i++)if(g[i]===a[i]){r[i]='g';used[i]=true}
   for(let i=0;i<5;i++)if(r[i]!=='g'){const j=a.findIndex((c,k)=>!used[k]&&c===g[i]);if(j>=0){r[i]='y';used[j]=true}}return r}
-function startPal(cat){const C=palCats()[cat];R=rngFrom((Date.now()^(Math.random()*1e9))>>>0);const [ans,info]=pick(C.w);G={mode:'palabra',rounds:[],i:0,notes:[]};
-  const rows=[],keyst={};let curw='',done=false;
+function palGame(el,host,ans,cb){
+  const rows=[],keyst={},found=Array(5).fill(false);let curw='',done=false;
   const kb=['QWERTYUIOP','ASDFGHJKLÑ','<ZXCVBNM>'];
-  const el=show(`${SPIRAL}<div class="topbar"><button class="iconbtn" data-quit aria-label="Salir">${IC.x}</button><div class="grow"><div class="roundlbl">Palabra oculta · <b>${esc(C.t)}</b></div></div></div>
-  <div class="palgrid">${Array.from({length:6},(_,r)=>`<div class="palrow" data-r="${r}">${Array.from({length:5},(_,c)=>`<span class="pt" data-c="${c}"></span>`).join('')}</div>`).join('')}</div>
+  host.innerHTML=`<div class="palgrid">${Array.from({length:6},(_,r)=>`<div class="palrow" data-r="${r}">${Array.from({length:5},(_,c)=>`<span class="pt" data-c="${c}"></span>`).join('')}</div>`).join('')}</div>
   <div class="palmsg hand"></div>
-  <div class="palkb">${kb.map(row=>`<div class="pkr">${row.split('').map(k=>`<button class="pk ${k==='<'||k==='>'?'wide':''}" data-k="${k}">${k==='<'?'⌫':k==='>'?'OK':k}</button>`).join('')}</div>`).join('')}</div>`);
-  $('[data-quit]',el).onclick=()=>{SFX.tap();document.removeEventListener('keydown',onKey);palMenu()};
-  const msg=t=>{const m=$('.palmsg',el);m.textContent=t;m.classList.remove('in');void m.offsetWidth;m.classList.add('in')};
-  const paint=()=>{const r=rows.length;if(r>5)return;const row=$(`.palrow[data-r="${r}"]`,el);$$('.pt',row).forEach((t,i)=>{const ch=curw[i]||'';if(t.textContent!==ch){t.textContent=ch;t.classList.toggle('on',!!ch);if(ch){t.classList.remove('pop');void t.offsetWidth;t.classList.add('pop')}}})};
-  const finish=win=>{done=true;document.removeEventListener('keydown',onKey);S.pal=S.pal||{run:0,best:0};if(win){S.pal.run++;S.pal.best=Math.max(S.pal.best,S.pal.run);S.games++;award('primera');if(rows.length<=3)award('palabra3')}else S.pal.run=0;save();
-    const sol=info?`${ans} · ${esc(info)}`:ans;
-    setTimeout(()=>{if(win){SFX.fanfare();confetti()}else SFX.bad();
-      $('.palkb',el).innerHTML=`<div class="verdict rv"><div><h3>${win?['¡A la primera!','¡Increíble!','¡Muy bien!','¡Bien!','¡Por los pelos!','¡Justito!'][rows.length-1]:'¡Se acabaron los intentos!'}</h3><p>La palabra era <b>${sol}</b>. Racha: ${S.pal.run} (mejor: ${S.pal.best}).</p></div></div><div class="row" style="margin-top:10px"><button class="btn" data-again>${IC.redo} Otra</button><button class="btn white" data-menu>Temas</button></div>`;
-      $('[data-again]',el).onclick=()=>{SFX.tap();startPal(cat)};$('[data-menu]',el).onclick=()=>{SFX.tap();palMenu()}},rows.length*0+900)};
-  const submit=()=>{if(curw.length<5){msg('Faltan letras');const row=$(`.palrow[data-r="${rows.length}"]`,el);row.classList.remove('shake');void row.offsetWidth;row.classList.add('shake');SFX.bad();return}
-    const sc=palScore(curw,ans),r=rows.length,row=$(`.palrow[data-r="${r}"]`,el);rows.push(curw);
-    $$('.pt',row).forEach((t,i)=>{setTimeout(()=>{t.classList.add('flip',sc[i]);SFX.tick();const k=curw[i]||t.textContent,prev=keyst[t.textContent];const rank={g:3,y:2,x:1};if(!prev||rank[sc[i]]>rank[prev]){keyst[t.textContent]=sc[i];const b=$(`.pk[data-k="${t.textContent}"]`,el);if(b){b.classList.remove('g','y','x');b.classList.add(sc[i])}}},i*180)});
-    const w=curw;curw='';
+  <div class="palkb">${kb.map(row=>`<div class="pkr">${row.split('').map(k=>`<button class="pk ${k==='<'||k==='>'?'wide':''}" data-k="${k}">${k==='<'?'⌫':k==='>'?'OK':k}</button>`).join('')}</div>`).join('')}</div>`;
+  const msg=t=>{const m=$('.palmsg',host);m.textContent=t;m.classList.remove('in');void m.offsetWidth;m.classList.add('in')};
+  const paint=()=>{const r=rows.length;if(r>5)return;const row=$(`.palrow[data-r="${r}"]`,host);$$('.pt',row).forEach((t,i)=>{const ch=curw[i]||'';if(t.textContent!==ch){t.textContent=ch;t.classList.toggle('on',!!ch);if(ch){t.classList.remove('pop');void t.offsetWidth;t.classList.add('pop')}}})};
+  const off=()=>document.removeEventListener('keydown',onKey);
+  const finish=win=>{done=true;off();setTimeout(()=>cb(win,rows.length),900)};
+  const submit=()=>{if(curw.length<5){msg('Faltan letras');const row=$(`.palrow[data-r="${rows.length}"]`,host);row.classList.remove('shake');void row.offsetWidth;row.classList.add('shake');SFX.bad();return}
+    const sc=palScore(curw,ans),r=rows.length,row=$(`.palrow[data-r="${r}"]`,host),w=curw;rows.push(curw);curw='';
+    sc.forEach((v,i)=>{if(v==='g')found[i]=true});
+    $$('.pt',row).forEach((t,i)=>{setTimeout(()=>{t.classList.add('flip',sc[i]);SFX.tick();const ch=w[i],prev=keyst[ch],rank={g:3,y:2,x:1};if(!prev||rank[sc[i]]>rank[prev]){keyst[ch]=sc[i];const b=$(`.pk[data-k="${ch}"]`,host);if(b){b.classList.remove('g','y','x');b.classList.add(sc[i])}}},i*180)});
     setTimeout(()=>{if(w===ans){row.classList.add('win');finish(true)}else if(rows.length>=6)finish(false);else msg(['Sigue…','Vas bien','Piensa…','Ánimo','¡Última!'][Math.min(rows.length-1,4)])},5*180+200)};
   const press=k=>{if(done)return;if(k==='<'){curw=curw.slice(0,-1);paint();return}if(k==='>'){submit();return}if(curw.length<5&&/^[A-ZÑ]$/.test(k)){curw+=k;vib(4);paint()}};
-  $$('.pk',el).forEach(b=>b.onclick=()=>{SFX.tap&&SFX.tick();press(b.dataset.k)});
-  function onKey(e){if(!el.isConnected){document.removeEventListener('keydown',onKey);return}const k=e.key==='Backspace'?'<':e.key==='Enter'?'>':e.key.length===1?palN(e.key)||(e.key.toUpperCase()==='Ñ'?'Ñ':''):'';if(k){e.preventDefault();press(k)}}
+  $$('.pk',host).forEach(b=>b.onclick=()=>{SFX.tick();press(b.dataset.k)});
+  function onKey(e){if(!el.isConnected){off();return}const k=e.key==='Backspace'?'<':e.key==='Enter'?'>':e.key.length===1?palN(e.key):'';if(k){e.preventDefault();press(k)}}
   document.addEventListener('keydown',onKey);
+  return{off,hint:()=>{const free=[0,1,2,3,4].filter(i=>!found[i]);if(!free.length)return null;const i=pick(free);return[i,ans[i]]},isDone:()=>done}
+}
+function startPal(cat){const C=palCats()[cat];R=rngFrom((Date.now()^(Math.random()*1e9))>>>0);const [ans,info]=pick(C.w);G={mode:'palabra',rounds:[],i:0,notes:[]};
+  const el=show(`${SPIRAL}<div class="topbar"><button class="iconbtn" data-quit aria-label="Salir">${IC.x}</button><div class="grow"><div class="roundlbl">Palabra oculta · <b>${esc(C.t)}</b></div></div></div><div class="palhost"></div>`);
+  const api=palGame(el,$('.palhost',el),ans,(win,n)=>{S.pal=S.pal||{run:0,best:0};if(win){S.pal.run++;S.pal.best=Math.max(S.pal.best,S.pal.run);S.games++;award('primera');if(n<=3)award('palabra3')}else S.pal.run=0;save();
+    const sol=info?`${ans} · ${esc(info)}`:ans;if(win){SFX.fanfare();confetti()}else SFX.bad();
+    $('.palkb',el).innerHTML=`<div class="verdict rv"><div><h3>${win?['¡A la primera!','¡Increíble!','¡Muy bien!','¡Bien!','¡Por los pelos!','¡Justito!'][n-1]:'¡Se acabaron los intentos!'}</h3><p>La palabra era <b>${sol}</b>. Racha: ${S.pal.run} (mejor: ${S.pal.best}).</p></div></div><div class="row" style="margin-top:10px"><button class="btn" data-again>${IC.redo} Otra</button><button class="btn white" data-menu>Temas</button></div>`;
+    $('[data-again]',el).onclick=()=>{SFX.tap();startPal(cat)};$('[data-menu]',el).onclick=()=>{SFX.tap();palMenu()}});
+  $('[data-quit]',el).onclick=()=>{SFX.tap();api.off();palMenu()};
+}
+/* v67: Palabra oculta dentro de Llega al millón */
+function genPal(){return{type:'pal',ans:pick(PAL_W)}}
+function roundPal(r){
+  const el=show(`${topbar()}<div class="palq hand">${IC.book||''}<b>Palabra oculta</b> · 6 intentos</div><div class="palhost m"></div><div class="bottom"></div>`);
+  bindQuit(el);const api=palGame(el,$('.palhost',el),r.ans,(win,n)=>{const nt=win?10:0;finishRound(nt);
+    $('.palkb',el).style.display='none';
+    $('.bottom',el).innerHTML=`<div class="verdict">${stampHTML(nt)}<div><h3>${win?(n<=3?'¡Clavada!':'¡Adivinada!'):'No salió'}</h3><p>La palabra era <b>${r.ans}</b>.</p></div></div>${nextBtn()}`;SFX.stamp();$('[data-next]',el).onclick=next});
+  r.api=api;const q=$('[data-quit]',el),old=q.onclick;q.onclick=()=>{if(G.millon&&Date.now()-quitArmed>=2500){old();return}api.off();old()};
 }
 /* números que crecen al cambiar */
-(function(){if(typeof MutationObserver==='undefined')return;const mo=new MutationObserver(ms=>{if(RM())return;for(const m of ms){const t=m.target.nodeType===3?m.target.parentElement:m.target;const el=t&&t.closest&&t.closest('.streak,.prize,[data-sc],[data-vo]');if(el){el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump')}
+(function(){if(typeof MutationObserver==='undefined')return;const mo=new MutationObserver(ms=>{if(RM())return;for(const m of ms){const t=m.target.nodeType===3?m.target.parentElement:m.target;const el=t&&t.closest&&t.closest('.streak,.prize,[data-sc],[data-vo]');if(el&&!el.__bq){el.__bq=1;requestAnimationFrame(()=>{el.classList.remove('bump');requestAnimationFrame(()=>{el.classList.add('bump');setTimeout(()=>{el.__bq=0},350)})})}
     m.addedNodes&&m.addedNodes.forEach(nd=>{if(nd.nodeType!==1)return;nd.querySelectorAll('.stamp b.num:not(.cu),.ch-amt:not(.cu)').forEach(countUp)})}});
   addEventListener('DOMContentLoaded',()=>mo.observe(document.body,{subtree:true,childList:true,characterData:true}));if(document.body)mo.observe(document.body,{subtree:true,characterData:true,childList:true})})();
 
@@ -1967,12 +1994,12 @@ const LADDER=[100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,25000
 const SAFE=[4,9];
 const WORDS={0:'cero euros',100:'cien euros',200:'doscientos euros',300:'trescientos euros',500:'quinientos euros',1000:'mil euros',2000:'dos mil euros',4000:'cuatro mil euros',8000:'ocho mil euros',16000:'dieciséis mil euros',32000:'treinta y dos mil euros',64000:'sesenta y cuatro mil euros',125000:'ciento veinticinco mil euros',250000:'doscientos cincuenta mil euros',500000:'quinientos mil euros',1000000:'un millón de euros'};
 function euro(v){return fmt(v)+' €'}
-const MPLAN=['trivia','vs','year','vf','guess','draw','raro','ord','song','draw','raroW','trivia','year','vs','draw'];
-const genType=(t,l=7)=>t==='vf'?genVFm():t==='ord'?genOrd():t==='song'?genSongs(1)[0]:t==='raroW'?genWset()[0]:t==='raro'?genRaro(pick(RARO)):t==='draw'?genDraw():t==='trivia'?genTriviaM(l):t==='year'?genYearM(l):t==='guess'?genGuessM(l):genVSM(l);
-const needFor=(r,l)=>r.type==='raro'||r.type==='raroW'?2:r.type==='song'?1:r.type==='ord'?(l<10?6.5:8):(r.type==='trivia'||r.type==='vs'||r.type==='vf')?10:Math.round((5+l*.2)*10)/10;
+const MPLAN=['trivia','vs','year','vf','guess','draw','raro','ord','song','draw','raroW','trivia','year','pal','draw'];
+const genType=(t,l=7)=>t==='pal'?genPal():t==='vf'?genVFm():t==='ord'?genOrd():t==='song'?genSongs(1)[0]:t==='raroW'?genWset()[0]:t==='raro'?genRaro(pick(RARO)):t==='draw'?genDraw():t==='trivia'?genTriviaM(l):t==='year'?genYearM(l):t==='guess'?genGuessM(l):genVSM(l);
+const needFor=(r,l)=>r.type==='pal'?10:r.type==='raro'||r.type==='raroW'?2:r.type==='song'?1:r.type==='ord'?(l<10?6.5:8):(r.type==='trivia'||r.type==='vs'||r.type==='vf')?10:Math.round((5+l*.2)*10)/10;
 function startMillon(mode){
   R=mode==='diario'?rngFrom(todayKey()*7919):rngFrom((Date.now()^(Math.random()*1e9))>>>0);usedSeries.clear();
-  const rounds=MPLAN.map((t,l)=>genType(t,l));const spares={};['trivia','vs','year','guess','draw','raro','vf','ord','song','raroW'].forEach(t=>spares[t]=genType(t,7));
+  const rounds=MPLAN.map((t,l)=>genType(t,l));const spares={};['trivia','vs','year','guess','draw','raro','vf','ord','song','raroW','pal'].forEach(t=>spares[t]=genType(t,7));
   if(mode==='diario')R=rngFrom((Date.now()^(Math.random()*1e9))>>>0);
   G={mode,millon:true,rounds,spares,i:0,notes:[],streak:0,triviaRun:0,life:{fifty:1,hint:1,swap:1,pub:1}};
   SFX.page();ladder(true);
@@ -1980,7 +2007,7 @@ function startMillon(mode){
 function topbarM(){
   const r=G.rounds[G.i],nd=needFor(r,G.i),L=G.life;
   const lb=(k,lbl,ok)=>`<button class="life ${L[k]&&ok?'':'used'}" data-life="${k}" ${L[k]&&ok?'':'disabled'} aria-label="${lbl}">${k==='fifty'?'<b>50:50</b>':k==='hint'?'<svg viewBox="0 0 24 24"><path d="M9 3h6v4H9zM9 7h6v10l-3 5-3-5z"/></svg>Pista':k==='pub'?'<svg viewBox="0 0 24 24"><path d="M4 20V12M10 20V6M16 20v-9M21 20H3"/></svg>Público':IC.redo+'Cambiar'}</button>`;
-  return `${SPIRAL}<div class="topbar"><button class="iconbtn" data-quit aria-label="Salir">${IC.x}</button><div class="grow"><div class="prize num">${euro(LADDER[G.i])}</div><div class="roundlbl">Pregunta ${G.i+1} de 15${r.type==='raro'||r.type==='raroW'?` · <b class="needc">mín. ${nd*10} pts</b>`:r.type==='song'?` · <b class="needc">acierta</b>`:r.type==='vf'?` · <b class="needc">3 de 3</b>`:nd<10?` · <b class="needc">necesitas un ${nota(nd)}</b>`:''}</div></div></div><div class="lifes">${lb('fifty','Comodín 50:50',r.type==='trivia'||r.type==='raro'||r.type==='song')}${lb('pub','Comodín del público',r.type==='trivia'||r.type==='vs'||r.type==='raro'||r.type==='vf')}${lb('hint','Pista de Lapi',r.type!=='vs')}${lb('swap','Cambiar pregunta',true)}</div>`;
+  return `${SPIRAL}<div class="topbar"><button class="iconbtn" data-quit aria-label="Salir">${IC.x}</button><div class="grow"><div class="prize num">${euro(LADDER[G.i])}</div><div class="roundlbl">Pregunta ${G.i+1} de 15${r.type==='raro'||r.type==='raroW'?` · <b class="needc">mín. ${nd*10} pts</b>`:r.type==='pal'?` · <b class="needc">adivínala</b>`:r.type==='song'?` · <b class="needc">acierta</b>`:r.type==='vf'?` · <b class="needc">3 de 3</b>`:nd<10?` · <b class="needc">necesitas un ${nota(nd)}</b>`:''}</div></div></div><div class="lifes">${lb('fifty','Comodín 50:50',r.type==='trivia'||r.type==='raro'||r.type==='song')}${lb('pub','Comodín del público',r.type==='trivia'||r.type==='vs'||r.type==='raro'||r.type==='vf')}${lb('hint','Pista de Lapi',r.type!=='vs')}${lb('swap','Cambiar pregunta',true)}</div>`;
 }
 let quitArmed=0;
 function confirmQuit(el){if(Date.now()-quitArmed<2500)return true;quitArmed=Date.now();lapiSays(el,'¿Te vas? Si sales ahora no cobras nada. Toca la X otra vez para salir.','sad');return false}
@@ -2002,6 +2029,7 @@ function bindLife(el){
       if(r.type==='vs'){const pc=pollShares(2,r.b.v>r.a.v?0:1,tierOf(G.i));['1','0'].forEach((v,i)=>$(`[data-a="${v}"]`,el).insertAdjacentHTML('beforeend',`<span class="pct" style="--w:${pc[i]}%"><i></i><b class="num">${pc[i]}%</b></span>`));return lapiSays(el,pollHtml(['Más','Menos'],pc),'cool',3500)}
     }
     if(k==='hint'){
+      if(r.type==='pal'){const h=r.api&&r.api.hint();return lapiSays(el,h?`Te soplo una: la letra ${h[0]+1} es la <b>${h[1]}</b>.`:'¡Si ya las tienes todas en su sitio!')}
       if(r.type==='raro'){const okT=r.tiles.filter(t=>t.ok&&t.pts>=20),badT=r.tiles.filter((t,j)=>!t.ok&&!$(`.rtile[data-k="${j}"]`,el).classList.contains('gone'));const g=okT.length&&(Math.random()<.85||!badT.length)?pick(okT):pick(badT);return lapiSays(el,`Prueba con <b>«${esc(g.t)}»</b>… creo que vale y no es de las típicas.`)}
       if(r.type==='trivia'){const okK=r.q.opts.findIndex(o=>o.ok);const vis=[0,1,2,3].filter(j=>j!==okK&&!$(`.ans[data-k="${j}"]`,el).classList.contains('gone'));const g=Math.random()<(vis.length<3?.85:.75)?okK:pick(vis);return lapiSays(el,`Yo diría la <b>${'ABCD'[g]}</b>… pero no te lo juro.`)}
       if(r.type==='vf'){const say=Math.random()<.85?r.cur.t:!r.cur.t;return lapiSays(el,`Esta frase… yo diría que es <b>${say?'verdad':'falsa'}</b>.`)}
@@ -2088,7 +2116,7 @@ function cheque(amount,kind){
 }
 
 /* ================= boletín final ================= */
-function subject(r){if(r.type==='vf')return['Verdadero o falso','Tres frases seguidas'];if(r.type==='song')return['Adivina la canción','Pista a pista'];if(r.type==='raroW')return['Escríbelo raro',r.d.q.replace(/<[^>]+>/g,'')];if(r.type==='guess'&&r.c.gk&&r.c.gk!=='pop')return['Calcula a ojo',r.c.n];if(r.type==='ord')return['Ordénalos',r.d.q.replace(/<[^>]+>/g,'')];if(r.type==='raro')return['Lo más raro',r.d.q.replace(/<[^>]+>/g,'')];if(r.type==='trivia'&&['Cine','Fútbol','Geografía','JJ. OO.','Intruso'].includes(r.q.tag))return[r.q.tag,r.q.q.replace(/<[^>]+>/g,'')];return r.type==='guess'?['Geografía','Habitantes de '+r.c.n]:r.type==='draw'?['Gráficas',r.s.t]:r.type==='trivia'?['Música',r.q.tag]:r.type==='year'?['Historia',r.e[0]]:['Más o menos',r.m.lbl]}
+function subject(r){if(r.type==='pal')return['Palabra oculta','5 letras, 6 intentos'];if(r.type==='vf')return['Verdadero o falso','Tres frases seguidas'];if(r.type==='song')return['Adivina la canción','Pista a pista'];if(r.type==='raroW')return['Escríbelo raro',r.d.q.replace(/<[^>]+>/g,'')];if(r.type==='guess'&&r.c.gk&&r.c.gk!=='pop')return['Calcula a ojo',r.c.n];if(r.type==='ord')return['Ordénalos',r.d.q.replace(/<[^>]+>/g,'')];if(r.type==='raro')return['Lo más raro',r.d.q.replace(/<[^>]+>/g,'')];if(r.type==='trivia'&&['Cine','Fútbol','Geografía','JJ. OO.','Intruso'].includes(r.q.tag))return[r.q.tag,r.q.q.replace(/<[^>]+>/g,'')];return r.type==='guess'?['Geografía','Habitantes de '+r.c.n]:r.type==='draw'?['Gráficas',r.s.t]:r.type==='trivia'?['Música',r.q.tag]:r.type==='year'?['Historia',r.e[0]]:['Más o menos',r.m.lbl]}
 const COMMENTS=[[9.5,'Matrícula de honor. ¿Has hecho trampas?'],[9,'Sobresaliente. Que te pongan un marco.'],[7,'Notable. El profe está orgulloso.'],[6,'Bien. Se nota que has estudiado un poco.'],[5,'Aprobado raspado. ¡Por los pelos!'],[3,'Suspenso. Hay que repasar en verano.'],[0,'Muy deficiente. Lapi se ha comido el boli del disgusto.']];
 function duelEnd(){S.games++;award('primera');award('duelo');save();
   const a=Math.round(duelTot(0)*10)/10,b=Math.round(duelTot(1)*10)/10,w=a>b?0:b>a?1:-1;
@@ -2190,7 +2218,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v66</div></div>`);
+  <div class="foot">¡Clavado! v67</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

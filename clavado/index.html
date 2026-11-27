@@ -653,6 +653,11 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 @keyframes lpIn{from{transform:translate(90px,30px) rotate(20deg);opacity:0}}@keyframes lpOut{to{transform:translate(90px,20px) rotate(15deg);opacity:0}}
 .ladderscreen .rung:not(.justgot):not(.now){animation:rungIn .4s var(--ease) both}@keyframes rungIn{from{opacity:0;transform:translateX(30px)}}
 .ladderscreen .rung.now{animation:rungIn .4s var(--ease) both,nowPulse 1.6s 1s ease-in-out infinite}@keyframes nowPulse{50%{box-shadow:0 0 0 5px rgba(244,255,61,.6)}}
+
+/* v64 */
+.card.mode .cnt{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:999px;background:rgba(31,63,148,.08);color:var(--ink-soft,#33427a);font-family:var(--hand);font-size:13.5px;line-height:1.3;white-space:nowrap}
+.card.mode:active .sticker,.card.mode:active .stk{animation:wig .35s ease-in-out}
+@keyframes wig{25%{transform:rotate(-12deg) scale(1.08)}60%{transform:rotate(8deg)}100%{transform:rotate(0)}}
 </style>
 </head>
 <body>
@@ -940,7 +945,7 @@ function menu(){
     </button>
     <button class="card fact" data-fact><span class="tape" style="--tape:rgba(88,240,138,.55)"></span><div class="fact-in">${factHTML()}</div></button>
     ${MSEC.map(([lbl,ids])=>{const ms=ids.map(id=>MODES.find(m=>m.id===id)).filter(m=>m&&!m.hide);return `<div class="section-label"><svg width="26" height="14" viewBox="0 0 26 14"><path d="M2 7c6-5 10 5 16 0l5-3M19 2l4 2-2 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>${lbl}</div>
-    <div class="grid2">${ms.map((m,i)=>`<button class="card mode${(ms.length%2&&i===ms.length-1)?' wide':''}" style="--i:${i}" data-go="${m.id}"><span class="tape" style="--tape:${m.tape}"></span>${m.nu?'<span class="nuevo">¡Nuevo!</span>':''}${sticker(m.ic,m.c,'sm')}<h3>${m.t}</h3><p>${m.p}</p><span class="best">${bestTxt(m.id)}</span></button>`).join('')}</div>`}).join('')}
+    <div class="grid2">${ms.map((m,i)=>`<button class="card mode${(ms.length%2&&i===ms.length-1)?' wide':''}" style="--i:${i}" data-go="${m.id}"><span class="tape" style="--tape:${m.tape}"></span>${m.nu?'<span class="nuevo">¡Nuevo!</span>':''}${sticker(m.ic,m.c,'sm')}<h3>${m.t}</h3><p>${m.p}</p>${modeCount(m.id)}<span class="best">${bestTxt(m.id)}</span></button>`).join('')}</div>`}).join('')}
     <div class="dock">
       <button data-go="album">${sticker('star','var(--lila)','sm')}Pegatinas</button>
       <button data-go="stats">${sticker('book','var(--orange)','sm')}Boletín</button>
@@ -1627,6 +1632,10 @@ function intrusoQ(){for(let i=0;i<20;i++){const d=pick(RARO)();if(!d.bad.length|
 function genIntruso(){for(let i=0;i<30;i++){const q=intrusoQ();if(!usedQ.has(q.k)){usedQ.add(q.k);return{type:'trivia',q}}}return{type:'trivia',q:intrusoQ()}}
 
 
+
+/* ================= v64: contador de temas en cada tarjeta ================= */
+function modeCount(id){try{const L={dibuja:[SERIES.length,'gráficas'],anio:[ANIOS.length,'sucesos'],masmenos:[VSM.length,'temas'],bote:[VSM.length,'temas'],raro:[RARO.length,'tableros'],intruso:[RARO.length,'tableros'],escribe:[RARO.length+WONLY.length+1,'tableros'],aojo:[4+Object.keys(GUESSX).length-1+SER_OJO.length,'temas'],vf:[VF.length,'tipos de frase'],orden:[ORDS.length,'tipos'],cancion:[songPool().length,'canciones'],cine:[FILMS.length+OSC_ALL.length,'películas'],futbol:[LIGA.length+WC.length+BAL_ALL.length+UCL.length,'datos'],geo:[CAPS3.length,'capitales'],jjoo:[OLY.length,'sedes'],trivia:[GRAB.length+ALB.length+CANC.length+NUEVO.length+EURO.length+EURO_OLD.length+SPOTY.length+SONGS.length,'datos']}[id];return L?`<span class="cnt">${fmt(L[0])} ${L[1]}</span>`:''}catch(e){return ''}}
+
 /* ================= v46: Verdadero o falso dentro de Llega al millón ================= */
 function genVFm(){const out=[],seen=new Set();for(let i=0;i<60&&out.length<3;i++){const q=pick(VF)();if(seen.has(q.s)||usedQ.has(q.s))continue;seen.add(q.s);usedQ.add(q.s);out.push(q)}return{type:'vf',qs:out}}
 function roundVFm(r){
@@ -1710,6 +1719,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v64','Cada tarjeta del menú dice cuántos temas, gráficas o sucesos tiene ese juego (se cuentan solos, así siempre están al día). Las pegatinas de las tarjetas se mueven un poco al tocarlas.'],
  ['v63','Trivia de JJ. OO.: medallas de España en cada Juegos y en qué Juegos hubo más deportistas. Trivia de fútbol: goles en cada Mundial y cuál tuvo más goles por partido. En el millón, además, preguntas de F1 y de tenis.'],
  ['v62','¿Más o menos? con 7 temas nuevos: recaudación de películas, peso de Pokémon, récords de Steam, duración de canciones, victorias en F1, Grand Slams y números 1 del Billboard. Salen también en El bote y en el millón.'],
  ['v61',`¿En qué año? suma unos 110 sucesos nuevos: el primer Grand Slam de Nadal, Federer, Serena…, la primera victoria en F1 de Alonso, Hamilton, Verstappen…, el primer número 1 de Taylor Swift, Rihanna, Adele… y el estreno de 66 películas.`],
@@ -2097,7 +2107,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v63</div></div>`);
+  <div class="foot">¡Clavado! v64</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

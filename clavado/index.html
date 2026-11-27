@@ -858,6 +858,7 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 .rt-mapa .mapbox{background:#dcebf7}
 .mland.target{stroke-width:1.4px}
 @keyframes mTgt{50%{stroke-width:2.6px}}
+.srev .btn[data-rev="life"]{flex-direction:column;gap:2px;line-height:1.1}.srev .btn small{display:block;font-weight:400;font-size:13px}
 </style>
 </head>
 <body>
@@ -1905,10 +1906,10 @@ function safePickHTML(at){const won=LADDER[at-1],used=Object.keys(G.life).filter
   return `<div class="safepick card"><span class="tape" style="--tape:rgba(69,227,255,.55)"></span><h3>¡Pregunta ${at}! Elige una:</h3>
   <button class="btn wide" data-safe style="background:var(--cyan)">Asegurar ${euro(won)}<small>si fallas luego, te los llevas</small></button>
   <div class="spor hand">o, sin seguro…</div>
-  <div class="srev">${used.length?used.map(k=>`<button class="btn white" data-rev="${k}">${IC.redo} Recuperar ${LNAME[k]}</button>`).join(''):`<button class="btn white" data-rev="swap">${IC.redo} +1 Cambiar pregunta</button>`}</div></div>`}
-function bindSafePick(el,at,won){const fin=()=>{G.safeAsk=at-1;$('.bottom',el).innerHTML=ladderBtns(at,false);bindLadderBtns(el,won);const sf=$('.rung.got .sf',el)||$$('.rung .sf',el).find(x=>/\?/.test(x.textContent));if(sf)sf.textContent=(G.safe||[]).includes(at-1)?'seguro ✓':'comodín ✓'};
+  <div class="srev">${used.length?used.map(k=>`<button class="btn white" data-rev="${k}">${IC.redo} Recuperar ${LNAME[k]}</button>`).join(''):`<button class="btn white" data-rev="life">${IC.heart} +1 vida<small>si fallas una, la repites con otra</small></button>`}</div></div>`}
+function bindSafePick(el,at,won){const fin=()=>{G.safeAsk=at-1;$('.bottom',el).innerHTML=ladderBtns(at,false);bindLadderBtns(el,won);const sf=$('.rung.got .sf',el)||$$('.rung .sf',el).find(x=>/\?/.test(x.textContent));if(sf)sf.textContent=(G.safe||[]).includes(at-1)?'seguro ✓':G.lives&&!Object.keys(G.life).some(k=>!G.life[k])?'vida ✓':'comodín ✓'};
   $('[data-safe]',el).onclick=()=>{G.safe=(G.safe||[]).concat(at-1);if(at-1===SAFE[1])award('seguro');SFX.ok();toast('¡Seguro guardado!',`${euro(won)} ya no te los quita nadie`,'medal','var(--cyan)');fin()};
-  $$('[data-rev]',el).forEach(b=>b.onclick=()=>{const k=b.dataset.rev;G.life[k]=(G.life[k]||0)+1;G.revived=G.revived||{};G.revived[at-1]=1;SFX.ok();toast(G.life[k]>1?'¡Comodín extra!':'¡Comodín recuperado!',`${LNAME[k]} vuelve a estar disponible. Pero sin seguro.`,'star','var(--yel)');fin()})}
+  $$('[data-rev]',el).forEach(b=>b.onclick=()=>{const k=b.dataset.rev;if(k==='life'){G.lives=(G.lives||0)+1;G.revived=G.revived||{};G.revived[at-1]=1;SFX.ok();toast('¡Vida extra!','Si fallas una pregunta, la repites con otra. Pero sin seguro.','heart','var(--pink)');return fin()}G.life[k]=(G.life[k]||0)+1;G.revived=G.revived||{};G.revived[at-1]=1;SFX.ok();toast(G.life[k]>1?'¡Comodín extra!':'¡Comodín recuperado!',`${LNAME[k]} vuelve a estar disponible. Pero sin seguro.`,'star','var(--yel)');fin()})}
 
 
 /* ================= v51: Calcula a ojo con más temas ================= */
@@ -1930,6 +1931,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v79','Escalera del millón como antes: en la 5 y en la 10 eliges seguro o recuperar un comodín; si los tienes todos, puedes elegir una vida. Se quitan los premios de la 7 y la 12. Mapa: al comprobar la respuesta, la cámara hace un zoom suave hasta el país correcto (y el que tocaste, si fallaste), para ver bien dónde estaba.'],
  ['v78','Repaso de datos: las preguntas de «en qué año fue n.º 1» ahora dicen «por primera vez» y quitan las canciones que pudieron estar arriba dos años seguidos (como Tusa o Capaz), para no dar por mala una respuesta buena.'],
  ['v77','¿En qué año? suma los grandes números 1 de España (los que estuvieron 3 semanas o más arriba): ¿en qué año llegaron por primera vez al n.º 1 «Despacito», «Columbia» o «La Perla»? (Solo canciones de las que se sabe seguro el año.)'],
  ['v76','Dos tableros nuevos en Lo más raro y Escríbelo raro, con música en español: «elige un artista que fuera n.º 1 en España» (más puntos cuantos menos números 1) y «elige una canción n.º 1 en España en tal año» (más puntos cuantas menos semanas arriba).'],
@@ -2200,7 +2202,7 @@ function roundMapa(r){
     const tg=mapData().filter(q=>OK.includes(q.a3));const a=mapCent(sel);let best=tg[0],bd=1e9;tg.forEach(q=>{const b=mapCent(q),dd=kmBetween(a[0],a[1],b[0],b[1]);if(dd<bd){bd=dd;best=q}});const b=mapCent(best),d=right?0:bd;
     let nt;if(v==='pop'){const rk=mapData().filter(q=>q.reg===reg&&q.q).sort((x,y)=>y.pop-x.pop).findIndex(q=>q.a3===sel.a3);nt=right?10:rk===1?7:rk===2?5:rk>=0&&rk<6?3:1}
     else nt=right?10:Math.min(8.5,Math.round(10*Math.exp(-Math.pow(d/(2.2*KM),1.2))*10)/10);
-    if(!right)$$('.mland.sel',el).forEach(p=>p.classList.add('wrong'));tg.forEach(q=>{if(q.a3!==sel.a3||right)mapPaint(el,sv,q,'target')});
+    if(!right)$$('.mland.sel',el).forEach(p=>p.classList.add('wrong'));tg.forEach(q=>{if(q.a3!==sel.a3||right)mapPaint(el,sv,q,'target')});setTimeout(()=>mapZoomTo(sv,k,right?[sel]:[sel,best]),250);
     const dotR=sv.viewBox.baseVal.width/70;
     if(!right&&v!=='pop')fx.innerHTML=`<line class="mline" x1="${a[0]*k}" y1="${-a[1]}" x2="${b[0]*k}" y2="${-b[1]}" stroke="var(--red)" stroke-width="${dotR*.35}" stroke-dasharray="${dotR*.9} ${dotR*.6}" stroke-linecap="round"/>`;
     finishRound(nt);
@@ -2261,7 +2263,7 @@ function millonSetup(){const M=mset();SFX.page();
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};$('[data-go]',el).onclick=()=>{SFX.tap();startMillon('millon')};chk()}
 
 /* --- escalera con premios --- */
-const PERKS={6:{t:'+1 vida',d:'Si fallas una, la repites con otra pregunta',ic:'heart'},11:{t:'+1 comodín',d:'Un comodín al azar, de regalo',ic:'star'}};
+const PERKS={};
 function perkGive(at){const k=at-1,p=PERKS[k];if(!p||!G||(G.perkGot||{})[k])return;G.perkGot=Object.assign({},G.perkGot,{[k]:1});
   if(k===6){G.lives=(G.lives||0)+1;setTimeout(()=>{toast('¡Vida extra!','Si fallas una pregunta, la repites con otra.','heart','var(--pink)')},700)}
   if(k===11){const opts=['fifty','hint','pub','swap'];const w=pick(opts);G.life[w]=(G.life[w]||0)+1;setTimeout(()=>{toast('¡Comodín de regalo!',`Tienes un ${LNAME[w]} más.`,'star','var(--yel)')},700)}}
@@ -2308,6 +2310,13 @@ RARO.push(
 
 /* ================= v77: números 1 de España en «¿En qué año?» ================= */
 (()=>{const t=cnt(ESN1ALL.map(r=>r[1]));const first=new Set([2017,2019,2023,2025].map(y=>ESN1.find(r=>r[0]===y)[1]));ESN1.filter(r=>r[3]>=3&&t.get(r[1])===1&&!first.has(r[1])).forEach(r=>{const e=`«${r[1]}», de ${r[2]}, llega por primera vez al n.º 1 en España`;if(!ANIOS.some(x=>x[0]===e))ANIOS.push([e,r[0],esn1Url(r[0])])})})();
+
+/* ================= v79: zoom suave al país al revelar ================= */
+function mapZoomTo(sv,k,cs){if(RM()||!cs.length)return;const vb=sv.viewBox.baseVal,from=[vb.x,vb.y,vb.width,vb.height];
+  let bx=[1e9,1e9,-1e9,-1e9];cs.forEach(c=>{const P=c.polys.slice().sort((a,b)=>b.length-a.length)[0];P.forEach(([x,y])=>{bx=[Math.min(bx[0],x*k),Math.min(bx[1],-y),Math.max(bx[2],x*k),Math.max(bx[3],-y)]})});
+  let w=Math.max(bx[2]-bx[0],from[2]*.22),h=Math.max(bx[3]-bx[1],from[3]*.22);const ar=from[2]/from[3];if(w/h>ar)h=w/ar;else w=h*ar;w*=1.9;h*=1.9;if(w>from[2]){w=from[2];h=from[3]}
+  const cx=(bx[0]+bx[2])/2,cy=(bx[1]+bx[3])/2,to=[cx-w/2,cy-h/2,w,h];const t0=performance.now(),T=900;
+  (function st(t){const f=Math.min(1,(t-t0)/T),e=f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;const v=from.map((a,i)=>a+(to[i]-a)*e);sv.setAttribute('viewBox',v.join(' '));if(f<1&&sv.isConnected)requestAnimationFrame(st)})(t0)}
 /* números que crecen al cambiar */
 (function(){if(typeof MutationObserver==='undefined')return;const mo=new MutationObserver(ms=>{if(RM())return;for(const m of ms){const t=m.target.nodeType===3?m.target.parentElement:m.target;const el=t&&t.closest&&t.closest('.streak,.prize,[data-sc],[data-vo]');if(el&&!el.__bq){el.__bq=1;requestAnimationFrame(()=>{el.classList.remove('bump');requestAnimationFrame(()=>{el.classList.add('bump');setTimeout(()=>{el.__bq=0},350)})})}
     m.addedNodes&&m.addedNodes.forEach(nd=>{if(nd.nodeType!==1)return;nd.querySelectorAll('.stamp b.num:not(.cu),.ch-amt:not(.cu)').forEach(countUp)})}});
@@ -2394,7 +2403,7 @@ function ladder(first){
   const at=G.i,won=at>0?LADDER[at-1]:0;$$('.lapipop').forEach(x=>x.parentNode.removeChild(x));if(!first)perkGive(at);
   const el=show(`${SPIRAL}<div class="pagehead"><button class="iconbtn" data-quit aria-label="Salir">${IC.x}</button><h2>${first?'Llega al millón':`¡Llevas ${euro(won)}!`}</h2></div>
   <div class="ladderwrap"><div class="ladder">${LADDER.map((v,k)=>`<div class="rung ${k<at?'got':''} ${k===at?'now':''} ${SAFE.includes(k)?'safe':''}" style="animation-delay:${(14-k)*.03}s"><span class="rn">${k+1}</span><span class="rv num">${euro(v)}</span>${SAFE.includes(k)?`<span class="sf">${(G.safe||[]).includes(k)?'seguro ✓':(G.revived||{})[k]?'comodín ✓':'¿seguro o comodín?'}</span>`:PERKS[k]?`<span class="sf pk">${PERKS[k].t}${(G.perkGot||{})[k]?' ✓':''}</span>`:''}${k<at?'<svg viewBox="0 0 24 24" class="tk"><path d="M4 12l5 5L20 6"/></svg>':''}</div>`).reverse().join('')}<div class="lapimini" style="--k:${14-at}">${lapi(first?'happy':'cool')}</div></div>
-  ${first?`<p class="rules hand">Acierta las de música y ¿más o menos?. En gráficas, años y «a ojo» saca la nota que se pide. En la 5 y en la 10 eliges: <b>asegurar el dinero</b> o <b>recuperar un comodín</b>. En la 7 ganas una <b>vida</b> y en la 12, un <b>comodín de regalo</b>.</p>`:''}</div>
+  ${first?`<p class="rules hand">Acierta las de música y ¿más o menos?. En gráficas, años y «a ojo» saca la nota que se pide. En la 5 y en la 10 eliges: <b>asegurar el dinero</b> o <b>recuperar un comodín</b>. Si ya tienes todos los comodines, puedes elegir una <b>vida</b>.</p>`:''}</div>
   <div class="bottom">${SAFE.includes(at-1)&&G.safeAsk!==at-1?safePickHTML(at):ladderBtns(at,first)}</div>`,'ladderscreen');
   if(SAFE.includes(at-1)&&G.safeAsk!==at-1)bindSafePick(el,at,won);
   const nw=$('.rung.now',el);if(nw)setTimeout(()=>nw.scrollIntoView({block:'center'}),30);
@@ -2555,7 +2564,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v78</div></div>`);
+  <div class="foot">¡Clavado! v79</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

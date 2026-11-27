@@ -901,6 +901,17 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 .mavg .mbar::after{content:'';position:absolute;inset:0 auto 0 0;width:var(--w);background:var(--c);border-radius:4px;transform-origin:left;animation:barIn .8s var(--ease) .3s both}
 .mavg b{font-size:13px;color:var(--ink)}.mavg small{font-family:var(--hand);font-size:13px;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){.mavg .mbar::after{animation:none}}
+
+/* v85 informe final animado */
+.rrow.rbar{position:relative}
+.rrow.rbar::after{content:'';position:absolute;left:2px;bottom:-1px;height:4px;width:var(--w);background:var(--c);border-radius:3px;transform-origin:left;animation:barIn .7s var(--ease) both;animation-delay:inherit;opacity:.85}
+.rrow.rbar .n{animation:notePop .45s var(--ease) both}
+@keyframes notePop{0%{transform:scale(0) rotate(-20deg);opacity:0}70%{transform:scale(1.25) rotate(4deg)}100%{transform:none;opacity:1}}
+.rrow.rbest{background:linear-gradient(90deg,rgba(255,211,77,.35),transparent 80%);border-radius:8px}
+.rtagb,.rtagw{display:inline-block;font-family:var(--hand);font-size:12.5px;font-weight:700;padding:0 7px;border-radius:9px;margin:0 6px 2px 0;vertical-align:1px}
+.rtagb{background:var(--yel);color:#5a4300;animation:pkBeat 1.6s ease-in-out 1.2s 2}
+.rtagw{background:#ffe0e5;color:#b0243c}
+@media (prefers-reduced-motion:reduce){.rrow.rbar::after,.rrow.rbar .n,.rtagb{animation:none}}
 </style>
 </head>
 <body>
@@ -1973,6 +1984,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v85','El informe final está más vivo: cada ronda lleva una barra de color que se rellena con tu nota, las notas aparecen de golpe una a una, y se marca tu mejor ronda (★) y la que conviene repasar.'],
  ['v84','En el menú, cada minijuego que ya has jugado muestra una barrita con tu nota media (verde si vas bien, amarilla regular, roja si te cuesta), sacada del Boletín.'],
  ['v83','¿Qué suena? tiene escenario propio: tarjeta morada con pentagrama, letras de cartel y barra de sonido de colores. Ordénalos estrena fichas con números que botan. Y en ¿Dónde está?, si clavas el país, ¡confeti!'],
  ['v82','«Por minijuego» del Boletín ahora también cuenta las partidas sueltas de Palabra oculta (acertada = 10) y de Verdadero o falso (tu porcentaje de aciertos en el minuto). El Duelo marca más claro de quién es el turno.'],
@@ -2376,6 +2388,12 @@ function rtStatsHTML(){const T=Object.entries(S.rt||{}).filter(([k,o])=>o.n>0).m
   return `<div class="section-label">Por minijuego</div><div class="rtbars">${T.map(([k,a,n,top],i)=>`<div class="rtb" style="--i:${i}"><span class="rtn">${RTNAME[k]||k}</span><span class="rtbar"><i style="--w:${Math.max(4,a*10)}%;--c:${a>=8?'#58c97f':a>=5?'#ffd34d':'#ff7a8a'}"></i></span><b class="num">${nota(Math.round(a*10)/10)}</b><small>${n} ronda${n>1?'s':''}${top?` · ${top} clavada${top>1?'s':''}`:''}</small></div>`).join('')}</div>
   ${T.length>1?`<p class="hand rtsum">Tu fuerte: <b>${RTNAME[best[0]]||best[0]}</b>. A mejorar: <b>${RTNAME[worst[0]]||worst[0]}</b>.</p>`:''}`}
 const statsV79=stats;stats=function(){statsV79();try{const sc=$('.scroll',cur);if(sc)sc.insertAdjacentHTML('beforeend',rtStatsHTML())}catch(e){}};
+
+/* ================= v85: informe final animado ================= */
+const reportV84=report;report=function(){const notes=(G&&G.notes||[]).slice();reportV84();try{const rows=$$('.report .rrow',cur);if(!rows.length)return;let bi=-1,bv=-1,wi=-1,wv=99;notes.forEach((n,i)=>{if(n>bv){bv=n;bi=i}if(n<wv){wv=n;wi=i}});
+  rows.forEach((r,i)=>{const n=notes[i];if(n==null)return;r.style.setProperty('--w',Math.max(3,n*10)+'%');r.style.setProperty('--c',n>=8?'#58c97f':n>=5?'#ffd34d':'#ff7a8a');r.classList.add('rbar');const nn=$('.n',r);if(nn)nn.style.animationDelay=(i*.06+.35)+'s';
+    if(i===bi&&bv>=7){r.classList.add('rbest');$('.s',r).insertAdjacentHTML('afterbegin','<span class="rtagb">★ tu mejor</span>')}
+    else if(i===wi&&wv<5&&notes.length>2){r.classList.add('rworst');$('.s',r).insertAdjacentHTML('afterbegin','<span class="rtagw">a repasar</span>')}})}catch(e){}};
 /* números que crecen al cambiar */
 (function(){if(typeof MutationObserver==='undefined')return;const mo=new MutationObserver(ms=>{if(RM())return;for(const m of ms){const t=m.target.nodeType===3?m.target.parentElement:m.target;const el=t&&t.closest&&t.closest('.streak,.prize,[data-sc],[data-vo]');if(el&&!el.__bq){el.__bq=1;requestAnimationFrame(()=>{el.classList.remove('bump');requestAnimationFrame(()=>{el.classList.add('bump');setTimeout(()=>{el.__bq=0},350)})})}
     m.addedNodes&&m.addedNodes.forEach(nd=>{if(nd.nodeType!==1)return;nd.querySelectorAll('.stamp b.num:not(.cu),.ch-amt:not(.cu)').forEach(countUp)})}});
@@ -2623,7 +2641,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v84</div></div>`);
+  <div class="foot">¡Clavado! v85</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

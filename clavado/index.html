@@ -1040,6 +1040,17 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 .th-tenis .qcard .qtitle,.th-tenis .qcard .qtitle b{color:#fff}
 .th-tenis .qcard .timer{background:rgba(255,255,255,.85)}
 .th-tenis .ans{box-shadow:var(--shadow-1),inset 6px 0 0 #d7e94a}
+
+/* v121 pantalla de cambio de turno del Duelo */
+.hand-off{position:relative}
+.ho-glow{position:absolute;inset:-10% -20%;background:radial-gradient(circle at 50% 42%,color-mix(in srgb,var(--pc) 38%,transparent),transparent 62%);z-index:-1;animation:hoGlow 2.4s ease-in-out infinite alternate;pointer-events:none}
+@keyframes hoGlow{from{opacity:.65;transform:scale(.96)}to{opacity:1;transform:scale(1.04)}}
+.ho-x{position:absolute;top:calc(34px + var(--safe-t,0px));left:20px;z-index:5}
+.ho-sc span{font-size:18px;padding:6px 14px;box-shadow:inset 0 -8px 0 var(--pc)}
+.ho-sc b{font-size:22px}
+@media (prefers-reduced-motion:reduce){.ho-glow{animation:none}}
+.hand-off{background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--pc) 30%,transparent),transparent 65%)}
+.ho-glow{display:none}
 </style>
 </head>
 <body>
@@ -1442,8 +1453,8 @@ function finalIntro(go){const d=document.createElement('div');d.className='final
   let done=0;const end=()=>{if(done)return;done=1;d.classList.add('bye');setTimeout(()=>d.remove(),450);go()};setTimeout(()=>d.onclick=end,900);setTimeout(end,4200)}
 function duelTot(p){return G.notes.reduce((a,n,k)=>a+(k%2===p&&n!=null?n:0),0)}
 function duelHand(go){const p=G.i%2,c=p?'var(--pink)':'var(--cyan)';G.handShown=G.i;
-  const el=show(`${SPIRAL}<div class="hand-off" style="--pc:${c}"><div class="ho-k hand">Ronda ${Math.floor(G.i/2)+1} de 5</div><div class="ho-p brush">Jugador ${p+1}</div><div class="ho-l">${lapi(p?'cool':'happy')}</div><div class="ho-s hand">${G.i?`Pásale el móvil a J${p+1}. ¡Sin mirar la respuesta de antes!`:'Empieza J1. J2, mira para otro lado.'}</div><div class="ho-sc"><span style="--pc:var(--cyan)">J1 <b class="num">${nota(Math.round(duelTot(0)*10)/10)}</b></span><span style="--pc:var(--pink)">J2 <b class="num">${nota(Math.round(duelTot(1)*10)/10)}</b></span></div><button class="btn wide" data-go>¡Listo! ${IC.arrow}</button></div>`);
-  vib(20);$('[data-go]',el).onclick=()=>{SFX.tap();go()}}
+  const el=show(`${SPIRAL}<button class="iconbtn ho-x" data-quit aria-label="Salir">${IC.x}</button><div class="hand-off" style="--pc:${c}"><div class="ho-glow" aria-hidden="true"></div><div class="ho-k hand">Ronda ${Math.floor(G.i/2)+1} de 5</div><div class="ho-p brush">Jugador ${p+1}</div><div class="ho-l">${lapi(p?'cool':'happy')}</div><div class="ho-s hand">${G.i?`Pásale el móvil a J${p+1}. ¡Sin mirar la respuesta de antes!`:'Empieza J1. J2, mira para otro lado.'}</div><div class="ho-sc"><span style="--pc:var(--cyan)">J1 <b class="num">${nota(Math.round(duelTot(0)*10)/10)}</b></span><span style="--pc:var(--pink)">J2 <b class="num">${nota(Math.round(duelTot(1)*10)/10)}</b></span></div><button class="btn wide" data-go>¡Listo! ${IC.arrow}</button></div>`);
+  vib(20);try{bindQuit(el)}catch(e){}$('[data-go]',el).onclick=()=>{SFX.tap();go()}}
 function playRound(){if(G.millon&&G.i===14&&!G.finalShown){G.finalShown=1;return finalIntro(playRound)}if(G.duel&&G.handShown!==G.i)return duelHand(playRound);const r=G.rounds[G.i];({draw:roundDraw,trivia:roundTrivia,vs:roundVS,year:roundYear,guess:roundGuess,raro:roundRaro,raroW:roundRaroW,song:roundSong,suena:roundSuena,ord:roundOrd,vf:roundVFm,pal:roundPal,mapa:roundMapa})[r.type](r);if(G.millon){musicStart(G.i);document.body.classList.toggle('final',G.i===14)}}
 function finishRound(n,extra){
   musicStop();
@@ -2122,6 +2133,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v121','Duelo a dos: la pantalla de «Pásale el móvil» se tiñe del color del jugador al que le toca, el marcador se ve más grande y ya tiene botón para salir (antes solo se podía salir en mitad de una pregunta).'],
  ['v120','Más escenarios en la trivia: Eurovisión sale en un escenario con focos y purpurina, la Fórmula 1 sobre asfalto con bandera de cuadros (antes salía en un campo de fútbol) y el tenis en una pista de tierra batida.'],
  ['v119','Las preguntas de Pokémon y de videojuegos tienen escenario propio (antes usaban el de música): Pokémon, en una tarjeta roja y blanca como una Poké Ball; videojuegos, en una pantalla de recreativa con píxeles y letras de neón.'],
  ['v118','Preguntas nuevas de LEGO en las trivias de Llega al millón y del concurso: «¿De qué colección es este set?» (Star Wars, Harry Potter, Minecraft, Super Mario…) y «¿Qué set tiene más piezas?». Datos de Rebrickable.'],
@@ -2863,7 +2875,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v120</div></div>`);
+  <div class="foot">¡Clavado! v121</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

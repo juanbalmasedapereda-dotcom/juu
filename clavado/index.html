@@ -1095,6 +1095,13 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 
 /* v142 Lapi no tapa la explicación */
 .lapipop{transition:bottom .25s var(--ease,ease)}
+
+/* v144 sello ✓/✗ en Verdadero o falso */
+.vfcard{position:relative}
+.vfcard.good::after,.vfcard.bad::after{position:absolute;top:-16px;right:-8px;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font:900 26px/1 system-ui,sans-serif;color:#fff;border:3px solid #fff;box-shadow:0 3px 0 rgba(22,41,94,.35);transform:rotate(-12deg);animation:vfstamp .4s cubic-bezier(.3,1.6,.5,1) both;z-index:2}
+.vfcard.good::after{content:'✓';background:#18a957}
+.vfcard.bad::after{content:'✗';background:var(--red,#d42f27)}
+@keyframes vfstamp{from{transform:scale(2.2) rotate(-30deg);opacity:0}}
 </style>
 </head>
 <body>
@@ -2178,6 +2185,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v144','Verdadero o falso: al responder, la tarjeta recibe un sello redondo verde con ✓ si aciertas o rojo con ✗ si fallas, para que se vea de un vistazo sin leer el texto.'],
  ['v143','Palabra oculta: Países y Capitales tienen ya su propio icono (bola del mundo y diana) en vez de la estrella genérica, para distinguir los temas de un vistazo. He revisado además Verdadero o falso, Ordénalos, ¿Dónde está?, Dibuja y Adivina la canción en un móvil pequeño (360×640) y no se solapa nada.'],
  ['v142','Lapi ya no tapa la explicación: cuando sale a decir «¡Casi!» o «¡Bien!», se coloca encima de la tarjeta de la respuesta en vez de encima del texto, así puedes leer quién era el intruso o el dato correcto desde el primer momento.'],
  ['v141','Calcula a ojo: en los temas de gráficas (acciones en bolsa, jugadores de Steam, Grand Slams, goles…) la respuesta real (en la pantalla y en el boletín) ahora lleva su unidad: «3,50 dólares», «10 mil jugadores», «20 títulos». Antes salía el número solo.'],
@@ -2950,7 +2958,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v143</div></div>`);
+  <div class="foot">¡Clavado! v144</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

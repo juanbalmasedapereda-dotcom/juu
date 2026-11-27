@@ -1022,6 +1022,24 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 .th-game .ans{background:#fff;clip-path:polygon(0 6px,6px 6px,6px 0,calc(100% - 6px) 0,calc(100% - 6px) 6px,100% 6px,100% calc(100% - 6px),calc(100% - 6px) calc(100% - 6px),calc(100% - 6px) 100%,6px 100%,6px calc(100% - 6px),0 calc(100% - 6px));box-shadow:inset 0 -4px 0 #d9d4ff}
 .th-game .ans .k{border-radius:3px;background:#17123a;color:#7ff6ff;border-color:#17123a}
 .th-poke .qcard{padding-bottom:48px}
+
+/* v120 escenarios Eurovisión, F1 y tenis */
+.th-euro .qcard{background:radial-gradient(ellipse 60% 90% at 20% -10%,rgba(255,210,255,.45),transparent 60%),radial-gradient(ellipse 60% 90% at 80% -10%,rgba(160,220,255,.45),transparent 60%),radial-gradient(circle,rgba(255,255,255,.7) 0 1px,transparent 1.5px) 0 0/17px 13px,linear-gradient(160deg,#2a0f5e,#0d1446);color:#fff}
+.th-euro .qcard .qtitle,.th-euro .qcard .qtitle b{color:#fff}
+.th-euro .qcard .qtitle b{color:#ffd1f4;text-shadow:0 0 10px rgba(255,120,220,.7)}
+.th-euro .qcard .timer{background:rgba(255,255,255,.85)}
+.th-euro .ans{background:linear-gradient(90deg,#fff 70%,#fbe9ff)}
+.th-euro .ans .k{background:#2a0f5e;color:#fff;border-color:#2a0f5e}
+.th-f1 .qcard{background:linear-gradient(#3a3f4a,#2b2f38);color:#fff}
+.th-f1 .qcard::after{content:'';position:absolute;top:10px;right:10px;width:42px;height:28px;background:repeating-conic-gradient(#16295e 0 25%,#fff 0 50%) 0 0/14px 14px;border-radius:3px;transform:skewX(-8deg);box-shadow:0 2px 0 rgba(0,0,0,.3);pointer-events:none}
+.th-f1 .qcard .qtitle{padding-right:44px}
+.th-f1 .qcard .qtitle,.th-f1 .qcard .qtitle b{color:#fff}
+.th-f1 .qcard .timer{background:rgba(255,255,255,.85)}
+.th-f1 .ans{box-shadow:var(--shadow-1),inset 6px 0 0 #e10600}
+.th-tenis .qcard{background:linear-gradient(90deg,transparent 5px,rgba(255,255,255,.8) 5px 8px,transparent 8px calc(100% - 8px),rgba(255,255,255,.8) calc(100% - 8px) calc(100% - 5px),transparent calc(100% - 5px)),#c9632f;color:#fff}
+.th-tenis .qcard .qtitle,.th-tenis .qcard .qtitle b{color:#fff}
+.th-tenis .qcard .timer{background:rgba(255,255,255,.85)}
+.th-tenis .ans{box-shadow:var(--shadow-1),inset 6px 0 0 #d7e94a}
 </style>
 </head>
 <body>
@@ -1541,7 +1559,7 @@ function roundDraw(r){
 /* ---------- ronda: trivia ---------- */
 function roundTrivia(r){
   const q=r.q,T=15000;
-  const el=show(`${topbar()}<div class="card qcard"><span class="tape" style="--tape:rgba(69,227,255,.55)"></span><span class="tag" style="--tag:${q.tag==='Fútbol'?'var(--green)':q.tag==='Cine'?'var(--orange)':q.tag==='Geografía'?'var(--lila)':q.tag==='JJ. OO.'?'var(--yel)':q.tag==='Intruso'?'var(--pink)':'var(--cyan)'}">${(q.tag==='Fútbol'?IC.ball:q.tag==='Cine'?IC.star:q.tag==='Geografía'?IC.globe:q.tag==='JJ. OO.'?IC.medal:q.tag==='Intruso'?IC.target:q.tag==='LEGO'?IC.star:q.tag==='Pokémon'?IC.target:q.tag==='Videojuegos'?IC.bolt:IC.note).replace('<svg','<svg width="16" height="16" style="vertical-align:-3px"')} ${q.tag}</span><h2 class="qtitle">${q.q}</h2><div class="timer"><i></i></div></div>
+  const el=show(`${topbar()}<div class="card qcard"><span class="tape" style="--tape:rgba(69,227,255,.55)"></span><span class="tag" style="--tag:${q.tag==='Fútbol'?'var(--green)':q.tag==='Cine'?'var(--orange)':q.tag==='Geografía'?'var(--lila)':q.tag==='JJ. OO.'?'var(--yel)':q.tag==='Intruso'?'var(--pink)':'var(--cyan)'}">${(q.tag==='Fútbol'?IC.ball:q.tag==='Cine'?IC.star:q.tag==='Geografía'?IC.globe:q.tag==='JJ. OO.'?IC.medal:q.tag==='Intruso'?IC.target:q.tag==='LEGO'?IC.star:q.tag==='Pokémon'?IC.target:q.tag==='F1'?IC.trophy:q.tag==='Tenis'?IC.ball:q.tag==='Videojuegos'?IC.bolt:IC.note).replace('<svg','<svg width="16" height="16" style="vertical-align:-3px"')} ${q.tag}</span><h2 class="qtitle">${q.q}</h2><div class="timer"><i></i></div></div>
   <div class="answers">${q.opts.map((o,k)=>`<button class="ans" data-k="${k}"><span class="k">${'ABCD'[k]}</span><span class="t">${esc(o.t)}${o.a?`<small>${esc(o.a)}</small>`:''}</span><span class="mark"></span></button>`).join('')}</div><div class="bottom"></div>`);themeTrivia(el,q);
   bindQuit(el);$$('.sticker svg',el);
   $$('.tag svg *',el).forEach(p=>{p.style.fill=p.classList.contains('f')?'#16295e':'none';p.style.stroke='#16295e';p.style.strokeWidth=2.6});
@@ -2104,6 +2122,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v120','Más escenarios en la trivia: Eurovisión sale en un escenario con focos y purpurina, la Fórmula 1 sobre asfalto con bandera de cuadros (antes salía en un campo de fútbol) y el tenis en una pista de tierra batida.'],
  ['v119','Las preguntas de Pokémon y de videojuegos tienen escenario propio (antes usaban el de música): Pokémon, en una tarjeta roja y blanca como una Poké Ball; videojuegos, en una pantalla de recreativa con píxeles y letras de neón.'],
  ['v118','Preguntas nuevas de LEGO en las trivias de Llega al millón y del concurso: «¿De qué colección es este set?» (Star Wars, Harry Potter, Minecraft, Super Mario…) y «¿Qué set tiene más piezas?». Datos de Rebrickable.'],
  ['v117','Repaso de erratas en las canciones de España en Eurovisión: títulos con las mayúsculas bien puestas («Quédate conmigo», no «Quédate Conmigo»), El Sueño de Morfeo con su nombre completo y Serafín Zubiri escrito igual en 1992 y en 2000 (antes parecían dos artistas distintos y podía confundir las opciones).'],
@@ -2462,7 +2481,7 @@ function mapFind(name){mapData();if(!MAPIDX){MAPIDX={};MAPD.forEach(c=>{MAPIDX[m
 function geoMini(q){try{const names=[...String(q.q).matchAll(/<b>([^<]+)<\/b>/g)].map(m=>m[1]).concat(q.opts.map(o=>o.t));const cs=[...new Set(names.map(mapFind).filter(Boolean))];if(!cs.length)return '';
   const regs=[...new Set(cs.map(c=>c.reg))];const reg=regs.length===1?regs[0]:'w';const {svg}=mapSVG(reg,'mini');
   return `<div class="qmini" data-hl="${cs.map(c=>c.a3).join(',')}">${svg}</div>`}catch(e){return ''}}
-function themeTrivia(el,q){const th={'Fútbol':'fut','Cine':'cine','Geografía':'geo','JJ. OO.':'jjoo','Intruso':'intr','LEGO':'lego','Pokémon':'poke','Videojuegos':'game'}[q.tag]||(q.tag==='F1'||q.tag==='Tenis'?'fut':'mus');el.classList.add('th-'+th);
+function themeTrivia(el,q){const th={'Fútbol':'fut','Cine':'cine','Geografía':'geo','JJ. OO.':'jjoo','Intruso':'intr','LEGO':'lego','Pokémon':'poke','Videojuegos':'game','Eurovisión':'euro','F1':'f1','Tenis':'tenis'}[q.tag]||'mus';el.classList.add('th-'+th);
   const card=$('.qcard',el);if(!card)return;
   if(th==='geo'){const m=geoMini(q);if(m){card.insertAdjacentHTML('beforeend',m);const box=$('.qmini',card);box.dataset.hl.split(',').forEach(a=>$$(`.mland[data-a3="${a}"]`,box).forEach(p=>p.classList.add('hl')))}}
   card.insertAdjacentHTML('afterbegin',`<span class="thdeco" aria-hidden="true"></span>`)}
@@ -2844,7 +2863,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v119</div></div>`);
+  <div class="foot">¡Clavado! v120</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

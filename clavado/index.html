@@ -1934,6 +1934,42 @@ Object.assign(EN,{'CO₂ en la atmósfera (Mauna Loa)':'CO₂ in the atmosphere 
 Object.assign(EN_X,{'Seúl':'Seoul','Sídney':'Sydney','Milán-Cortina':'Milan-Cortina','Atlanta':'Atlanta','Barcelona':'Barcelona','México':'Mexico'});
 Object.assign(EN,{'Población del mundo':'World population','TikTok se lanza fuera de China':'TikTok launches outside China','Sale el primer móvil con Android':'The first Android phone comes out','Se estrena la primera «Star Wars»':'The first «Star Wars» is released','Se estrena la primera película de Harry Potter':'The first Harry Potter film is released','Se estrena la serie de «Los Simpson»':'«The Simpsons» series premieres','Se estrena «El cantante de jazz», la primera película sonora larga':'«The Jazz Singer», the first feature-length sound film, is released','Se estrena «Blancanieves» de Disney':'Disney\'s «Snow White» is released'});
 EN_RX.unshift([/^Juegos Olímpicos de verano de (.+)$/,(m,a)=>`${ENN(a)} Summer Olympics`],[/^Sale («.+?») de (.+)$/,'$2 releases $1']);
+
+/* v281: inglés para Verdadero o falso */
+const EN_VF=[
+[/^(.+?) ganó el <b>Mundial de (\d+)<\/b>\.$/,(m,a,y)=>`${ENN(a)} won the <b>${y} World Cup</b>.`],
+[/^El (.+?) ganó <b>la Liga (.+?)<\/b>\.$/,'$1 won <b>La Liga $2</b>.'],
+[/^La capital de <b>(.+?)<\/b> es (.+?)\.$/,(m,a,c)=>`The capital of <b>${ENN(a)}</b> is ${ENN(c)}.`],
+[/^(«.+?») ganó el <b>Óscar a mejor película<\/b> en (\d+)\.$/,'$1 won the <b>Oscar for Best Picture</b> in $2.'],
+[/^(.+?) ganó <b>Eurovisión (\d+)<\/b>\.$/,(m,a,y)=>`${ENN(a)} won <b>Eurovision ${y}</b>.`],
+[/^<b>(.+?)<\/b> tiene más habitantes que (.+?)\.$/,(m,a,b)=>`<b>${ENN(a)}</b> has more people than ${ENN(b)}.`],
+[/^Los <b>Juegos Olímpicos de verano de (\d+)<\/b> fueron en (.+?)\.$/,(m,y,c)=>`The <b>${y} Summer Olympics</b> were in ${ENN(c)}.`],
+[/^(.+?) ganó el <b>Balón de Oro (\d+)<\/b>\.$/,'$1 won the <b>$2 Ballon d\'Or</b>.'],
+[/^El (.+?) ganó la <b>(Champions|Copa de Europa) (.+?)<\/b>\.$/,(m,a,c,y)=>`${a} won the <b>${c==='Champions'?'Champions League':'European Cup'} ${y}</b>.`],
+[/^(«.+?») recaudó <b>más<\/b> que («.+?»)\.$/,'$1 made <b>more</b> than $2.'],
+[/^(«.+?») se estrenó en <b>(\d+)<\/b>\.$/,'$1 was released in <b>$2</b>.'],
+[/^<b>(.+?)<\/b> pesa más que (.+?)\.$/,(m,a,b)=>`<b>${ENN(a)}</b> weighs more than ${ENN(b)}.`],
+[/^<b>(.+?)<\/b> es de tipo (.+?)\.$/,(m,a,t)=>`<b>${a}</b> is ${EN_PT[t]||t}-type.`],
+[/^<b>(.+?)<\/b> tuvo más gente jugando a la vez en Steam que (.+?)\.$/,'<b>$1</b> had more people playing at once on Steam than $2.'],
+[/^<b>(«.+?»)<\/b> se ha escuchado más veces en Spotify que («.+?»)\.$/,'<b>$1</b> has been streamed more times on Spotify than $2.'],
+[/^<b>(.+?)<\/b> ganó más Grandes Premios de F1 que (.+?)\.$/,'<b>$1</b> won more F1 Grands Prix than $2.'],
+[/^(«.+?») es de <b>(.+?)<\/b>\.$/,'$1 is by <b>$2</b>.'],
+[/^(«.+?») dura <b>más de 3 minutos<\/b>\.$/,'$1 lasts <b>more than 3 minutes</b>.'],
+[/^El set de LEGO («.+?») \((.+?)\) tiene <b>más de (.+?) piezas<\/b>\.$/,'The LEGO set $1 ($2) has <b>more than $3 pieces</b>.'],
+[/^(.+?) quedó entre <b>los 10 primeros<\/b> en Eurovisión (\d+) con («.+?»)\.$/,'$1 finished in the <b>top 10</b> at Eurovision $2 with $3.'],
+[/^<b>(«.+?»)<\/b>, de (.+?), ganó la Grabación del Año en los Latin Grammy (\d+)\.$/,'<b>$1</b>, by $2, won Record of the Year at the $3 Latin Grammys.'],
+[/^<b>(«.+?»)<\/b> \((\d+)\) recaudó más de (.+?) millones de dólares en todo el mundo\.$/,'<b>$1</b> ($2) made more than $3 million dollars worldwide.'],
+[/^<b>(«.+?»)<\/b> recaudó más de 1\.000 millones de dólares\.$/,'<b>$1</b> made more than 1,000 million dollars.'],
+[/^<b>(.+?)<\/b> es más rápido que <b>(.+?)<\/b>\.$/,(m,a,b)=>`<b>${ENN(a)}</b> is faster than <b>${ENN(b)}</b>.`],
+[/^<b>(.+?)<\/b> es más alto que <b>(.+?)<\/b>\.$/,(m,a,b)=>`<b>${ENN(a)}</b> is taller than <b>${ENN(b)}</b>.`],
+[/^El set de LEGO <b>(«.+?»)<\/b> \((\d+)\) es de la línea <b>(.+?)<\/b>\.$/,'The LEGO set <b>$1</b> ($2) is from the <b>$3</b> theme.'],
+[/^El set <b>(«.+?»)<\/b> tiene más piezas que («.+?»)\.$/,'The set <b>$1</b> has more pieces than $2.'],
+[/^La provincia de <b>(.+?)<\/b> tiene más habitantes que la de (.+?)\.$/,'The province of <b>$1</b> has more people than $2.'],
+[/^<b>(.+?)<\/b> ganó más Grand Slams individuales que (.+?) entre 1968 y enero de 2019\.$/,'<b>$1</b> won more singles Grand Slams than $2 between 1968 and January 2019.'],
+[/^La crítica puso mejor nota a <b>(.+?)<\/b> que a (.+?) en Metacritic\.$/,'Critics gave <b>$1</b> a better score than $2 on Metacritic.'],
+[/^<b>(.+?)<\/b> tiene más de (\d+) sobre 100 de nota en Metacritic\.$/,'<b>$1</b> has a score above $2 out of 100 on Metacritic.'],
+[/^(«.+?»), de (.+?) \((\d+)\), quedó <b>entre los 10 primeros<\/b> de Eurovisión\.$/,'$1, by $2 ($3), finished <b>in the top 10</b> at Eurovision.']];
+function enVF(q){if(S.lang!=='en'||!q||q.__en)return q;let s2=q.s;for(const [r,f] of EN_VF)if(r.test(q.s)){s2=q.s.replace(r,f);break}return Object.assign({},q,{__en:1,s:s2,why:q.why?enPh(enFree(q.why)):q.why})}
 function langBtn(){return `<button class="langbtn notr" data-lang aria-label="Language">${S.lang==='en'?'🇪🇸 Español':'🇬🇧 English'}</button>`}
 
 Object.assign(EN,{
@@ -2780,7 +2816,7 @@ function modeCount(id){try{const L={dibuja:[SERIES.length,'gráficas'],anio:[ANI
 /* ================= v46: Verdadero o falso dentro de Llega al millón ================= */
 function genVFm(){const out=[],seen=new Set();for(let i=0;i<60&&out.length<3;i++){const q=pick(VF)();if(seen.has(q.s)||usedQ.has(q.s))continue;seen.add(q.s);usedQ.add(q.s);out.push(q)}return{type:'vf',qs:out}}
 function roundVFm(r){
-  let k=0,ok=0;r.cur=r.qs[0];
+  if(S.lang==='en')r.qs=r.qs.map(enVF);let k=0,ok=0;r.cur=r.qs[0];
   const el=show(`${topbar()}<div class="card qcard"><span class="tape" style="--tape:rgba(88,240,138,.55)"></span><span class="tag" style="--tag:var(--green)">${IC.bolt.replace('<svg','<svg width="16" height="16" style="vertical-align:-3px"')} Verdadero o falso</span><h2 class="qtitle">Tres frases: acierta al menos 2</h2><div class="qsub">Van <b data-vk>1</b> de 3 · aciertos <b data-vo>0</b></div></div>
   <div class="vfwrap" style="padding-left:40px"><div class="card vfcard in"><span class="tape" style="--tape:rgba(88,240,138,.55)"></span><div class="vfs"></div><div class="vfw hand"></div></div></div>
   <div class="bottom"><div class="row"><button class="btn green" data-a="1">${IC.check} Verdadero</button><button class="btn pink" data-a="0">${IC.x} Falso</button></div></div>`);
@@ -2860,6 +2896,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v281','English: Verdadero o falso ya está en inglés.'],
  ['v280','English: ¿En qué año? y Dibuja la gráfica ya están en inglés: los 642 sucesos y los títulos de las 102 gráficas.'],
  ['v279','English: más traducido. Elementos químicos, animales, lunas y ríos ya salen en inglés, y también muchas frases de ¿Quién soy?, Verdadero o falso, Adivina la canción, Dibuja la gráfica, Ordénalos y Para peques.'],
  ['v278','English: ya están traducidas casi todas las preguntas del Trivial (geografía, animales, espacio, ciencia, fútbol, cine, música, Juegos Olímpicos, dinero y más) y los datos que salen después de responder.'],
@@ -4678,7 +4715,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v280</div></div>`);
+  <div class="foot">¡Clavado! v281</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   {const lb=$('[data-lang]',el);if(lb)lb.onclick=()=>{SFX.tap();setLang(S.lang==='en'?'es':'en');ajustes()}}

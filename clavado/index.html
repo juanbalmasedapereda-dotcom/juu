@@ -1662,6 +1662,218 @@ function trEl(root){if(root.nodeType===3)return trNode(root);if(root.nodeType!==
 const EN_MO=new MutationObserver(ms=>{if(S.lang!=='en')return;for(const m of ms){if(m.type==='characterData')trNode(m.target);else m.addedNodes.forEach(trEl)}});
 function setLang(l){S.lang=l;save();document.documentElement.lang=l;if(l==='en'){trEl(document.body);EN_MO.observe(document.body,{childList:true,subtree:true,characterData:true})}else{EN_MO.disconnect()}}
 if(S.lang==='en'){document.documentElement.lang='en';EN_MO.observe(document.body,{childList:true,subtree:true,characterData:true})}
+
+/* ================= v278: inglés, preguntas del Trivial traducidas frase a frase ================= */
+const ENN=x=>{const t=String(x).trim();return trEN(t)||t};
+const ENB=x=>`<b>${ENN(x)}</b>`;
+const EN_Q=[
+/* geografía */
+[/^¿Cuál es la capital de <b>(.+?)<\/b>\?$/,(m,a)=>`What is the capital of ${ENB(a)}?`],
+[/^¿De qué país es capital <b>(.+?)<\/b>\?$/,(m,a)=>`${ENB(a)} is the capital of which country?`],
+[/^¿Qué país tiene <b>más habitantes<\/b>\?$/,'Which country has <b>more people</b>?'],
+[/^¿Qué provincia española tiene <b>más habitantes<\/b>\?$/,'Which Spanish province has <b>more people</b>?'],
+[/^¿Qué provincia española tiene <b>menos habitantes<\/b>\?$/,'Which Spanish province has <b>fewer people</b>?'],
+[/^¿Qué país produce <b>más % de electricidad renovable<\/b> \(2024\)\?$/,'Which country makes <b>a higher % of renewable electricity</b> (2024)?'],
+[/^¿Cuál de estos países es <b>más grande<\/b> \(superficie\)\?$/,'Which of these countries is <b>bigger</b> (area)?'],
+[/^¿Cuál de estos países es <b>más pequeño<\/b>\?$/,'Which of these countries is <b>smaller</b>?'],
+[/^¿Cuántas <b>Españas<\/b> cabrían dentro de <b>(.+?)<\/b>\?$/,(m,a)=>`How many <b>Spains</b> would fit inside ${ENB(a)}?`],
+[/^¿Cuál es el <b>país más grande del mundo<\/b>\?$/,'What is the <b>biggest country in the world</b>?'],
+[/^El <b>Vaticano<\/b> es el país más pequeño del mundo\. ¿Cuánto mide\?$/,'<b>Vatican City</b> is the smallest country in the world. How big is it?'],
+[/^¿Qué idioma <b>habla más gente<\/b> en el mundo \(sumando los que lo aprendieron después\)\?$/,'Which language <b>do more people speak</b> worldwide (counting those who learned it later)?'],
+[/^¿Qué idioma tiene <b>más hablantes nativos<\/b> \(los que lo aprendieron de pequeños\)\?$/,'Which language has <b>more native speakers</b> (people who learned it as children)?'],
+[/^¿Cuál de estos idiomas tiene <b>más hablantes nativos<\/b>\?$/,'Which of these languages has <b>more native speakers</b>?'],
+[/^¿Cuál es el <b>idioma más hablado del mundo<\/b> contando a todos los que lo hablan\?$/,'What is the <b>most spoken language in the world</b>, counting everyone who speaks it?'],
+[/^¿Cuál de estos océanos es <b>más grande<\/b>\?$/,'Which of these oceans is <b>bigger</b>?'],
+[/^¿Qué océano es <b>el menos profundo<\/b> \(de media\)\?$/,'Which ocean is <b>the shallowest</b> (on average)?'],
+[/^¿Cuál de estos continentes es <b>más grande<\/b> \(superficie\)\?$/,'Which of these continents is <b>bigger</b> (area)?'],
+[/^¿En cuál de estos continentes <b>vive más gente<\/b>\?$/,'Which of these continents <b>has more people</b>?'],
+[/^¿Qué parte de la gente del mundo <b>vive en Asia<\/b>\?$/,'What share of the world\'s people <b>live in Asia</b>?'],
+[/^¿Qué continente <b>no tiene habitantes<\/b> fijos\?$/,'Which continent <b>has no permanent population</b>?'],
+[/^¿Cuál de estos rascacielos es <b>más alto<\/b>\?$/,'Which of these skyscrapers is <b>taller</b>?'],
+[/^¿En qué ciudad está el rascacielos <b>(.+?)<\/b>\?$/,(m,a)=>`In which city is the skyscraper ${ENB(a)}?`],
+[/^¿En qué país está el rascacielos <b>(.+?)<\/b>\?$/,(m,a)=>`In which country is the skyscraper ${ENB(a)}?`],
+[/^¿Cuánto mide el <b>Burj Khalifa<\/b> \(Dubái\), el edificio más alto del mundo\?$/,'How tall is the <b>Burj Khalifa</b> (Dubai), the tallest building in the world?'],
+[/^¿Cuál de estos rascacielos <b>se terminó antes<\/b>\?$/,'Which of these skyscrapers <b>was finished first</b>?'],
+[/^¿Cuál de estos ríos es <b>más largo<\/b>\?$/,'Which of these rivers is <b>longer</b>?'],
+[/^¿En qué continente está el río <b>(.+?)<\/b>\?$/,(m,a)=>`On which continent is the ${ENB(a)} river?`],
+[/^¿Cuánto mide el río <b>(.+?)<\/b> \(con sus afluentes principales\)\?$/,(m,a)=>`How long is the ${ENB(a)} river (with its main tributaries)?`],
+[/^¿Cuál de estas montañas es <b>más alta<\/b>\?$/,'Which of these mountains is <b>higher</b>?'],
+[/^¿Cuánto mide el <b>Everest<\/b>, la montaña más alta del mundo\?$/,'How high is <b>Everest</b>, the highest mountain in the world?'],
+[/^¿Dónde está la montaña <b>(.+?)<\/b>\?$/,(m,a)=>`Where is the mountain ${ENB(a)}?`],
+/* animales */
+[/^¿Cuál de estos animales <b>pesa más<\/b>\?$/,'Which of these animals <b>weighs more</b>?'],
+[/^¿Cuál de estos animales <b>pesa menos<\/b>\?$/,'Which of these animals <b>weighs less</b>?'],
+[/^Peso medio de un adulto: ¿cuánto pesa este animal\? <b>(.+?)<\/b>$/,(m,a)=>`Average adult weight: how heavy is this animal? ${ENB(a)}`],
+[/^¿Cuántos <b>elefantes africanos<\/b> \(de 6 toneladas\) pesan lo mismo que una <b>ballena azul<\/b> media\?$/,'How many <b>African elephants</b> (6 tonnes each) weigh the same as an average <b>blue whale</b>?'],
+[/^¿Cuál de estos animales es <b>más rápido<\/b>( nadando| volando| en tierra)?\?$/,(m,a)=>`Which of these animals is <b>faster</b>${a===' nadando'?' swimming':a===' volando'?' flying':a===' en tierra'?' on land':''}?`],
+[/^¿Cuál de estos animales es <b>más lento<\/b> corriendo\?$/,'Which of these animals is <b>slower</b> running?'],
+[/^Velocidad máxima: ¿a cuánto puede ir este animal\? <b>(.+?)<\/b>(.*)$/,(m,a,r)=>`Top speed: how fast can this animal go? ${ENB(a)}${r.replace('nadando','swimming').replace('volando','flying').replace('en picado','diving')}`],
+[/^Si corrieras tan rápido como Usain Bolt \(44 km\/h\), ¿a cuál de estos animales <b>le ganarías<\/b> una carrera\?$/,'If you ran as fast as Usain Bolt (44 km/h), which of these animals <b>would you beat</b> in a race?'],
+/* espacio */
+[/^¿Quién de estos astronautas <b>pasó más tiempo en el espacio<\/b>, sumando todas sus misiones\?$/,'Which of these astronauts <b>spent the most time in space</b>, adding up all their missions?'],
+[/^¿Cuál de estos planetas es <b>más grande<\/b>\?$/,'Which of these planets is <b>bigger</b>?'],
+[/^¿Cuál de estos planetas está <b>más cerca del Sol<\/b>\?$/,'Which of these planets is <b>closest to the Sun</b>?'],
+[/^¿Cuánto dura <b>un año en (.+?)<\/b> \(una vuelta completa al Sol\)\?$/,(m,a)=>`How long is <b>a year on ${ENN(a)}</b> (one full trip around the Sun)?`],
+[/^¿En cuál de estos planetas hace <b>más calor<\/b> \(temperatura media\)\?$/,'Which of these planets is <b>hotter</b> (average temperature)?'],
+[/^¿Cuál de estos planetas <b>no tiene anillos<\/b>\?$/,'Which of these planets <b>has no rings</b>?'],
+[/^¿De qué planeta es la luna <b>(.+?)<\/b>\?$/,(m,a)=>`Which planet does the moon ${ENB(a)} belong to?`],
+[/^¿Cuál de estas lunas es <b>más grande<\/b>\?$/,'Which of these moons is <b>bigger</b>?'],
+/* ciencia */
+[/^¿Cuál es el <b>símbolo químico<\/b> del (.+?)\?$/,(m,a)=>`What is the <b>chemical symbol</b> of ${ENN(a)}?`],
+[/^¿Qué elemento químico tiene el símbolo <b>(.+?)<\/b>\?$/,'Which chemical element has the symbol <b>$1</b>?'],
+[/^¿Cuál de estos elementos es un <b>gas<\/b> a temperatura ambiente\?$/,'Which of these elements is a <b>gas</b> at room temperature?'],
+[/^¿Cuál de estos elementos es <b>líquido<\/b> a temperatura ambiente\?$/,'Which of these elements is <b>liquid</b> at room temperature?'],
+[/^¿Cuál de estos elementos necesita <b>más calor para derretirse<\/b>\?$/,'Which of these elements needs <b>more heat to melt</b>?'],
+[/^¿Qué <b>número atómico<\/b> tiene el (.+?)\? \(cuántos protones tiene\)$/,(m,a)=>`What is the <b>atomic number</b> of ${ENN(a)}? (how many protons it has)`],
+[/^¿Qué país tiene <b>más premios Nobel<\/b> \(personas premiadas\)\?$/,'Which country has <b>more Nobel prizes</b> (laureates)?'],
+[/^¿De qué país es <b>(.+?)<\/b>, premio Nobel de (.+?) en (\d+)\?$/,(m,a,c,y)=>`Which country is <b>${a}</b> from, Nobel Prize in ${ENN(c)} in ${y}?`],
+[/^¿En qué categoría ganó el premio Nobel <b>(.+?)<\/b>\?$/,'In which category did <b>$1</b> win the Nobel Prize?'],
+[/^¿En qué año ganó el Nobel <b>(.+?)<\/b>\?$/,'What year did <b>$1</b> win the Nobel Prize?'],
+[/^¿Qué país tiene <b>más personas con premio Nobel<\/b>\?$/,'Which country has <b>the most Nobel laureates</b>?'],
+[/^¿Qué escritor colombiano ganó el <b>Nobel de Literatura<\/b> en 1982\?$/,'Which Colombian writer won the <b>Nobel Prize in Literature</b> in 1982?'],
+/* música */
+[/^¿Qué canción ganó <b>Grabación del Año<\/b> en los Latin Grammy (\d+)\?$/,'Which song won <b>Record of the Year</b> at the $1 Latin Grammys?'],
+[/^¿Qué disco ganó <b>Álbum del Año<\/b> en los Latin Grammy (\d+)\?$/,'Which album won <b>Album of the Year</b> at the $1 Latin Grammys?'],
+[/^¿Qué tema ganó <b>Canción del Año<\/b> \(el premio de los compositores\) en (\d+)\?$/,'Which song won <b>Song of the Year</b> (the songwriters\' award) in $1?'],
+[/^¿Quién ganó <b>Mejor Nuevo Artista<\/b> en los Latin Grammy (\d+)\?$/,'Who won <b>Best New Artist</b> at the $1 Latin Grammys?'],
+[/^¿Qué país ganó <b>Eurovisión (\d+)<\/b>\?$/,'Which country won <b>Eurovision $1</b>?'],
+[/^¿Qué canción ganó <b>Eurovisión (\d+)<\/b>\?$/,'Which song won <b>Eurovision $1</b>?'],
+[/^¿En qué ciudad se celebró <b>Eurovisión (\d+)<\/b>\?$/,'In which city was <b>Eurovision $1</b> held?'],
+[/^¿En qué puesto quedó <b>España<\/b> en Eurovisión (\d+) con (.+)$/,(m,y,r)=>`What place did <b>Spain</b> finish in Eurovision ${y} with ${r.replace(', de ',', by ')}`],
+[/^¿Quién representó a <b>España<\/b> en Eurovisión (\d+)\?$/,'Who represented <b>Spain</b> at Eurovision $1?'],
+[/^¿Con qué canción fue <b>(.+?)<\/b> a Eurovisión (\d+)\?$/,'Which song did <b>$1</b> take to Eurovision $2?'],
+[/^¿Cuál fue la canción <b>más escuchada en Spotify<\/b> en (\d+)\?$/,'What was the <b>most streamed song on Spotify</b> in $1?'],
+[/^¿Cuál de estas canciones tiene <b>más reproducciones<\/b> en Spotify\?$/,'Which of these songs has <b>more streams</b> on Spotify?'],
+[/^¿Quién canta <b>(.+?)<\/b>\?$/,'Who sings <b>$1</b>?'],
+[/^¿Quién canta <b>(.+?)<\/b>, número 1 en España en (\d+)\?$/,'Who sings <b>$1</b>, number 1 in Spain in $2?'],
+[/^¿Quién tiene <b>más números 1<\/b> en el Billboard Hot 100 \(sin contar colaboraciones\)\?$/,'Who has <b>more number ones</b> on the Billboard Hot 100 (not counting collaborations)?'],
+[/^¿Qué canción estuvo <b>más semanas en el n\.º 1 en España<\/b> en (\d+)\?$/,'Which song spent <b>the most weeks at number 1 in Spain</b> in $1?'],
+[/^¿En qué año llegó por primera vez al <b>n\.º 1 en España<\/b> (.+?), de (.+?)\?$/,'In what year did $1, by $2, first reach <b>number 1 in Spain</b>?'],
+/* cine */
+[/^¿Cuál de estas películas ganó el <b>Óscar a mejor película<\/b> en una gala (?:entre (\d+) y (\d+)|de los años (\d+))\?$/,(m,a,b,c)=>`Which of these films won the <b>Oscar for Best Picture</b> at a ceremony ${a?`between ${a} and ${b}`:`in the ${c}s`}?`],
+[/^¿Qué película ganó el <b>Óscar a mejor película<\/b> en la gala de (\d+)\?$/,'Which film won the <b>Oscar for Best Picture</b> at the $1 ceremony?'],
+[/^¿En qué gala de los Óscar ganó <b>(.+?)<\/b> el premio a mejor película\?$/,'At which Oscars ceremony did <b>$1</b> win Best Picture?'],
+[/^¿Cuál de estas películas <b>recaudó más<\/b> en todo el mundo\?$/,'Which of these films <b>made more money</b> worldwide?'],
+[/^¿Cuál de estas películas <b>costó más dinero<\/b> hacer\?$/,'Which of these films <b>cost more</b> to make?'],
+[/^¿En qué año se estrenó <b>(.+?)<\/b>\?$/,'What year was <b>$1</b> released?'],
+[/^¿Qué película de animación <b>recaudó más<\/b> en los cines de todo el mundo\?$/,'Which animated film <b>made more money</b> in cinemas worldwide?'],
+[/^¿Cuál es la <b>película de animación más taquillera<\/b> de la historia\?$/,'What is the <b>highest-grossing animated film</b> ever?'],
+[/^¿Cuál de estas películas de <b>Gru y los Minions<\/b> recaudó más\?$/,'Which of these <b>Despicable Me and Minions</b> films made more money?'],
+/* fútbol */
+[/^¿Quién ganó el <b>Balón de Oro (\d+)<\/b>\?$/,'Who won the <b>$1 Ballon d\'Or</b>?'],
+[/^¿Quién quedó <b>segundo<\/b> en el Balón de Oro (\d+)\?$/,'Who came <b>second</b> in the $1 Ballon d\'Or?'],
+[/^¿Quién ganó la <b>(Champions|Copa de Europa) (.+?)<\/b>\?$/,(m,a,y)=>`Who won the <b>${a==='Champions'?'Champions League':'European Cup'} ${y}</b>?`],
+[/^¿En qué ciudad se jugó la final de la (Champions|Copa de Europa) (.+?)\?$/,(m,a,y)=>`In which city was the ${a==='Champions'?'Champions League':'European Cup'} final ${y} played?`],
+[/^¿Qué selección ganó el <b>Mundial de (\d+)<\/b>\?$/,'Which national team won the <b>$1 World Cup</b>?'],
+[/^¿Contra quién ganó <b>(.+?)<\/b> la final del Mundial de (\d+)\?$/,(m,a,y)=>`Who did ${ENB(a)} beat in the ${y} World Cup final?`],
+[/^¿En qué país se jugó la <b>final del Mundial de (\d+)<\/b>\?$/,'In which country was the <b>$1 World Cup final</b> played?'],
+[/^¿Quién ganó <b>la Liga (.+?)<\/b>\?$/,'Who won <b>La Liga $1</b>?'],
+[/^¿Quién quedó <b>segundo<\/b> en la Liga (.+?)\?$/,'Who came <b>second</b> in La Liga $1?'],
+[/^¿Cuántos <b>goles<\/b> se marcaron en total en el Mundial de (\d+)\?$/,'How many <b>goals</b> were scored in total at the $1 World Cup?'],
+[/^¿Qué Mundial tuvo <b>más goles por partido<\/b>\?$/,'Which World Cup had <b>more goals per game</b>?'],
+[/^¿Qué estadio tiene <b>más asientos<\/b>\?$/,'Which stadium has <b>more seats</b>?'],
+[/^¿En qué estadio juega <b>(.+?)<\/b>\?$/,(m,a)=>`Which stadium does <b>${a.replace(/^(el|la) selección de (.+)$/,(q,x,c)=>ENN(c)+' national team').replace(/^el /,'')}</b> play in?`],
+[/^¿En qué ciudad está el estadio <b>(.+?)<\/b>\?$/,'In which city is the stadium <b>$1</b>?'],
+[/^¿Dónde está el <b>estadio de fútbol más grande del mundo<\/b>\?$/,'Where is the <b>biggest football stadium in the world</b>?'],
+[/^¿Cuál es el <b>estadio más grande de España<\/b>\?$/,'What is the <b>biggest stadium in Spain</b>?'],
+[/^¿Quién ganó el <b>Mundial femenino de (\d+)<\/b>\?$/,'Who won the <b>$1 Women\'s World Cup</b>?'],
+[/^¿Qué selección ha ganado <b>más Mundiales femeninos<\/b>\?$/,'Which team has won <b>the most Women\'s World Cups</b>?'],
+[/^¿En qué año ganó <b>España<\/b> el Mundial femenino\?$/,'In what year did <b>Spain</b> win the Women\'s World Cup?'],
+[/^¿Quién es la <b>máxima goleadora<\/b> de la historia de los Mundiales femeninos\?$/,'Who is the <b>all-time top scorer</b> in Women\'s World Cups?'],
+[/^¿Qué país <b>organizó<\/b> el Mundial femenino de (\d+)\?$/,'Which country <b>hosted</b> the $1 Women\'s World Cup?'],
+[/^La final de 1999 en el Rose Bowl \(Estados Unidos\) batió un récord\. ¿Cuántos espectadores fueron\?$/,'The 1999 final at the Rose Bowl (United States) set a record. How many spectators were there?'],
+[/^¿Quién ganó la <b>(Copa América|Eurocopa) de (\d+)<\/b>\?$/,(m,a,y)=>`Who won the <b>${a==='Eurocopa'?'Euro':'Copa América'} ${y}</b>?`],
+[/^¿Qué selección ha ganado <b>más (Copas América|Eurocopas)<\/b>\?$/,(m,a)=>`Which team has won <b>the most ${a==='Eurocopas'?'European Championships':'Copa América titles'}</b>?`],
+[/^¿Cuántas (Copas América|Eurocopas) ha ganado <b>(.+?)<\/b>\?$/,(m,a,t)=>`How many ${a==='Eurocopas'?'European Championships':'Copa América titles'} has ${ENB(t)} won?`],
+[/^¿Contra quién ganó Argentina la <b>final de la Copa América de 2021<\/b>, en el Maracaná\?$/,'Who did Argentina beat in the <b>2021 Copa América final</b>, at the Maracanã?'],
+[/^¿En cuál de estos años <b>ganó España la Eurocopa<\/b>\?$/,'In which of these years <b>did Spain win the Euros</b>?'],
+[/^¿Qué selección <b>sorprendió a todos<\/b> ganando la Eurocopa de 2004 en Portugal\?$/,'Which team <b>surprised everyone</b> by winning Euro 2004 in Portugal?'],
+[/^¿Quién ha marcado <b>más goles con su selección<\/b>\?$/,'Who has scored <b>more goals for their national team</b>?'],
+[/^¿Con qué selección marcó sus goles <b>(.+?)<\/b>\?$/,'Which national team did <b>$1</b> score his goals for?'],
+[/^¿Cuántos goles ha marcado <b>(.+?)<\/b> con (.+?)\? \(a noviembre de 2026\)$/,(m,a,c)=>`How many goals has <b>${a}</b> scored for ${ENN(c)}? (as of November 2026)`],
+[/^¿Quién marca <b>más goles por partido<\/b> con su selección\?$/,'Who scores <b>more goals per game</b> for their national team?'],
+/* JJ. OO. */
+[/^¿Qué ciudad organizó los <b>Juegos Olímpicos de (verano|invierno) de (\d+)<\/b>\?$/,(m,s,y)=>`Which city hosted the <b>${y} ${s==='verano'?'Summer':'Winter'} Olympics</b>?`],
+[/^¿En qué país se celebraron los <b>Juegos Olímpicos de (verano|invierno) de (\d+)<\/b>\?$/,(m,s,y)=>`In which country were the <b>${y} ${s==='verano'?'Summer':'Winter'} Olympics</b> held?`],
+[/^¿En qué año fueron los <b>Juegos Olímpicos de (verano|invierno) de (.+?)<\/b>\?$/,(m,s,c)=>`In what year were the <b>${ENN(c)} ${s==='verano'?'Summer':'Winter'} Olympics</b>?`],
+[/^¿Cuántas medallas ganó <b>España<\/b> en los Juegos de verano de (\d+)\?$/,'How many medals did <b>Spain</b> win at the $1 Summer Games?'],
+[/^¿En cuáles de estos Juegos ganó <b>España más medallas<\/b>\?$/,'At which of these Games did <b>Spain win more medals</b>?'],
+[/^¿En cuáles de estos Juegos hubo <b>más deportistas<\/b>\?$/,'Which of these Games had <b>more athletes</b>?'],
+[/^¿Cuál de estos países ha ganado <b>más oros<\/b> en la historia de los Juegos Olímpicos de verano\?$/,'Which of these countries has won <b>more golds</b> in the history of the Summer Olympics?'],
+[/^¿Cuántas <b>medallas<\/b> \(oro, plata y bronce\) ha ganado <b>España<\/b> en todos los Juegos de verano\?$/,'How many <b>medals</b> (gold, silver and bronze) has <b>Spain</b> won at all the Summer Games?'],
+[/^Estados Unidos es el país con más oros olímpicos de verano\. ¿Cuántos tiene\?$/,'The United States is the country with the most Summer Olympic golds. How many does it have?'],
+[/^¿Cuál de estos países tiene <b>más medallas en total<\/b> en los Juegos de verano\?$/,'Which of these countries has <b>more medals in total</b> at the Summer Games?'],
+/* otros */
+[/^¿Cuál es el <b>intruso<\/b>\? Tres son «(.+?)» y uno no\.$/,(m,a)=>`Which is the <b>odd one out</b>? Three are «${ENN(a)}» and one isn't.`],
+[/^¿Cuál de estos Pokémon tiene <b>más PS<\/b> \(puntos de salud\) base\?$/,'Which of these Pokémon has <b>more base HP</b>?'],
+[/^¿Cuál de estos Pokémon <b>pesa más<\/b>\?$/,'Which of these Pokémon <b>weighs more</b>?'],
+[/^¿Cuál de estos Pokémon es <b>más rápido<\/b> \(estadística de velocidad\)\?$/,'Which of these Pokémon is <b>faster</b> (Speed stat)?'],
+[/^¿De qué colección de LEGO es el set <b>(.+?)<\/b> \((\d+)\)\?$/,'Which LEGO theme is the set <b>$1</b> ($2) from?'],
+[/^¿Qué set de LEGO (.+?) tiene <b>más piezas<\/b>\?$/,'Which LEGO $1 set has <b>more pieces</b>?'],
+[/^¿Qué set de LEGO salió <b>antes<\/b> a la venta\?$/,'Which LEGO set <b>went on sale first</b>?'],
+[/^¿Qué juego tuvo <b>más gente jugando a la vez<\/b> en Steam \(récord\)\?$/,'Which game had <b>more people playing at once</b> on Steam (record)?'],
+[/^¿Qué juego tiene <b>mejor nota de la crítica<\/b> en Metacritic\?$/,'Which game has <b>a better critics\' score</b> on Metacritic?'],
+[/^¿Cuál de estos videojuegos ha <b>vendido más copias<\/b>\?$/,'Which of these video games has <b>sold more copies</b>?'],
+[/^¿En qué año salió <b>(.+?)<\/b>\?$/,'What year did <b>$1</b> come out?'],
+[/^¿Cuántas copias ha vendido <b>Minecraft<\/b>\?$/,'How many copies has <b>Minecraft</b> sold?'],
+[/^¿Cuál de estos videojuegos es <b>más antiguo<\/b>\?$/,'Which of these video games is <b>older</b>?'],
+[/^¿Qué piloto ganó <b>más Grandes Premios<\/b> \(hasta 2020\)\?$/,'Which driver won <b>more Grands Prix</b> (up to 2020)?'],
+[/^¿Quién ganó <b>más Grand Slams<\/b> individuales entre 1968 y enero de 2019\?$/,'Who won <b>more singles Grand Slams</b> between 1968 and January 2019?'],
+[/^¿Quién fue <b>campeón del mundo de Fórmula 1<\/b> en <b>(\d+)<\/b>\?$/,'Who was <b>Formula 1 world champion</b> in <b>$1</b>?'],
+[/^(.+?) fue campeón en (\d+)\. ¿Con qué <b>escudería<\/b>\?$/,'$1 was champion in $2. With which <b>team</b>?'],
+[/^¿Quién tiene <b>más títulos de campeón<\/b> de Fórmula 1\?$/,'Who has <b>more Formula 1 world titles</b>?'],
+[/^¿En qué años fue <b>Fernando Alonso<\/b> campeón del mundo de Fórmula 1\?$/,'In which years was <b>Fernando Alonso</b> Formula 1 world champion?'],
+[/^¿De qué país es el campeón de F1 <b>(.+?)<\/b>\?$/,'Which country is F1 champion <b>$1</b> from?'],
+[/^¿Qué equipo <b>ganó la NBA<\/b> en <b>(\d+)<\/b>\?$/,'Which team <b>won the NBA</b> in <b>$1</b>?'],
+[/^¿Cuál de estos equipos ha ganado <b>más títulos de la NBA<\/b>\?$/,'Which of these teams has won <b>more NBA titles</b>?'],
+[/^¿Cuántos títulos de la NBA tienen los <b>(.+?)<\/b>\?$/,'How many NBA titles do the <b>$1</b> have?'],
+[/^¿En qué año ganaron la NBA los <b>(.+?)<\/b>\?$/,'In what year did the <b>$1</b> win the NBA?'],
+[/^En la final de la NBA de <b>(\d+)<\/b> ganaron los (.+?)\. ¿Contra quién\?$/,'In the <b>$1</b> NBA Finals the $2 won. Against whom?'],
+[/^¿Quién ganó el <b>Tour de Francia de (\d+)<\/b>\?$/,'Who won the <b>$1 Tour de France</b>?'],
+[/^¿De qué país era <b>(.+?)<\/b>, ganador del Tour de Francia de (\d+)\?$/,'Which country was <b>$1</b>, winner of the $2 Tour de France, from?'],
+[/^¿Cuál de estos ciclistas ha ganado <b>más Tours de Francia<\/b>\?$/,'Which of these riders has won <b>more Tours de France</b>?'],
+[/^¿Cuál de estos récords del mundo es <b>el más antiguo<\/b>\?$/,'Which of these world records is <b>the oldest</b>?'],
+[/^¿Cuál es la <b>moneda de (.+?)<\/b>\?$/,(m,a)=>`What is the <b>currency of ${ENN(a)}</b>?`],
+[/^¿De qué moneda es este símbolo\? (.+)$/,'Which currency is this symbol from? $1'],
+[/^¿En cuál de estos países se paga con <b>pesos<\/b>\?$/,'In which of these countries do people pay in <b>pesos</b>?'],
+[/^¿Cuál de estas empresas <b>valía más en bolsa<\/b> \(finales de septiembre de 2026\)\?$/,'Which of these companies <b>was worth more on the stock market</b> (end of September 2026)?'],
+[/^¿Cuál era la <b>empresa más valiosa del mundo<\/b> en bolsa a finales de septiembre de 2026\?$/,'Which was the <b>most valuable company in the world</b> on the stock market at the end of September 2026?'],
+[/^¿Qué empresa de Estados Unidos fue la <b>primera en valer un billón de dólares<\/b> \(en 2018\)\?$/,'Which US company was the <b>first to be worth a trillion dollars</b> (in 2018)?'],
+[/^<b>TSMC<\/b>, una de las empresas más valiosas del mundo, fabrica chips\. ¿De dónde es\?$/,'<b>TSMC</b>, one of the most valuable companies in the world, makes chips. Where is it from?'],
+[/^Si en (\d+) hubieras metido <b>100 dólares<\/b> en acciones de una de estas empresas, ¿con cuál tendrías <b>más dinero en 2022<\/b>\?$/,'If in $1 you had put <b>100 dollars</b> into shares of one of these companies, which would give you <b>more money in 2022</b>?'],
+[/^¿Cuánto costaba una <b>onza de oro<\/b> \(31 gramos\) en (\d+)\?$/,'How much did an <b>ounce of gold</b> (31 grams) cost in $1?'],
+[/^¿En cuál de estos años estuvo <b>más caro el petróleo<\/b> \(barril de Brent\)\?$/,'In which of these years was <b>oil more expensive</b> (Brent barrel)?'],
+[/^¿En qué año <b>valía más el euro<\/b> en dólares\?$/,'In which year <b>was the euro worth more</b> in dollars?'],
+[/^¿Qué país tiene la <b>economía más grande<\/b> \(PIB de 2023\)\?$/,'Which country has the <b>biggest economy</b> (GDP in 2023)?'],
+[/^¿Cuánto costaba un <b>Big Mac<\/b> en la zona euro en (\d+)\?$/,'How much did a <b>Big Mac</b> cost in the euro area in $1?']
+];
+const EN_UNITS=[[/ millones de km²/g,' million km²'],[/ millones de \$/g,' million $'],[/ mil millones \$/g,' billion $'],[/ billones \$/g,' trillion $'],[/ billones de \$/g,' trillion $'],[/ millones de personas/g,' million people'],[/ millones de habitantes/g,' million people'],[/ millones/g,' million'],[/ asientos/g,' seats'],[/ premiados?/g,' laureates'],[/ habitantes/g,' people'],[/ nativos/g,' native'],[/ toneladas/g,' tonnes'],[/ Mundiales/g,' World Cups'],[/ Eurocopas?/g,' Euros'],[/ goles/g,' goals'],[/ partidos/g,' games'],[/ medallas/g,' medals'],[/ oros/g,' golds'],[/ copias/g,' copies'],[/ años/g,' years'],[/ días/g,' days'],[/ metros/g,' metres'],[/ plantas/g,' floors']];
+let EN_CRX=null;
+function enCtryRx(){if(EN_CRX)return EN_CRX;const C=Object.assign({},enCountries(),EN_X);const ks=Object.keys(C).filter(k=>k.length>3).sort((a,b)=>b.length-a.length).map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));EN_CRX=[new RegExp('(^|[\\s(«·:,])('+ks.join('|')+')(?=$|[\\s).»·:,;])','g'),C];return EN_CRX}
+function enFree(t){if(!t)return t;let o=String(t);EN_UNITS.forEach(([r,f])=>o=o.replace(r,f));const [rx,C]=enCtryRx();o=o.replace(rx,(m,p,k)=>p+C[k]);return o}
+function enS(h){if(!h)return h;for(const [r,f] of EN_Q)if(r.test(h))return h.replace(r,f);return h}
+function enQ(q){if(S.lang!=='en'||!q||q.__en)return q;return Object.assign({},q,{__en:1,q:enS(q.q),after:q.after?enPh(enFree(q.after)):q.after,opts:q.opts&&q.opts.map(o=>Object.assign({},o,{t:o.t!=null?(trEN(String(o.t))||enFree(String(o.t))):o.t}))})}
+
+
+const EN_EV=e=>String(e).replace(/^(\d+) metros vallas$/,'$1 metres hurdles').replace(/^(\d+) metros obstáculos$/,'$1 metres steeplechase').replace(/^([\d ]+) metros$/,'$1 metres').replace('maratón','marathon').replace('media maratón','half marathon').replace('lanzamiento de disco','discus throw').replace('lanzamiento de jabalina','javelin throw').replace('lanzamiento de martillo','hammer throw').replace('lanzamiento de peso','shot put').replace('salto con pértiga','pole vault').replace('salto de altura','high jump').replace('salto de longitud','long jump').replace('triple salto','triple jump');
+const EN_SX=x=>x==='hombres'?'men':x==='mujeres'?'women':x;
+const EN_GSN={'el Abierto de Australia':'the Australian Open','Roland Garros':'Roland Garros','Wimbledon':'Wimbledon','el US Open':'the US Open'};
+EN_Q.push(
+[/^¿Qué océano está <b>(.+?)<\/b>\?$/,(m,a)=>`Which ocean is <b>${enFree(a.replace(/^entre /,'between ').replace(/^alrededor de la Antártida$/,'around Antarctica').replace(/^en el Polo Norte, entre /,'at the North Pole, between ').replace(/ y /g,' and ').replace('la India','India').replace('Eurasia','Eurasia').replace('Norteamérica','North America').replace('América','the Americas'))}</b>?`],
+[/^¿Quién tiene el <b>récord del mundo de (.+?)<\/b> \((hombres|mujeres)\)\?$/,(m,e,x)=>`Who holds the <b>${EN_EV(e)} world record</b> (${EN_SX(x)})?`],
+[/^¿Cuál es el <b>récord del mundo de (.+?)<\/b> \((hombres|mujeres)\)\?$/,(m,e,x)=>`What is the <b>${EN_EV(e)} world record</b> (${EN_SX(x)})?`],
+[/^¿De qué país es <b>(.+?)<\/b>, plusmarquista mundial de (.+?)\?$/,(m,a,e)=>`Which country is <b>${a}</b>, ${EN_EV(e)} world record holder, from?`],
+[/^¿Quién ganó <b>(el Abierto de Australia|Roland Garros|Wimbledon|el US Open) (\d+)<\/b> \((hombres|mujeres), individual\)\?$/,(m,t,y,x)=>`Who won <b>${EN_GSN[t]} ${y}</b> (${EN_SX(x)}'s singles)?`],
+[/^¿Quién ganó <b>más veces (el Abierto de Australia|Roland Garros|Wimbledon|el US Open)<\/b> entre (\d+) y (\d+) \((hombres|mujeres)\)\?$/,(m,t,a,b,x)=>`Who won <b>${EN_GSN[t]}</b> more times between ${a} and ${b} (${EN_SX(x)})?`]);
+
+Object.assign(EN_X,{'Ciudad de México':'Mexico City','Río de Janeiro':'Rio de Janeiro','Saint-Denis (París)':'Saint-Denis (Paris)','París':'Paris','Londres':'London','Múnich':'Munich','Mánchester':'Manchester','Milán':'Milan','Pionyang':'Pyongyang','Johannesburgo':'Johannesburg','Sevilla':'Seville','Lisboa':'Lisbon','Kiev':'Kyiv','Belgrado':'Belgrade','Atenas':'Athens','Roma':'Rome','Moscú':'Moscow','Pekín':'Beijing','Tokio':'Tokyo','Estocolmo':'Stockholm','Bruselas':'Brussels','Gotemburgo':'Gothenburg','Róterdam':'Rotterdam','Ámsterdam':'Amsterdam','Viena':'Vienna','Berlín':'Berlin','Varsovia':'Warsaw','Copenhague':'Copenhagen','Miami (EE. UU.)':'Miami (USA)','Alemania Oriental':'East Germany','EE. UU.':'USA'});
+const EN_PH=[[/Ganó con /g,'It won with '],[/^Ganó (.+?) con /,'$1 won with '],[/^Lo ganó (.+)\.$/,'Won by $1.'],[/^En (\d+) (.+?) ganó la final a /,'In $1 $2 beat '],[/ en penaltis/g,' on penalties'],[/\(prórroga\)/g,'(extra time)'],[/ en la prórroga/g,' in extra time'],[/\(gol de oro\)/g,'(golden goal)'],[/\(partido de desempate\)/g,'(replay)'],[/Se jugó en /g,'It was played in '],
+[/ recaudó unos /g,' made about '],[/ recaudó /g,' made '],[/ salió en (\d+) y ha vendido unos /g,' came out in $1 and has sold about '],[/ million de copies/g,' million copies'],[/ mil million/g,' billion'],[/(\d) mil\b/g,'$1 thousand'],[/ semanas\b/g,' weeks'],[/ semana\b/g,' week'],[/ horas\b/g,' hours'],
+[/ marcó /g,' scored '],[/ marcaron /g,' scored '],[/ goals en (\S+) games con /g,' goals in $1 games for '],[/ goals en /g,' goals in '],[/ por partido\)/g,' per game)'],[/ está en /g,' is in '],[/ y tiene /g,' and has '],[/ tiene /g,' has '],[/ mide /g,' measures '],[/: unas (\S+) veces más\./g,': about $1 times bigger.'],[/Unos /g,'About '],[/ unos /g,' about '],
+[/Quedó en el puesto (\d+)/g,'It finished in place $1'],[/^Cantó /,'Sang '],[/ y quedó en el puesto (\d+)/g,' and finished in place $1'],[/^Estuvo (\d+) (weeks?) en el n\.º 1 ese año\./,'It spent $1 $2 at number 1 that year.'],[/^Llegó al n\.º 1 de la lista oficial de /,'It reached number 1 on the official chart of '],
+[/\(datos de octubre de (\d+)\)/g,'(data from October $1)'],[/\(dato de (\d+)\)/g,'(figure from $1)'],[/ ganó (\d+-\d+) a /g,' beat $1 '],[/ ganó /g,' won '],[/ en la final de /g,' in the final in '],[/ jugada en /g,' played in '],[/El segundo es el /g,'The second is '],[/^Es el /,'It is '],[/ volvió a ganar, /g,' won again, '],[/ también dio la sorpresa en /g,' also caused a surprise in '],[/Cuenta las de /g,'Includes those of '],
+[/ fue campeón en /g,' was champion in '],[/\(a (\d+-\d+-\d+)\)/g,'(as of $1)'],[/Las otras opciones también estuvieron en el top (\d+) de ese año\./,'The other options were also in that year\'s top $1.'],[/^El Mundial femenino de (\d+) se jugó en (.+?) y lo won (.+)\.$/,'The $1 Women\'s World Cup was played in $2 and won by $3.'],[/ y lo won /g,' and was won by ']];
+function enPh(t){return String(t).split(/(«[^»]*»)/).map((seg,i)=>i%2?seg:EN_PH.reduce((o,[r,f])=>o.replace(r,f),seg)).join('')}
 function langBtn(){return `<button class="langbtn notr" data-lang aria-label="Language">${S.lang==='en'?'🇪🇸 Español':'🇬🇧 English'}</button>`}
 
 Object.assign(EN,{
@@ -2008,7 +2220,7 @@ function roundDraw(r){
 
 /* ---------- ronda: trivia ---------- */
 function roundTrivia(r){
-  const q=r.q,T=15000;
+  const q=enQ(r.q),T=15000;
   const el=show(`${topbar()}<div class="card qcard"><span class="tape" style="--tape:rgba(69,227,255,.55)"></span><span class="tag" style="--tag:${q.tag==='Fútbol'?'var(--green)':q.tag==='Cine'?'var(--orange)':q.tag==='Geografía'?'var(--lila)':q.tag==='JJ. OO.'?'var(--yel)':q.tag==='Intruso'?'var(--pink)':'var(--cyan)'}">${(q.tag==='Fútbol'?IC.ball:q.tag==='Cine'?IC.star:q.tag==='Geografía'?IC.globe:q.tag==='JJ. OO.'?IC.medal:q.tag==='Intruso'?IC.target:q.tag==='LEGO'?IC.star:q.tag==='Pokémon'?IC.target:q.tag==='F1'?IC.trophy:q.tag==='Tenis'?IC.ball:q.tag==='Videojuegos'||q.tag==='Ciencia'?IC.bolt:q.tag==='Dinero'?IC.trophy:q.tag==='Ciclismo'||q.tag==='Atletismo'||q.tag==='Baloncesto'||q.tag==='Fórmula 1'?IC.medal:q.tag==='Espacio'?IC.globe:q.tag==='Animales'?IC.target:IC.note).replace('<svg','<svg width="16" height="16" style="vertical-align:-3px"')} ${q.tag}</span><h2 class="qtitle">${q.q}</h2><div class="timer"><i></i></div></div>
   <div class="answers">${q.opts.map((o,k)=>`<button class="ans" data-k="${k}"><span class="k">${'ABCD'[k]}</span><span class="t">${esc(o.t)}${o.a?`<small>${esc(o.a)}</small>`:''}</span><span class="mark"></span></button>`).join('')}</div><div class="bottom"></div>`);themeTrivia(el,q);
   bindQuit(el);$$('.sticker svg',el);
@@ -2588,6 +2800,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v278','English: ya están traducidas casi todas las preguntas del Trivial (geografía, animales, espacio, ciencia, fútbol, cine, música, Juegos Olímpicos, dinero y más) y los datos que salen después de responder.'],
  ['v277','Ya se puede jugar en inglés: toca el botón «English» de arriba en el menú (o en Ajustes). Están traducidos los menús, los botones, los nombres de los países y muchas preguntas. Los juegos de letras en español (Palabra oculta, Sopa de letras, Letra a letra, ¡Revuelto!, Escríbelo raro y ¿Qué suena?) se esconden en inglés. Iré traduciendo más preguntas en las próximas versiones.'],
  ['v276','Tema nuevo: los estadios de fútbol más grandes. ¿Cuál tiene más asientos, el Bernabéu o el Maracaná? ¿Dónde juega el Bayern? ¿Cuál es el más grande del mundo? Está en Trivial › Fútbol, ¿Más o menos?, El bote y Ordénalos. Datos de Wikipedia.'],
  ['v275','Grupos nuevos en Conexiones, ¡A cada lado!, ¡Revuelto! y ¡Atrápalos!: países que han ganado el Mundial femenino, países con 20 premios Nobel o más, países gigantes (más de 2 millones de km²), idiomas muy hablados y premios Nobel en español (Literatura frente a Ciencia). Así hay menos Pokémon y más variedad.'],
@@ -4403,7 +4616,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v277</div></div>`);
+  <div class="foot">¡Clavado! v278</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   {const lb=$('[data-lang]',el);if(lb)lb.onclick=()=>{SFX.tap();setLang(S.lang==='en'?'es':'en');ajustes()}}

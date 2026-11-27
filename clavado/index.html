@@ -624,6 +624,25 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 
 .sheet.nov{margin-bottom:10px;padding:12px 14px;animation:pop .35s var(--ease) both}.sheet.nov .nv{font-family:var(--brush);font-size:24px;color:var(--red);display:block}.sheet.nov p{margin:2px 0 0;line-height:1.3}
 .rtile{font-size:15px;letter-spacing:-.01em;padding-left:3px;padding-right:3px}
+
+/* v57 animaciones */
+.grid2 .card.mode{animation:cardIn .5s var(--ease) both;animation-delay:calc(.05s * var(--i,0) + .15s)}
+@keyframes cardIn{from{opacity:0;transform:translateY(18px) rotate(var(--rot,-1deg)) scale(.96)}}
+.section-label{animation:labIn .5s var(--ease) both}@keyframes labIn{from{opacity:0;transform:translateX(-16px) rotate(-1deg)}}
+.btn{transition:transform .28s cubic-bezier(.3,1.7,.5,1),box-shadow .2s}
+.card.mode:active,.card.hero:active{transform:scale(.97) rotate(-.5deg);transition:transform .1s}
+.ans.ok{animation:ansOk .6s var(--ease) both}@keyframes ansOk{0%{transform:scale(1)}35%{transform:scale(1.06)}60%{transform:scale(.98)}100%{transform:scale(1)}}
+.ans.ok::after{content:'';position:absolute;inset:-3px;border-radius:inherit;box-shadow:0 0 0 3px #18a957,0 0 18px 2px rgba(24,169,87,.45);animation:glow 1.2s ease-out both;pointer-events:none}@keyframes glow{from{opacity:1}to{opacity:.35}}
+.ans{position:relative}
+.ans.no{animation:shake .4s}
+.bump{animation:bump .45s cubic-bezier(.3,1.8,.5,1)}@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.28) rotate(-4deg)}100%{transform:scale(1)}}
+.fxburst{position:fixed;left:50%;top:42%;width:0;height:0;z-index:60;pointer-events:none}
+.fxburst i{position:absolute;width:10px;height:10px;margin:-5px;border-radius:2px;background:var(--c);animation:fxb .9s cubic-bezier(.2,.8,.3,1) both}
+.fxburst i.st{width:16px;height:16px;margin:-8px;border-radius:0;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+@keyframes fxb{0%{transform:translate(0,0) scale(.3) rotate(0);opacity:1}70%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--r));opacity:0}}
+.screen.fxbad{animation:scrShake .45s}@keyframes scrShake{20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+.clue{animation:clueIn .4s var(--ease) both}@keyframes clueIn{from{opacity:0;transform:translateX(-14px)}}
+.oitem.ok{animation:pop .35s var(--ease) both,okPulse .8s .2s}@keyframes okPulse{50%{box-shadow:0 0 0 4px rgba(24,169,87,.35),var(--shadow-1)}}
 </style>
 </head>
 <body>
@@ -904,7 +923,7 @@ function menu(){
     </button>
     <button class="card fact" data-fact><span class="tape" style="--tape:rgba(88,240,138,.55)"></span><div class="fact-in">${factHTML()}</div></button>
     ${MSEC.map(([lbl,ids])=>{const ms=ids.map(id=>MODES.find(m=>m.id===id)).filter(m=>m&&!m.hide);return `<div class="section-label"><svg width="26" height="14" viewBox="0 0 26 14"><path d="M2 7c6-5 10 5 16 0l5-3M19 2l4 2-2 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>${lbl}</div>
-    <div class="grid2">${ms.map((m,i)=>`<button class="card mode${(ms.length%2&&i===ms.length-1)?' wide':''}" data-go="${m.id}"><span class="tape" style="--tape:${m.tape}"></span>${m.nu?'<span class="nuevo">¡Nuevo!</span>':''}${sticker(m.ic,m.c,'sm')}<h3>${m.t}</h3><p>${m.p}</p><span class="best">${bestTxt(m.id)}</span></button>`).join('')}</div>`}).join('')}
+    <div class="grid2">${ms.map((m,i)=>`<button class="card mode${(ms.length%2&&i===ms.length-1)?' wide':''}" style="--i:${i}" data-go="${m.id}"><span class="tape" style="--tape:${m.tape}"></span>${m.nu?'<span class="nuevo">¡Nuevo!</span>':''}${sticker(m.ic,m.c,'sm')}<h3>${m.t}</h3><p>${m.p}</p><span class="best">${bestTxt(m.id)}</span></button>`).join('')}</div>`}).join('')}
     <div class="dock">
       <button data-go="album">${sticker('star','var(--lila)','sm')}Pegatinas</button>
       <button data-go="stats">${sticker('book','var(--orange)','sm')}Boletín</button>
@@ -1012,7 +1031,7 @@ function playRound(){if(G.millon&&G.i===14&&!G.finalShown){G.finalShown=1;return
 function finishRound(n,extra){
   musicStop();
   if(cur)cur.classList.add('done');
-  G.notes[G.i]=n;S.sumNotes+=n;S.nNotes++;save();
+  G.notes[G.i]=n;S.sumNotes+=n;S.nNotes++;save();fxResult(n);
   if(n>=9.5)vib([10,40,30]);
 }
 function next(){
@@ -1674,6 +1693,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v57','Más animaciones: las tarjetas del menú entran una detrás de otra, explosión de estrellas al sacar buena nota, la pantalla tiembla si fallas, los marcadores dan un salto al subir, las respuestas correctas brillan y los botones rebotan. Si el móvil tiene activado «reducir movimiento», se respetan.'],
  ['v56','Trivias con temas nuevos: qué peli recaudó o costó más y en qué año salió (Trivia de cine), quién canta cada éxito de Spotify (Trivia musical), y en el millón también Pokémon y Steam. Lo más raro: pilotos que han ganado en F1 y Pokémon de tipo fuego, agua, eléctrico y dragón.'],
  ['v55','Dibuja la gráfica: 13 temas más (ya son 60 nuevos desde la v48). Victorias en F1 de Hamilton, Schumacher, Alonso, Vettel y Senna, audiencia de «Friends», precio del Big Mac, piezas por set de LEGO, pelis y series de Netflix por año, deportistas y países en los Juegos y países en Eurovisión. También entran en Calcula a ojo.'],
  ['v54','Calcula a ojo con más de 50 temas nuevos: recaudación y presupuesto de 68 películas, peso y altura de 493 Pokémon, duración de 150 canciones de Spotify, récords de jugadores en Steam, horas en el espacio de astronautas y 46 temas de las gráficas (jugadores de Steam, bolsa, Grand Slams, cohetes, Eurovisión, LEGO, F1…), cada uno en el año que toque.'],
@@ -1739,6 +1759,19 @@ RARO.push(
  ()=>({q:'Elige un piloto que haya <b>ganado un Gran Premio de F1</b>',rule:'Más puntos cuantas menos victorias tenga (hasta 2020)',valid:byC(new Map(F1WIN)),bad:F1NOWIN.map(t=>({t,info:'subió al podio pero nunca ganó'})),src:'Ergast (vía TidyTuesday)',url:TTURL('2021/2021-09-07')}),
  pokeType('fire','fuego'),pokeType('water','agua'),pokeType('electric','eléctrico'),pokeType('dragon','dragón')
 );
+
+
+/* ================= v57: animaciones ================= */
+const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+function fxResult(n){if(RM()||!cur)return;const good=n>=7,bad=n<3;
+  const lp=$('.lapimini,.lapi-wrap',cur);
+  if(good){const b=document.createElement('div');b.className='fxburst';const cols=['var(--yel)','var(--pink)','var(--green)','var(--cyan)','var(--lila)'];
+    for(let i=0;i<12;i++){const a=i/12*Math.PI*2,d=70+Math.random()*60,sp=document.createElement('i');sp.style.cssText=`--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d}px;--c:${cols[i%5]};--r:${Math.random()*360}deg;animation-delay:${Math.random()*.08}s`;if(i%3===0)sp.className='st';b.appendChild(sp)}
+    document.body.appendChild(b);setTimeout(()=>b.remove(),1100)}
+  if(bad){cur.classList.remove('fxbad');void cur.offsetWidth;cur.classList.add('fxbad');setTimeout(()=>cur&&cur.classList.remove('fxbad'),500)}}
+/* números que crecen al cambiar */
+(function(){if(typeof MutationObserver==='undefined')return;const mo=new MutationObserver(ms=>{if(RM())return;for(const m of ms){const t=m.target.nodeType===3?m.target.parentElement:m.target;const el=t&&t.closest&&t.closest('.streak,.prize,[data-sc],[data-vo]');if(el){el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump')}}});
+  addEventListener('DOMContentLoaded',()=>mo.observe(document.body,{subtree:true,childList:true,characterData:true}));if(document.body)mo.observe(document.body,{subtree:true,characterData:true,childList:true})})();
 
 /* ================= EL BOTE ================= */
 function coins(el){const pe=$('.streak',el),src=$('[data-v]',el);if(!pe||!src)return;const a=src.getBoundingClientRect(),b=pe.getBoundingClientRect();for(let i=0;i<9;i++){const c=document.createElement('i');c.className='coin';c.style.left=(a.left+a.width/2-11+(i-4)*9)+'px';c.style.top=(a.top+a.height/2-11)+'px';c.style.setProperty('--dx',(b.left+b.width/2-a.left-a.width/2-(i-4)*9)+'px');c.style.setProperty('--dy',(b.top+b.height/2-a.top-a.height/2)+'px');c.style.animationDelay=(i*55)+'ms';document.body.appendChild(c);setTimeout(()=>{c.parentNode&&c.parentNode.removeChild(c);if(i%3===0)SFX.tick()},800+i*55)}}
@@ -1976,7 +2009,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v56</div></div>`);
+  <div class="foot">¡Clavado! v57</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

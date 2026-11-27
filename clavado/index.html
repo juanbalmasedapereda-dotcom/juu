@@ -662,7 +662,7 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 
 /* v66 palabra oculta */
 .palgrid{display:grid;gap:6px;justify-content:center;margin:8px auto 4px}
-.palrow{display:grid;grid-template-columns:repeat(5,min(13vw,52px,6.8vh));gap:6px}
+.palrow{display:grid;grid-template-columns:repeat(var(--n,5),min(calc(66vw / var(--n,5)),52px,6.8vh));gap:6px}
 .pt{aspect-ratio:1;display:grid;place-items:center;border:2px dashed rgba(31,63,148,.28);border-radius:7px;background:#fffdf6;font-family:var(--hand);font-size:min(8vw,30px);font-weight:700;color:var(--ink);text-transform:uppercase}
 .pt.on{border-style:solid;border-color:rgba(31,63,148,.55)}
 .pt.pop{animation:ptPop .14s ease-out}
@@ -694,7 +694,7 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 /* v67 palabra en el millón */
 .palq{text-align:center;color:var(--graphite);font-size:17px;margin:2px 12px 0}
 .palq svg{display:none}
-.palhost.m .palrow{grid-template-columns:repeat(5,min(11vw,44px,5.4vh))}
+.palhost.m .palrow{grid-template-columns:repeat(var(--n,5),min(11vw,44px,5.4vh))}
 .palhost.m .pt{font-size:min(6.5vw,24px)}
 .palhost.m .pk{height:min(42px,5.6vh)}
 .palhost.m .palgrid{gap:4px;margin-top:4px}.palhost.m .palrow{gap:5px}
@@ -1802,6 +1802,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v70','Palabra oculta con dos temas nuevos: Música (artistas de Spotify, Latin Grammy y Billboard) y Futbolistas (apellidos del podio del Balón de Oro desde 1956). Pueden tener 5 o 6 letras: la cuadrícula se adapta sola. Al acabar te dice de dónde sale cada nombre.'],
  ['v69','Cada trivia tiene su escenario: Fútbol en un césped con sus líneas, Cine en un fotograma con perforaciones, JJ. OO. con anillas y pista, Música en un pentagrama con un disco girando y Geografía con un minimapa que marca el país del que se pregunta (o los cuatro países de las opciones). Quitada la etiqueta «¡Nuevo!» de las tarjetas del menú.'],
  ['v68','Juego nuevo: «¿Dónde está?». Te digo un país y lo tocas en un mapa de verdad (Natural Earth, 166 países en 7 regiones). Cuanto más cerca, mejor nota; dentro del país, un 10. Y Llega al millón ya no tiene orden fijo: cada partida reparte al azar los 12 minijuegos (también Palabra oculta y el mapa), sin repetir dos seguidos.'],
  ['v67','Más fluido: las pegatinas brillantes, Lapi y los cambios de página ya no obligan al móvil a redibujar la pantalla entera en cada fotograma, y los marcadores ya no hacen recálculos en bucle. No se ha quitado nada. Además, «Palabra oculta» ya sale en Llega al millón (pregunta 14), con su pista de Lapi.'],
@@ -1972,34 +1973,38 @@ const palN=t=>t.toUpperCase().split('').map(c=>c==='Ñ'?c:c.normalize('NFD').rep
 function palCats(){const sur=n=>{const p=n.split(' ');return palN(p[p.length-1])};
   const dep=[...new Map([...BAL_ALL.map(r=>[sur(r[1]),r[1]+' (Balón de Oro)']),...F1WIN.map(d=>[sur(d[0]),d[0]+' (F1)']),...GSW.map(g=>[sur(g[0]),g[0]+' (tenis)'])].filter(([k])=>k.length===5)).entries()];
   const pk=[...new Map(POKE.map(p=>[palN(p[0]),p[0]]).filter(([k])=>k.length===5)).entries()];
-  return{pal:{t:'Palabras',sub:'Palabras de todos los días',w:PAL_W.map(w=>[w,null])},dep:{t:'Deportistas',sub:'Apellidos de Balones de Oro, pilotos y tenistas',w:dep},poke:{t:'Pokémon',sub:'Nombres de las 4 primeras generaciones',w:pk}}}
-function palMenu(){const C=palCats();SFX.page();const el=show(`${pageHead('Palabra oculta')}<div class="scroll"><div class="hand" style="font-size:17px;color:var(--muted);margin:0 0 12px">5 letras, 6 intentos. Verde: letra en su sitio. Amarillo: está, pero en otro sitio. Tachada: no está.</div>
-  ${Object.entries(C).map(([k,c],i)=>`<button class="card mode wide palcat" style="--i:${i}" data-cat="${k}"><span class="tape" style="--tape:rgba(88,240,138,.55)"></span>${sticker(k==='pal'?'book':k==='dep'?'ball':'star',k==='pal'?'var(--green)':k==='dep'?'var(--yel)':'var(--pink)','sm')}<h3>${c.t}</h3><p>${c.sub}</p><span class="cnt">${c.w.length} palabras</span></button>`).join('')}
+  const bad=new Set(['JUNIOR','CARLOS','ELKJR']);const fut=[...new Map(BAL_ALL.flatMap(x=>[x[1],x[3],x[4]]).filter(Boolean).map(n=>{const w=n.split(' ');return[palN(w.length===1?n:w[w.length-1]),n]}).filter(([k])=>k.length>=5&&k.length<=6&&!bad.has(k))).entries()].map(([k,n])=>[k,n+' (Balón de Oro: top 3)']);
+  const junk=new Set(['OTROS','OTRAS','POLOG','MRBIG','JCOLE','NSYNC','LMFAO','CALLE','THE','VARIOS']);const art=new Map();const addA=(n,tag)=>{if(!n)return;String(n).split(/,| & | y | feat\. | ft\. | con /).forEach(a=>{a=a.trim();if(!a)return;const w=a.split(' '),full=palN(a),last=palN(w[w.length-1]);const k=full.length>=5&&full.length<=6?full:(w.length===2&&last.length>=5&&last.length<=6&&!/^(THE|LOS|LAS|LIL|DJ)$/.test(palN(w[0]))?last:'');if(k&&!junk.has(k)&&!art.has(k))art.set(k,a+' ('+tag+')')})};
+  SONGS.forEach(x=>addA(x[1],'Spotify'));SPOTY.forEach(([y,l])=>(l||[]).forEach(x=>addA(x[1],'lo más escuchado en Spotify '+y)));CANC.forEach(x=>addA(x[2],'Latin Grammy '+x[0]));NUEVO.forEach(x=>addA(x[1],'Latin Grammy al mejor artista nuevo '+x[0]));BBN1.filter(x=>x[1]>=3).forEach(x=>addA(x[0],x[1]+' números 1 en Billboard'));
+  const mus=[...art.entries()];
+  return{pal:{t:'Palabras',sub:'Palabras de todos los días',w:PAL_W.map(w=>[w,null])},dep:{t:'Deportistas',sub:'Apellidos de Balones de Oro, pilotos y tenistas',w:dep},poke:{t:'Pokémon',sub:'Nombres de las 4 primeras generaciones',w:pk},mus:{t:'Música',sub:'Artistas de 5 o 6 letras (Spotify, Latin Grammy, Billboard)',w:mus},fut:{t:'Futbolistas',sub:'Apellidos de 5 o 6 letras del podio del Balón de Oro',w:fut}}}
+function palMenu(){const C=palCats();SFX.page();const el=show(`${pageHead('Palabra oculta')}<div class="scroll"><div class="hand" style="font-size:17px;color:var(--muted);margin:0 0 12px">5 o 6 letras, 6 intentos. Verde: letra en su sitio. Amarillo: está, pero en otro sitio. Tachada: no está.</div>
+  ${Object.entries(C).map(([k,c],i)=>`<button class="card mode wide palcat" style="--i:${i}" data-cat="${k}"><span class="tape" style="--tape:rgba(88,240,138,.55)"></span>${sticker({pal:'book',dep:'medal',poke:'star',mus:'note',fut:'ball'}[k]||'star',{pal:'var(--green)',dep:'var(--yel)',poke:'var(--pink)',mus:'var(--cyan)',fut:'var(--orange)'}[k]||'var(--pink)','sm')}<h3>${c.t}</h3><p>${c.sub}</p><span class="cnt">${c.w.length} ${k==='mus'?'artistas':k==='fut'?'futbolistas':'palabras'}</span></button>`).join('')}
   <div class="hand" style="text-align:center;color:var(--muted);margin-top:10px">Racha actual: <b>${(S.pal||{}).run||0}</b> · mejor racha: <b>${(S.pal||{}).best||0}</b></div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};$$('[data-cat]',el).forEach(b=>b.onclick=()=>{SFX.tap();startPal(b.dataset.cat)})}
-function palScore(g,ans){const r=Array(5).fill('x'),a=ans.split(''),used=Array(5).fill(false);
-  for(let i=0;i<5;i++)if(g[i]===a[i]){r[i]='g';used[i]=true}
-  for(let i=0;i<5;i++)if(r[i]!=='g'){const j=a.findIndex((c,k)=>!used[k]&&c===g[i]);if(j>=0){r[i]='y';used[j]=true}}return r}
+function palScore(g,ans){const L=ans.length,r=Array(L).fill('x'),a=ans.split(''),used=Array(L).fill(false);
+  for(let i=0;i<L;i++)if(g[i]===a[i]){r[i]='g';used[i]=true}
+  for(let i=0;i<L;i++)if(r[i]!=='g'){const j=a.findIndex((c,k)=>!used[k]&&c===g[i]);if(j>=0){r[i]='y';used[j]=true}}return r}
 function palGame(el,host,ans,cb){
-  const rows=[],keyst={},found=Array(5).fill(false);let curw='',done=false;
+  const L=ans.length,rows=[],keyst={},found=Array(L).fill(false);let curw='',done=false;
   const kb=['QWERTYUIOP','ASDFGHJKLÑ','<ZXCVBNM>'];
-  host.innerHTML=`<div class="palgrid">${Array.from({length:6},(_,r)=>`<div class="palrow" data-r="${r}">${Array.from({length:5},(_,c)=>`<span class="pt" data-c="${c}"></span>`).join('')}</div>`).join('')}</div>
+  host.innerHTML=`<div class="palgrid" style="--n:${L}">${Array.from({length:6},(_,r)=>`<div class="palrow" data-r="${r}">${Array.from({length:L},(_,c)=>`<span class="pt" data-c="${c}"></span>`).join('')}</div>`).join('')}</div>
   <div class="palmsg hand"></div>
   <div class="palkb">${kb.map(row=>`<div class="pkr">${row.split('').map(k=>`<button class="pk ${k==='<'||k==='>'?'wide':''}" data-k="${k}">${k==='<'?'⌫':k==='>'?'OK':k}</button>`).join('')}</div>`).join('')}</div>`;
   const msg=t=>{const m=$('.palmsg',host);m.textContent=t;m.classList.remove('in');void m.offsetWidth;m.classList.add('in')};
   const paint=()=>{const r=rows.length;if(r>5)return;const row=$(`.palrow[data-r="${r}"]`,host);$$('.pt',row).forEach((t,i)=>{const ch=curw[i]||'';if(t.textContent!==ch){t.textContent=ch;t.classList.toggle('on',!!ch);if(ch){t.classList.remove('pop');void t.offsetWidth;t.classList.add('pop')}}})};
   const off=()=>document.removeEventListener('keydown',onKey);
   const finish=win=>{done=true;off();setTimeout(()=>cb(win,rows.length),900)};
-  const submit=()=>{if(curw.length<5){msg('Faltan letras');const row=$(`.palrow[data-r="${rows.length}"]`,host);row.classList.remove('shake');void row.offsetWidth;row.classList.add('shake');SFX.bad();return}
+  const submit=()=>{if(curw.length<L){msg('Faltan letras');const row=$(`.palrow[data-r="${rows.length}"]`,host);row.classList.remove('shake');void row.offsetWidth;row.classList.add('shake');SFX.bad();return}
     const sc=palScore(curw,ans),r=rows.length,row=$(`.palrow[data-r="${r}"]`,host),w=curw;rows.push(curw);curw='';
     sc.forEach((v,i)=>{if(v==='g')found[i]=true});
     $$('.pt',row).forEach((t,i)=>{setTimeout(()=>{t.classList.add('flip',sc[i]);SFX.tick();const ch=w[i],prev=keyst[ch],rank={g:3,y:2,x:1};if(!prev||rank[sc[i]]>rank[prev]){keyst[ch]=sc[i];const b=$(`.pk[data-k="${ch}"]`,host);if(b){b.classList.remove('g','y','x');b.classList.add(sc[i])}}},i*180)});
-    setTimeout(()=>{if(w===ans){row.classList.add('win');finish(true)}else if(rows.length>=6)finish(false);else msg(['Sigue…','Vas bien','Piensa…','Ánimo','¡Última!'][Math.min(rows.length-1,4)])},5*180+200)};
-  const press=k=>{if(done)return;if(k==='<'){curw=curw.slice(0,-1);paint();return}if(k==='>'){submit();return}if(curw.length<5&&/^[A-ZÑ]$/.test(k)){curw+=k;vib(4);paint()}};
+    setTimeout(()=>{if(w===ans){row.classList.add('win');finish(true)}else if(rows.length>=6)finish(false);else msg(['Sigue…','Vas bien','Piensa…','Ánimo','¡Última!'][Math.min(rows.length-1,4)])},L*180+200)};
+  const press=k=>{if(done)return;if(k==='<'){curw=curw.slice(0,-1);paint();return}if(k==='>'){submit();return}if(curw.length<L&&/^[A-ZÑ]$/.test(k)){curw+=k;vib(4);paint()}};
   $$('.pk',host).forEach(b=>b.onclick=()=>{SFX.tick();press(b.dataset.k)});
   function onKey(e){if(!el.isConnected){off();return}const k=e.key==='Backspace'?'<':e.key==='Enter'?'>':e.key.length===1?palN(e.key):'';if(k){e.preventDefault();press(k)}}
   document.addEventListener('keydown',onKey);
-  return{off,hint:()=>{const free=[0,1,2,3,4].filter(i=>!found[i]);if(!free.length)return null;const i=pick(free);return[i,ans[i]]},isDone:()=>done}
+  return{off,hint:()=>{const free=[...Array(L).keys()].filter(i=>!found[i]);if(!free.length)return null;const i=pick(free);return[i,ans[i]]},isDone:()=>done}
 }
 function startPal(cat){const C=palCats()[cat];R=rngFrom((Date.now()^(Math.random()*1e9))>>>0);const [ans,info]=pick(C.w);G={mode:'palabra',rounds:[],i:0,notes:[]};
   const el=show(`${SPIRAL}<div class="topbar"><button class="iconbtn" data-quit aria-label="Salir">${IC.x}</button><div class="grow"><div class="roundlbl">Palabra oculta · <b>${esc(C.t)}</b></div></div></div><div class="palhost"></div>`);
@@ -2313,7 +2318,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v69</div></div>`);
+  <div class="foot">¡Clavado! v70</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

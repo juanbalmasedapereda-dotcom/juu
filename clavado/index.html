@@ -1136,6 +1136,11 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 .report .vfm .q{font-weight:700}
 .report .vfm .a{margin-top:3px;color:var(--muted,#5a6480)}
 .report .vfm .a b.t{color:#157a3e}.report .vfm .a b.f{color:#c2185b}
+
+/* v179 jugada estrella en Duelo */
+.report .dbest{margin-top:14px;padding:10px 12px;border-radius:14px;background:rgba(255,214,0,.16);display:grid;gap:6px;font-size:14px;line-height:1.3;text-align:left}
+.report .dbest>div{display:flex;gap:8px;align-items:flex-start}
+.report .dbest svg{width:18px;height:18px;flex:none;margin-top:1px}
 </style>
 </head>
 <body>
@@ -1262,7 +1267,7 @@ const NEIGH={"TZA":["COD","KEN","ZMB","MWI","MOZ","BDI","UGA","RWA"],"COD":["TZA
 <script>'use strict';
 /* ================= utilidades ================= */
 /* v160: modos con cambios recientes (se marca «¡nuevo!» hasta que lo juegas) */
-const CHG={dibuja:'v165',raro:'v175',intruso:'v175',vf:'v173',orden:'v174',anio:'v176',masmenos:'v169',bote:'v169',aojo:'v170'};
+const CHG={dibuja:'v165',raro:'v175',intruso:'v175',vf:'v178',orden:'v174',anio:'v176',masmenos:'v169',bote:'v169',aojo:'v170',duelo:'v179'};
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const app=$('#app');
@@ -2231,6 +2236,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v179','Duelo a dos: la hoja final destaca la jugada estrella (la mejor nota de la partida y quién la sacó) y la ronda más reñida.'],
  ['v178','¿Verdad o mentira?: al acabar el minuto, la hoja de resultados te enseña las últimas frases que fallaste, con la respuesta y la explicación, para que aprendas algo de cada partida.'],
  ['v177','El boletín de notas ahora también te dice qué frases de ¿Verdad o mentira? fallaste y si eran verdad o falsas.'],
  ['v176','¿En qué año? estrena más Juegos Olímpicos, de verano y de invierno: de Estocolmo 1912 a Pyeongchang 2018. Solo salen las ciudades que han sido sede una vez, para que no haya dos respuestas posibles.'],
@@ -2935,7 +2941,7 @@ function duelEnd(){S.games++;award('primera');award('duelo');save();
   const col=p=>`<div class="dcol" style="--pc:${p?'var(--pink)':'var(--cyan)'}"><h3>J${p+1}</h3>${G.rounds.map((r,k)=>k%2===p?`<div class="rrow"><div class="s">${esc(subject(r)[0])}<small>${esc(subject(r)[1])}</small></div><div class="n num ${G.notes[k]<5?'low':''}">${nota(G.notes[k])}</div></div>`:'').join('')}<div class="dtot num">${nota(p?b:a)}<small>/${G.rounds.length/2*10}</small></div></div>`;
   const el=show(`${SPIRAL}<div class="scroll"><div class="report"><span class="tape" style="--tape:rgba(255,94,168,.5)"></span>
    <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><div><h2>${w<0?'¡Empate!':`¡Gana J${w+1}!`}</h2><div class="who">Duelo a dos · ${w<0?'Nadie se lleva la gloria':`por ${nota(Math.round(Math.abs(a-b)*10)/10)} puntos`}</div></div><div style="width:66px;height:100px;margin:-10px -4px 0 0;flex:none">${lapi(w<0?'meh':'cool')}</div></div>
-   <div class="dcols">${col(0)}${col(1)}</div></div>
+   <div class="dcols">${col(0)}${col(1)}</div>${(()=>{try{let bk=-1,bv=-1,dk=-1,dv=-1;G.notes.forEach((v,k)=>{if(v>bv){bv=v;bk=k}});for(let k=0;k+1<G.rounds.length;k+=2){const d=Math.abs((G.notes[k]||0)-(G.notes[k+1]||0));if(dv<0||d<dv){dv=d;dk=k}}if(bk<0)return '';return `<div class="dbest"><div>${IC.star||''}<span><b>Jugada estrella:</b> J${bk%2+1} sacó un <b>${nota(bv)}</b> en ${esc(subject(G.rounds[bk])[0])}</span></div>${dk>=0?`<div>${IC.bolt||''}<span><b>Lo más reñido:</b> ${esc(subject(G.rounds[dk])[0])} (${nota(G.notes[dk])} a ${nota(G.notes[dk+1])})</span></div>`:''}</div>`}catch(e){return ''}})()}</div>
    ${w<0?`<button class="btn wide tbbtn" data-tb style="margin-top:16px">${IC.bolt||''} ¡Desempate!</button>`:''}<div class="row" style="margin-top:${w<0?10:18}px"><button class="btn" data-again>${IC.redo} Revancha</button><button class="iconbtn" data-share aria-label="Compartir">${IC.share}</button><button class="btn white" data-menu>Menú</button></div></div>`);
   setTimeout(()=>{SFX.stamp();if(w>=0){SFX.fanfare();confetti()}},500);
   $('[data-again]',el).onclick=()=>start('duelo');$('[data-menu]',el).onclick=menu;
@@ -3081,7 +3087,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v178</div></div>`);
+  <div class="foot">¡Clavado! v179</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

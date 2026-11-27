@@ -643,6 +643,16 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 .screen.fxbad{animation:scrShake .45s}@keyframes scrShake{20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
 .clue{animation:clueIn .4s var(--ease) both}@keyframes clueIn{from{opacity:0;transform:translateX(-14px)}}
 .oitem.ok{animation:pop .35s var(--ease) both,okPulse .8s .2s}@keyframes okPulse{50%{box-shadow:0 0 0 4px rgba(24,169,87,.35),var(--shadow-1)}}
+
+/* v58 */
+.lapipop{position:fixed;right:-6px;bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:55;display:flex;align-items:flex-end;gap:4px;pointer-events:none;animation:lpIn .45s cubic-bezier(.3,1.6,.5,1) both}
+.lapipop .lp-l{width:64px;height:84px;transform:rotate(-12deg)}.lapipop .lp-l svg{width:100%;height:100%}
+.lapipop .lp-b{background:#fff;border:2px solid var(--ink);border-radius:14px 14px 4px 14px;padding:6px 10px;font-size:17px;color:var(--ink);box-shadow:var(--shadow-1);margin-bottom:46px;white-space:nowrap}
+.lapipop.sad .lp-b{color:var(--red)}.lapipop.wow .lp-b{background:var(--yel)}
+.lapipop.out{animation:lpOut .35s ease-in both}
+@keyframes lpIn{from{transform:translate(90px,30px) rotate(20deg);opacity:0}}@keyframes lpOut{to{transform:translate(90px,20px) rotate(15deg);opacity:0}}
+.ladderscreen .rung:not(.justgot):not(.now){animation:rungIn .4s var(--ease) both}@keyframes rungIn{from{opacity:0;transform:translateX(30px)}}
+.ladderscreen .rung.now{animation:rungIn .4s var(--ease) both,nowPulse 1.6s 1s ease-in-out infinite}@keyframes nowPulse{50%{box-shadow:0 0 0 5px rgba(244,255,61,.6)}}
 </style>
 </head>
 <body>
@@ -1693,6 +1703,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v58','Segunda tanda de animaciones: Lapi asoma por la esquina después de cada respuesta (contento, alucinado o triste) con un comentario, las notas del sello y el dinero del cheque suben contando, y la escalera del millón tiene una transición nueva.'],
  ['v57','Más animaciones: las tarjetas del menú entran una detrás de otra, explosión de estrellas al sacar buena nota, la pantalla tiembla si fallas, los marcadores dan un salto al subir, las respuestas correctas brillan y los botones rebotan. Si el móvil tiene activado «reducir movimiento», se respetan.'],
  ['v56','Trivias con temas nuevos: qué peli recaudó o costó más y en qué año salió (Trivia de cine), quién canta cada éxito de Spotify (Trivia musical), y en el millón también Pokémon y Steam. Lo más raro: pilotos que han ganado en F1 y Pokémon de tipo fuego, agua, eléctrico y dragón.'],
  ['v55','Dibuja la gráfica: 13 temas más (ya son 60 nuevos desde la v48). Victorias en F1 de Hamilton, Schumacher, Alonso, Vettel y Senna, audiencia de «Friends», precio del Big Mac, piezas por set de LEGO, pelis y series de Netflix por año, deportistas y países en los Juegos y países en Eurovisión. También entran en Calcula a ojo.'],
@@ -1768,9 +1779,15 @@ function fxResult(n){if(RM()||!cur)return;const good=n>=7,bad=n<3;
   if(good){const b=document.createElement('div');b.className='fxburst';const cols=['var(--yel)','var(--pink)','var(--green)','var(--cyan)','var(--lila)'];
     for(let i=0;i<12;i++){const a=i/12*Math.PI*2,d=70+Math.random()*60,sp=document.createElement('i');sp.style.cssText=`--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d}px;--c:${cols[i%5]};--r:${Math.random()*360}deg;animation-delay:${Math.random()*.08}s`;if(i%3===0)sp.className='st';b.appendChild(sp)}
     document.body.appendChild(b);setTimeout(()=>b.remove(),1100)}
+  popLapi(good?(n>=9.5?'wow':'happy'):bad?'sad':'happy',good?pick(['¡Toma!','¡Crack!','¡Eso es!','¡Clavado!']):bad?pick(['Uy…','¡Casi!','Otra vez será','Ay, ay…']):pick(['¡Nada mal!','Se acepta','Bien, bien']));
   if(bad){cur.classList.remove('fxbad');void cur.offsetWidth;cur.classList.add('fxbad');setTimeout(()=>cur&&cur.classList.remove('fxbad'),500)}}
+
+function countUp(el){el.classList.add('cu');const txt=el.textContent,isEu=/€/.test(txt);const to=isEu?+txt.replace(/[^\d]/g,''):+txt.replace(',','.');if(!isFinite(to)||to<=0)return;const dec=!isEu&&to%1?1:0,t0=performance.now(),dur=isEu?1100:650;
+  const f=v=>isEu?euro(Math.round(v)):fmt(v,dec);el.textContent=f(0);(function st(t){const k=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-k,3);el.textContent=f(k<1?to*e:to);if(k<1)requestAnimationFrame(st)})(t0)}
+let lapiPopT=0;function popLapi(mood,txt){$$('.lapipop').forEach(x=>x.parentNode.removeChild(x));clearTimeout(lapiPopT);const d=document.createElement('div');d.className='lapipop '+mood;d.innerHTML=`<div class="lp-b hand">${esc(txt)}</div><div class="lp-l">${lapi(mood)}</div>`;document.body.appendChild(d);lapiPopT=setTimeout(()=>{d.classList.add('out');setTimeout(()=>d.parentNode&&d.parentNode.removeChild(d),400)},1500)}
 /* números que crecen al cambiar */
-(function(){if(typeof MutationObserver==='undefined')return;const mo=new MutationObserver(ms=>{if(RM())return;for(const m of ms){const t=m.target.nodeType===3?m.target.parentElement:m.target;const el=t&&t.closest&&t.closest('.streak,.prize,[data-sc],[data-vo]');if(el){el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump')}}});
+(function(){if(typeof MutationObserver==='undefined')return;const mo=new MutationObserver(ms=>{if(RM())return;for(const m of ms){const t=m.target.nodeType===3?m.target.parentElement:m.target;const el=t&&t.closest&&t.closest('.streak,.prize,[data-sc],[data-vo]');if(el){el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump')}
+    m.addedNodes&&m.addedNodes.forEach(nd=>{if(nd.nodeType!==1)return;nd.querySelectorAll('.stamp b.num:not(.cu),.ch-amt:not(.cu)').forEach(countUp)})}});
   addEventListener('DOMContentLoaded',()=>mo.observe(document.body,{subtree:true,childList:true,characterData:true}));if(document.body)mo.observe(document.body,{subtree:true,characterData:true,childList:true})})();
 
 /* ================= EL BOTE ================= */
@@ -1846,7 +1863,7 @@ function nextM(){
   G.i++;ladder();
 }
 function ladder(first){
-  const at=G.i,won=at>0?LADDER[at-1]:0;
+  const at=G.i,won=at>0?LADDER[at-1]:0;$$('.lapipop').forEach(x=>x.parentNode.removeChild(x));
   const el=show(`${SPIRAL}<div class="pagehead"><button class="iconbtn" data-quit aria-label="Salir">${IC.x}</button><h2>${first?'Llega al millón':`¡Llevas ${euro(won)}!`}</h2></div>
   <div class="ladderwrap"><div class="ladder">${LADDER.map((v,k)=>`<div class="rung ${k<at?'got':''} ${k===at?'now':''} ${SAFE.includes(k)?'safe':''}" style="animation-delay:${(14-k)*.03}s"><span class="rn">${k+1}</span><span class="rv num">${euro(v)}</span>${SAFE.includes(k)?`<span class="sf">${(G.safe||[]).includes(k)?'seguro ✓':(G.revived||{})[k]?'comodín ✓':'¿seguro o comodín?'}</span>`:''}${k<at?'<svg viewBox="0 0 24 24" class="tk"><path d="M4 12l5 5L20 6"/></svg>':''}</div>`).reverse().join('')}<div class="lapimini" style="--k:${14-at}">${lapi(first?'happy':'cool')}</div></div>
   ${first?`<p class="rules hand">Acierta las de música y ¿más o menos?. En gráficas, años y «a ojo» saca la nota que se pide. En la 5 y en la 10 eliges: <b>asegurar el dinero</b> o <b>recuperar un comodín</b>.</p>`:''}</div>
@@ -2009,7 +2026,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v57</div></div>`);
+  <div class="foot">¡Clavado! v58</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

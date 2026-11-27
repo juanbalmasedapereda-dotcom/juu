@@ -1192,6 +1192,13 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 .th-cien .thdeco{display:none}
 .th-cien .ans{background:#fff;box-shadow:var(--shadow-1),inset 6px 0 0 #2bb673}
 .th-cien .ans .k{border-radius:6px;background:#1f4f4a;color:#9dffcf}
+
+/* v238 escenario Dinero: billete verde */
+.th-din .qcard{background:repeating-linear-gradient(45deg,rgba(255,255,255,.05) 0 2px,transparent 2px 9px),radial-gradient(circle at 85% 30%,rgba(255,255,255,.18),transparent 40%),#1d6b3f}
+.th-din .qcard .qtitle,.th-din .qcard .qtitle b{color:#f6fff2}.th-din .qcard .qtitle b{color:#ffe066}
+.th-din .qcard .timer{background:rgba(255,255,255,.85)}.th-din .thdeco{display:none}
+.th-din .ans{background:#fff;box-shadow:var(--shadow-1),inset 6px 0 0 #e0b400}
+.th-din .ans .k{border-radius:50%;background:#ffe066;color:#16295e}
 </style>
 </head>
 <body>
@@ -1320,7 +1327,7 @@ const ELEM=[["hidrógeno","H",1,-259.2,"G","otro",1.01,null],["helio","He",2,-27
 <script>'use strict';
 /* ================= utilidades ================= */
 /* v160: modos con cambios recientes (se marca «¡nuevo!» hasta que lo juegas) */
-const CHG={banderas:'v235',conex:'v236',trivial:'v236',dibuja:'v226',raro:'v220',intruso:'v220',vf:'v217',orden:'v236',anio:'v224',masmenos:'v236',bote:'v236',aojo:'v216',duelo:'v212',trivia:'v222',escribe:'v206',mapa:'v232',palabra:'v227'};
+const CHG={banderas:'v235',conex:'v236',trivial:'v238',dibuja:'v226',raro:'v220',intruso:'v220',vf:'v217',orden:'v238',anio:'v224',masmenos:'v238',bote:'v238',aojo:'v216',duelo:'v212',trivia:'v222',escribe:'v206',mapa:'v232',palabra:'v227'};
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const app=$('#app');
@@ -1431,7 +1438,7 @@ function show(html,cls=''){
 const SPIRAL='<div class="spiral"></div>';
 
 /* ================= menú ================= */
-const NM={ciencia:'Ciencia',banderas:'Banderas',conex:'Conexiones',trivial:'Trivial',tmix:'Trivial mezclado',totros:'Pokémon, LEGO y más',concurso:'Concurso',diario:'Reto del día',dibuja:'Dibuja la gráfica',trivia:'Trivia musical',anio:'¿En qué año?',aojo:'Calcula a ojo',futbol:'Trivia de fútbol',cine:'Trivia de cine',masmenos:'¿Más o menos?',geo:'Geografía',jjoo:'Juegos Olímpicos',bote:'El bote',raro:'Lo más raro',escribe:'Escríbelo raro',cancion:'Adivina la canción',suena:'¿Qué suena?',orden:'Ordénalos',vf:'Verdadero o falso',intruso:'El intruso',palabra:'Palabra oculta',mapa:'¿Dónde está?'};
+const NM={dinero:'Dinero y bolsa',ciencia:'Ciencia',banderas:'Banderas',conex:'Conexiones',trivial:'Trivial',tmix:'Trivial mezclado',totros:'Pokémon, LEGO y más',concurso:'Concurso',diario:'Reto del día',dibuja:'Dibuja la gráfica',trivia:'Trivia musical',anio:'¿En qué año?',aojo:'Calcula a ojo',futbol:'Trivia de fútbol',cine:'Trivia de cine',masmenos:'¿Más o menos?',geo:'Geografía',jjoo:'Juegos Olímpicos',bote:'El bote',raro:'Lo más raro',escribe:'Escríbelo raro',cancion:'Adivina la canción',suena:'¿Qué suena?',orden:'Ordénalos',vf:'Verdadero o falso',intruso:'El intruso',palabra:'Palabra oculta',mapa:'¿Dónde está?'};
 
 const MODES=[
   {id:'dibuja',t:'Dibuja la gráfica',p:'Traza con el dedo cómo siguió',ic:'chart',c:'var(--pink)',tape:'rgba(255,94,168,.5)'},
@@ -1456,7 +1463,7 @@ const MODES=[
   {id:'banderas',nu:1,t:'Banderas',p:'¿De qué país es? 165 banderas de todo el mundo',ic:'globe',c:'var(--red)',tape:'rgba(255,94,168,.5)'},
   {id:'conex',nu:1,t:'Conexiones',p:'16 cosas, 4 grupos escondidos: ¿sabes cuáles van juntas?',ic:'target',c:'var(--lila)',tape:'rgba(180,140,255,.5)'},
   {id:'trivial',nu:1,t:'Trivial',p:'Todas las trivias en una: elige tema o mézclalos',ic:'star',c:'var(--yel)',tape:'rgba(244,255,61,.7)',wide:1},
-  {hide:1,id:'tmix',t:'Trivial mezclado'},{hide:1,id:'ciencia',t:'Ciencia'},{hide:1,id:'totros',t:'Trivial: Pokémon, LEGO y más'},
+  {hide:1,id:'tmix',t:'Trivial mezclado'},{hide:1,id:'ciencia',t:'Ciencia'},{hide:1,id:'dinero',t:'Dinero y bolsa'},{hide:1,id:'totros',t:'Trivial: Pokémon, LEGO y más'},
   {id:'duelo',t:'Duelo a dos',p:'Pasaos el móvil: 5 preguntas cada uno, gana quien sume más',ic:'flame',c:'var(--red)',tape:'rgba(255,94,168,.5)',wide:1}
 ];
 const MSEC=[['Rápidos: contra el reloj',['vf','masmenos','bote','intruso']],['Preguntas',['banderas','trivial','mapa','cancion']],['Para pensar',['conex','palabra','dibuja','orden','anio','aojo','raro','escribe']]];
@@ -1583,6 +1590,7 @@ function start(mode){try{if(!S.seenMode){S.seenMode=Object.assign({},CHG);save()
   else if(mode==='trivia')types=Array(10).fill('tmus');
   else if(mode==='tmix')types=Array(10).fill('tmix');
   else if(mode==='ciencia')types=Array(10).fill('tag:Ciencia');
+  else if(mode==='dinero')types=Array(10).fill('tag:Dinero');
   else if(mode==='totros')types=Array(10).fill('totros');
   else if(mode==='anio')types=Array(8).fill('year');
   else if(mode==='aojo')types=Array(8).fill('guess');
@@ -1740,7 +1748,7 @@ function roundDraw(r){
 /* ---------- ronda: trivia ---------- */
 function roundTrivia(r){
   const q=r.q,T=15000;
-  const el=show(`${topbar()}<div class="card qcard"><span class="tape" style="--tape:rgba(69,227,255,.55)"></span><span class="tag" style="--tag:${q.tag==='Fútbol'?'var(--green)':q.tag==='Cine'?'var(--orange)':q.tag==='Geografía'?'var(--lila)':q.tag==='JJ. OO.'?'var(--yel)':q.tag==='Intruso'?'var(--pink)':'var(--cyan)'}">${(q.tag==='Fútbol'?IC.ball:q.tag==='Cine'?IC.star:q.tag==='Geografía'?IC.globe:q.tag==='JJ. OO.'?IC.medal:q.tag==='Intruso'?IC.target:q.tag==='LEGO'?IC.star:q.tag==='Pokémon'?IC.target:q.tag==='F1'?IC.trophy:q.tag==='Tenis'?IC.ball:q.tag==='Videojuegos'||q.tag==='Ciencia'?IC.bolt:IC.note).replace('<svg','<svg width="16" height="16" style="vertical-align:-3px"')} ${q.tag}</span><h2 class="qtitle">${q.q}</h2><div class="timer"><i></i></div></div>
+  const el=show(`${topbar()}<div class="card qcard"><span class="tape" style="--tape:rgba(69,227,255,.55)"></span><span class="tag" style="--tag:${q.tag==='Fútbol'?'var(--green)':q.tag==='Cine'?'var(--orange)':q.tag==='Geografía'?'var(--lila)':q.tag==='JJ. OO.'?'var(--yel)':q.tag==='Intruso'?'var(--pink)':'var(--cyan)'}">${(q.tag==='Fútbol'?IC.ball:q.tag==='Cine'?IC.star:q.tag==='Geografía'?IC.globe:q.tag==='JJ. OO.'?IC.medal:q.tag==='Intruso'?IC.target:q.tag==='LEGO'?IC.star:q.tag==='Pokémon'?IC.target:q.tag==='F1'?IC.trophy:q.tag==='Tenis'?IC.ball:q.tag==='Videojuegos'||q.tag==='Ciencia'?IC.bolt:q.tag==='Dinero'?IC.trophy:IC.note).replace('<svg','<svg width="16" height="16" style="vertical-align:-3px"')} ${q.tag}</span><h2 class="qtitle">${q.q}</h2><div class="timer"><i></i></div></div>
   <div class="answers">${q.opts.map((o,k)=>`<button class="ans" data-k="${k}"><span class="k">${'ABCD'[k]}</span><span class="t">${esc(o.t)}${o.a?`<small>${esc(o.a)}</small>`:''}</span><span class="mark"></span></button>`).join('')}</div><div class="bottom"></div>`);themeTrivia(el,q);
   bindQuit(el);$$('.sticker svg',el);
   $$('.tag svg *',el).forEach(p=>{p.style.fill=p.classList.contains('f')?'#16295e':'none';p.style.stroke='#16295e';p.style.strokeWidth=2.6});
@@ -1898,10 +1906,10 @@ const tierOf=l=>l<5?0:l<10?1:2;
 function genCine(){return genTag('Cine')}
 /* v233: Trivial, todas las trivias en un solo modo */
 const T_OTROS=['Pokémon','LEGO','Videojuegos','Espacio','Tenis','F1'];
-function genTrivK(t){if(t==='tmix'){const k=pick(['tmus','tmus','Fútbol','Fútbol','Cine','Geografía','JJ. OO.','totros','Ciencia']);return k.startsWith('t')?genTrivK(k):genTag(k)}
+function genTrivK(t){if(t==='tmix'){const k=pick(['tmus','tmus','Fútbol','Fútbol','Cine','Geografía','JJ. OO.','totros','Ciencia','Dinero']);return k.startsWith('t')?genTrivK(k):genTag(k)}
   const want=q=>t==='totros'?T_OTROS.includes(q.tag):!T_OTROS.includes(q.tag);let last;
   for(let i=0;i<300;i++){const q=pick(TRIV)();if(!want(q))continue;last=q;if(!usedQ.has(q.k)){usedQ.add(q.k);return{type:'trivia',q}}}return last?{type:'trivia',q:last}:genTrivia()}
-function trivMenu(){SFX.page();const C=[['tmix','Todo mezclado','De todo un poco: la mejor para jugar en clase','star','var(--yel)'],['trivia','Música','Números 1, Eurovisión, Spotify, Billboard y Latin Grammy','note','var(--cyan)'],['futbol','Fútbol','Liga, Mundiales, Balón de Oro y Champions','ball','var(--green)'],['cine','Cine','Óscar, taquilla y presupuestos','star','var(--orange)'],['geo','Geografía','Capitales, habitantes, provincias y renovables','globe','var(--cyan)'],['jjoo','Juegos Olímpicos','Sedes de 1896 a 2026 y medallas de España','medal','var(--green)'],['ciencia','Ciencia','Elementos químicos: símbolos, gases, metales…','bolt','var(--lila)'],['totros','Pokémon, LEGO y más','Pokémon, LEGO, videojuegos, espacio, tenis y F1','target','var(--pink)']];
+function trivMenu(){SFX.page();const C=[['tmix','Todo mezclado','De todo un poco: la mejor para jugar en clase','star','var(--yel)'],['trivia','Música','Números 1, Eurovisión, Spotify, Billboard y Latin Grammy','note','var(--cyan)'],['futbol','Fútbol','Liga, Mundiales, Balón de Oro y Champions','ball','var(--green)'],['cine','Cine','Óscar, taquilla y presupuestos','star','var(--orange)'],['geo','Geografía','Capitales, habitantes, provincias y renovables','globe','var(--cyan)'],['jjoo','Juegos Olímpicos','Sedes de 1896 a 2026 y medallas de España','medal','var(--green)'],['ciencia','Ciencia','Elementos químicos: símbolos, gases, metales…','bolt','var(--lila)'],['dinero','Dinero y bolsa','Acciones, oro, petróleo, el euro y el Big Mac','trophy','var(--yel)'],['totros','Pokémon, LEGO y más','Pokémon, LEGO, videojuegos, espacio, tenis y F1','target','var(--pink)']];
   const el=show(`${pageHead('Trivial')}<div class="scroll"><div class="hand" style="font-size:17px;color:var(--muted);margin:0 0 12px">10 preguntas con 4 opciones. Elige un tema o mézclalos todos.</div>
   ${C.map(([k,t,sub,ic,c],i)=>`<button class="card mode wide palcat" style="--i:${i}" data-tk="${k}"><span class="tape" style="--tape:rgba(244,255,61,.6)"></span>${sticker(ic,c,'sm')}<h3>${t}</h3><p>${sub}</p>${S.best[k]!=null?`<span class="best">${bestTxt(k)}</span>`:''}</button>`).join('')}</div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};$$('[data-tk]',el).forEach(b=>b.onclick=()=>{SFX.tap();start(b.dataset.tk)})}
@@ -2319,6 +2327,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v238','Tema nuevo: Dinero y bolsa. En Trivial hay categoría propia: si hubieras metido 100 dólares en Apple, Nvidia o Tesla, ¿cuánto tendrías? ¿Cuánto costaba el oro, el petróleo o un Big Mac? En ¿Más o menos? y El bote comparas inversiones y precios del oro, y en Ordénalos ordenas empresas y años.'],
  ['v237','Llega al millón: en «Prepara tu millón» ya puedes quitar dos temas que antes no tenían botón: «Ciencia, espacio y planeta» (elementos químicos, astronautas, CO₂, renovables…) y «Dinero y bolsa» (acciones, oro, petróleo, Big Mac…). Además, cuando quitas temas, el juego busca más a fondo una pregunta que encaje antes de rendirse.'],
  ['v236','Tema nuevo: Ciencia (elementos químicos). En Trivial hay categoría Ciencia (símbolos como Au o Fe, gases, líquidos, números atómicos…), en ¿Más o menos? y El bote comparas puntos de fusión y masas atómicas, en Ordénalos ordenas elementos y en Conexiones salen grupos como gases nobles o metales alcalinos.'],
  ['v235','Juego nuevo: Banderas. Hay 165 países: a veces te enseña una bandera y eliges el país, y otras te dice el país y eliges entre 4 banderas. Empieza con países conocidos y se va complicando. Pegatina nueva: «Abanderado», por acertar las 10.'],
@@ -2833,6 +2842,26 @@ function mapaMenu(){SFX.page();const regs=[['mix','Mundo mezclado','Países de t
 
 
 
+
+/* ================= v238: tema nuevo, Dinero y bolsa ================= */
+const srV=(id,y)=>{const x=SR(id);if(!x)return null;const i=x.y.indexOf(y);return i<0?null:x.v[i]};
+const BX=[['bx_aapl','Apple'],['bx_nflx','Netflix'],['bx_amzn','Amazon'],['bx_tsla','Tesla'],['bx_nvda','Nvidia'],['bx_msft','Microsoft'],['bx_meta','Meta (Facebook)'],['bx_googl','Google'],['bx_ibm','IBM']];
+const BXS='Yahoo Finance (vía TidyTuesday): precios ajustados por divisiones de acciones',BXU='https://github.com/rfordatascience/tidytuesday/tree/main/data/2023/2023-02-07';
+function bxGrow(y0,y1){return BX.map(([id,n])=>{const a=srV(id,y0),b=srV(id,y1);return a&&b?{n,v:100*b/a}:null}).filter(Boolean)}
+const usd=v=>fmt(Math.round(v))+' $';
+const dinQ={
+ inv:()=>{const y0=pick([2012,2014,2016]),c=pick4d(bxGrow(y0,2022),x=>x.v,60)||shuffle(bxGrow(y0,2022)).slice(0,4);const top=c.slice().sort((a,b)=>b.v-a.v)[0];return{tag:'Dinero',q:`Si en ${y0} hubieras metido <b>100 dólares</b> en acciones de una de estas empresas, ¿con cuál tendrías <b>más dinero en 2022</b>?`,opts:shuffle(c.map(x=>({t:x.n,ok:x===top}))),after:c.map(x=>`${x.n}: ${usd(x.v)}`).join(' · ')+' (medias de cada año)',src:BXS,url:BXU,k:'di'+y0+c.map(x=>x.n).join()}},
+ oro:()=>{const x=SR('oro');const ys=x.y.filter(y=>y%5===0);const y=pick(ys),v=srV('oro',y);const w=ys.filter(z=>z!==y).map(z=>srV('oro',z)).filter(u=>u&&Math.abs(u/v-1)>.25);return{tag:'Dinero',q:`¿Cuánto costaba una <b>onza de oro</b> (31 gramos) en ${y}?`,opts:opts4({t:usd(v)},w.map(u=>({t:usd(u)}))),after:`En ${y} costaba unos ${usd(v)}; en ${x.y[x.y.length-1]}, unos ${usd(x.v[x.v.length-1])}.`,src:'datasets/gold-prices (media del año)',url:'https://github.com/datasets/gold-prices',k:'do'+y}},
+ oil:()=>{const x=SR('brent');const c=pick4d(x.y.map((y,i)=>({y,v:x.v[i]})),o=>o.v,12)||[];if(c.length<4)return dinQ.oro();const top=c.slice().sort((a,b)=>b.v-a.v)[0];return{tag:'Dinero',q:'¿En cuál de estos años estuvo <b>más caro el petróleo</b> (barril de Brent)?',opts:shuffle(c.map(o=>({t:String(o.y),ok:o===top}))),after:c.map(o=>`${o.y}: ${fmt(o.v,1)} $`).join(' · '),src:'EIA (vía datasets/oil-prices)',url:'https://github.com/datasets/oil-prices',k:'dp'+c.map(o=>o.y).join()}},
+ eur:()=>{const x=SR('eurusd');const c=pick4d(x.y.map((y,i)=>({y,v:x.v[i]})),o=>o.v,.06)||[];if(c.length<4)return dinQ.oro();const top=c.slice().sort((a,b)=>b.v-a.v)[0];return{tag:'Dinero',q:'¿En qué año <b>valía más el euro</b> en dólares?',opts:shuffle(c.map(o=>({t:String(o.y),ok:o===top}))),after:c.map(o=>`${o.y}: 1 € = ${fmt(o.v,2)} $`).join(' · '),src:'Reserva Federal (vía datasets/exchange-rates)',url:'https://github.com/datasets/exchange-rates',k:'de'+c.map(o=>o.y).join()}},
+ pib:()=>{const P=PAISES.filter(p=>p.pib);const c=pick4d(P,p=>Math.log(p.pib),.25)||shuffle(P).slice(0,4);const top=c.slice().sort((a,b)=>b.pib-a.pib)[0];return{tag:'Dinero',q:'¿Qué país tiene la <b>economía más grande</b> (PIB de 2023)?',opts:shuffle(c.map(p=>({t:p.n,ok:p===top}))),after:c.map(p=>`${p.n}: ${fmt(Math.round(p.pib/1e9))} mil millones $`).join(' · '),src:'Banco Mundial (vía datasets/gdp)',url:'https://github.com/datasets/gdp',k:'dg'+c.map(p=>p.n).join()}},
+ bmac:()=>{const x=SR('bigmac_eur');if(!x)return dinQ.oro();const i=Math.floor(R()*x.y.length),y=x.y[i],v=x.v[i];const w=x.v.filter(u=>Math.abs(u-v)>=.35).map(u=>({t:fmt(u,2)+' €'}));return{tag:'Dinero',q:`¿Cuánto costaba un <b>Big Mac</b> en la zona euro en ${y}?`,opts:opts4({t:fmt(v,2)+' €'},w),after:`En ${y}: ${fmt(v,2)} €; en ${x.y[x.y.length-1]}: ${fmt(x.v[x.v.length-1],2)} €.`,src:'The Economist, índice Big Mac (vía TidyTuesday)',url:'https://github.com/rfordatascience/tidytuesday/tree/main/data/2020/2020-12-22',k:'db'+y}}
+};
+POOL['Dinero']=[[BX,dinQ.inv],[BX,dinQ.inv],[BX,dinQ.oro],[BX,dinQ.oil],[BX,dinQ.eur],[BX,dinQ.pib],[BX,dinQ.bmac]];
+VSM.push({id:'inv',lbl:'lo que tendrías en 2022 si en 2012 hubieras metido 100 $ en sus acciones',src:BXS,url:BXU,items:()=>bxGrow(2012,2022).map(x=>({n:x.n,v:x.v})),f:usd},
+ {id:'oroy',lbl:'precio de una onza de oro ese año',src:'datasets/gold-prices (media del año)',url:'https://github.com/datasets/gold-prices',items:()=>{const x=SR('oro');return x.y.filter(y=>y%2===0).map(y=>({n:'El oro en '+y,v:srV('oro',y)}))},f:usd});
+ORDS.push(()=>{const y0=pick([2012,2014,2016]);const c=pick4d(bxGrow(y0,2022),x=>x.v,40)||shuffle(bxGrow(y0,2022)).slice(0,4);return{q:`100 $ en acciones en ${y0}: ordena de <b>más a menos dinero en 2022</b>`,it:c.map(x=>({t:x.n,v:x.v,f:usd(x.v)})),asc:0,src:BXS,url:BXU}},
+ ()=>{const x=SR('oro');const c=pick4d(x.y.map((y,i)=>({y,v:x.v[i]})),o=>o.v,80)||[];return{q:'Ordena los años de <b>oro más caro a más barato</b>',it:c.map(o=>({t:String(o.y),v:o.v,f:usd(o.v)+' la onza'})),asc:0,src:'datasets/gold-prices',url:'https://github.com/datasets/gold-prices'}});
 /* ================= v236: tema nuevo, Ciencia (elementos químicos) ================= */
 const ELW='https://github.com/Bowserinator/Periodic-Table-JSON',ELS='Periodic Table JSON (datos de Wikipedia)';
 const elN=e=>e[0][0].toUpperCase()+e[0].slice(1);
@@ -2928,7 +2957,7 @@ function mapFind(name){mapData();if(!MAPIDX){MAPIDX={};MAPD.forEach(c=>{MAPIDX[m
 function geoMini(q){try{const names=[...String(q.q).matchAll(/<b>([^<]+)<\/b>/g)].map(m=>m[1]).concat(q.opts.map(o=>o.t));const cs=[...new Set(names.map(mapFind).filter(Boolean))];if(!cs.length)return '';
   const regs=[...new Set(cs.map(c=>c.reg))];const reg=regs.length===1?regs[0]:'w';const {svg}=mapSVG(reg,'mini');
   return `<div class="qmini" data-hl="${cs.map(c=>c.a3).join(',')}">${svg}</div>`}catch(e){return ''}}
-function themeTrivia(el,q){const th={'Fútbol':'fut','Cine':'cine','Geografía':'geo','JJ. OO.':'jjoo','Intruso':'intr','LEGO':'lego','Pokémon':'poke','Videojuegos':'game','Eurovisión':'euro','F1':'f1','Tenis':'tenis','Spotify':'spot','Latin Grammy':'grammy','Ciencia':'cien'}[q.tag]||'mus';el.classList.add('th-'+th);
+function themeTrivia(el,q){const th={'Fútbol':'fut','Cine':'cine','Geografía':'geo','JJ. OO.':'jjoo','Intruso':'intr','LEGO':'lego','Pokémon':'poke','Videojuegos':'game','Eurovisión':'euro','F1':'f1','Tenis':'tenis','Spotify':'spot','Latin Grammy':'grammy','Ciencia':'cien','Dinero':'din'}[q.tag]||'mus';el.classList.add('th-'+th);
   const card=$('.qcard',el);if(!card)return;
   if(th==='geo'){const m=geoMini(q);if(m){card.insertAdjacentHTML('beforeend',m);const box=$('.qmini',card);box.dataset.hl.split(',').forEach(a=>$$(`.mland[data-a3="${a}"]`,box).forEach(p=>p.classList.add('hl')))}}
   card.insertAdjacentHTML('afterbegin',`<span class="thdeco" aria-hidden="true"></span>`)}
@@ -2951,7 +2980,7 @@ const fonet=t=>norm(t).replace(/h/g,'').replace(/qu/g,'k').replace(/c([eiéí])/
 /* --- millón: elegir temas y juegos --- */
 const MTHEMES=[['mus','Música','note','var(--cyan)',/Grammy|Eurovisi|Spotify|Billboard|canci[oó]n|cantante|«[^»]+» ·|disco|reproducciones|artista/i],['cine','Cine','star','var(--orange)',/pel[ií]cula|Cine|taquilla|recaud|estreno/i],['dep','Deporte','ball','var(--green)',/F[úu]tbol|Mundial|Bal[óo]n de Oro|Liga|JJ\. OO\.|Ol[íi]mpic|F1|Grand Slam|Tenis|Tour de Francia|medallas|goles/i],['poke','Pokémon','bolt','var(--pink)',/Pok[eé]mon|Pokédex|PokéAPI|Pok[eé]API/i],['jueg','Videojuegos y LEGO','star','var(--green)',/Steam|videojuego|jugadores a la vez|LEGO|Metacritic|Rebrickable/i],['geo','Geografía','globe','var(--lila)',/Geograf|capital|habitantes|provincia|\bpa[ií]s(es)?\b|¿Dónde está|mapa/i],['hist','Historia y sucesos','book','var(--yel)',/"type":"year"|¿En qu[eé] a[ñn]o|rey|guerra|siglo/i],
  ['cien','Ciencia, espacio y planeta','bolt','var(--cyan)',/Ciencia|Periodic Table|elemento|qu[ií]mic|astronaut|Espacio|NASA|CO₂|temperatura global|glaciar|renovable|nuclear|solar|e[óo]lica|carb[óo]n|hidr[áa]ulica|electricidad|planeta|NOAA/i],
- ['din','Dinero y bolsa','trophy','var(--yel)',/bolsa|acci[óo]n de|S&P|Yahoo Finance|Big Mac|\bPIB\b|onza|Brent|petr[óo]leo|d[óo]lares vale un euro|cotiza/i]];
+ ['din','Dinero y bolsa','trophy','var(--yel)',/Dinero|bolsa|acci[óo]n de|acciones|S&P|Yahoo Finance|Big Mac|\bPIB\b|onza|Brent|petr[óo]leo|d[óo]lares vale un euro|cotiza/i]];
 const MGNAME={trivia:'Trivia',vs:'¿Más o menos?',year:'¿En qué año?',vf:'Verdadero o falso',guess:'Calcula a ojo',draw:'Dibuja la gráfica',raro:'Lo más raro',ord:'Ordénalos',song:'Adivina la canción',raroW:'Escríbelo raro',pal:'Palabra oculta',mapa:'¿Dónde está?'};
 function mset(){S.mset=S.mset||{offTh:[],offT:[]};return S.mset}
 function roundThemes(r){let s='';try{s=JSON.stringify(r,(k,v)=>k==='api'||k==='polys'||k==='d'&&typeof v==='string'&&v.length>200?undefined:v).slice(0,6000)}catch(e){}if(r.type==='year')s+='"type":"year"';if(r.type==='mapa')s+='¿Dónde está';return MTHEMES.filter(t=>t[4].test(s)).map(t=>t[0])}
@@ -3381,7 +3410,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v237</div></div>`);
+  <div class="foot">¡Clavado! v238</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

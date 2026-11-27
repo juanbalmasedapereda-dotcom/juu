@@ -1930,7 +1930,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
- ['v77','¿En qué año? suma los grandes números 1 de España (los que estuvieron 3 semanas o más arriba): ¿en qué año fue n.º 1 «Despacito», «Columbia» o «La Perla»?'],
+ ['v77','¿En qué año? suma los grandes números 1 de España (los que estuvieron 3 semanas o más arriba): ¿en qué año llegaron por primera vez al n.º 1 «Despacito», «Columbia» o «La Perla»? (Solo canciones de las que se sabe seguro el año.)'],
  ['v76','Dos tableros nuevos en Lo más raro y Escríbelo raro, con música en español: «elige un artista que fuera n.º 1 en España» (más puntos cuantos menos números 1) y «elige una canción n.º 1 en España en tal año» (más puntos cuantas menos semanas arriba).'],
  ['v75','«¿Dónde está?» crece: eliges dónde jugar (mundo mezclado o una de las 7 regiones) y hay rondas nuevas: «toca un país vecino de…» (fronteras calculadas del propio mapa) y «toca el país con más habitantes de…». También salen en el millón.'],
  ['v74','22 números 1 más de la lista oficial de España, de 2020 y 2024 (Safaera, TKN, Dakiti, Tú me dejaste de querer, Luna, Gran Vía, Potra salvaje…). Ya hay 69 en total para Adivina la canción, la trivia musical y Palabra oculta.'],
@@ -2305,7 +2305,7 @@ RARO.push(
 );
 
 /* ================= v77: números 1 de España en «¿En qué año?» ================= */
-(()=>{const t=cnt(ESN1ALL.map(r=>r[1]));ESN1.filter(r=>r[3]>=3&&t.get(r[1])===1).forEach(r=>{const e=`«${r[1]}», de ${r[2]}, es n.º 1 en España`;if(!ANIOS.some(x=>x[0]===e))ANIOS.push([e,r[0],esn1Url(r[0])])})})();
+(()=>{const t=cnt(ESN1ALL.map(r=>r[1]));const first=new Set([2017,2019,2023,2025].map(y=>ESN1.find(r=>r[0]===y)[1]));ESN1.filter(r=>r[3]>=3&&t.get(r[1])===1&&!first.has(r[1])).forEach(r=>{const e=`«${r[1]}», de ${r[2]}, llega por primera vez al n.º 1 en España`;if(!ANIOS.some(x=>x[0]===e))ANIOS.push([e,r[0],esn1Url(r[0])])})})();
 /* números que crecen al cambiar */
 (function(){if(typeof MutationObserver==='undefined')return;const mo=new MutationObserver(ms=>{if(RM())return;for(const m of ms){const t=m.target.nodeType===3?m.target.parentElement:m.target;const el=t&&t.closest&&t.closest('.streak,.prize,[data-sc],[data-vo]');if(el&&!el.__bq){el.__bq=1;requestAnimationFrame(()=>{el.classList.remove('bump');requestAnimationFrame(()=>{el.classList.add('bump');setTimeout(()=>{el.__bq=0},350)})})}
     m.addedNodes&&m.addedNodes.forEach(nd=>{if(nd.nodeType!==1)return;nd.querySelectorAll('.stamp b.num:not(.cu),.ch-amt:not(.cu)').forEach(countUp)})}});

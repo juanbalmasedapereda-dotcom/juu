@@ -924,6 +924,18 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 .toast.tb{transform:translateX(-50%) scale(.68);transform-origin:bottom center;animation:toastUp .45s var(--ease) both}
 @keyframes toastUp{from{opacity:0;transform:translateX(-50%) translateY(30px) scale(.68)}}
 @media (prefers-reduced-motion:reduce){.toast.tb{animation:none}}
+
+/* v88 hucha */
+.pigwrap{display:grid;place-items:center;margin:4px 0 -6px}
+.pig{width:130px;height:auto;overflow:visible}
+.pig .pbody{transform-origin:62px 80px;animation:pigHop .5s var(--ease) 1.25s both}
+@keyframes pigHop{0%,100%{transform:none}50%{transform:translateY(-6px) scaleY(1.04)}}
+.pig .pcoins circle{animation:coinIn .55s cubic-bezier(.5,0,.8,.4) both}
+.pig .pcoins circle:nth-child(1){animation-delay:.3s}.pig .pcoins circle:nth-child(2){animation-delay:.6s}.pig .pcoins circle:nth-child(3){animation-delay:.9s}
+@keyframes coinIn{0%{transform:translateY(-40px);opacity:0}25%{opacity:1}85%{transform:translateY(16px);opacity:1}100%{transform:translateY(20px);opacity:0}}
+.pig.broken{animation:pigShake .4s ease-in-out .3s 3;filter:saturate(.6)}
+@keyframes pigShake{0%,100%{transform:rotate(0)}25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
+@media (prefers-reduced-motion:reduce){.pig,.pig *{animation:none!important}}
 </style>
 </head>
 <body>
@@ -1996,6 +2008,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v88','Al acabar El bote sale una hucha: si te plantas, las monedas caen dentro y la hucha da un saltito; si lo pierdes todo, la hucha aparece rota y temblando.'],
  ['v87','En las pantallas de resultado, los avisos de «¡Pegatina nueva!» salen abajo y más pequeños, para no tapar tu nota, el sello ni la corona del Duelo.'],
  ['v86','Las barras de color y las marcas «★ tu mejor» / «a repasar» llegan también al final de Lo más raro, Escríbelo raro, Adivina la canción y ¿Qué suena?. En el Duelo, la columna del ganador se lleva una corona que bota.'],
  ['v85','El informe final está más vivo: cada ronda lleva una barra de color que se rellena con tu nota, las notas aparecen de golpe una a una, y se marca tu mejor ronda (★) y la que conviene repasar.'],
@@ -2411,6 +2424,15 @@ function decorRows(notes,rows){if(!rows.length)return;let bi=-1,bv=-1,wi=-1,wv=9
 const reportV84=report;report=function(){const notes=(G&&G.notes||[]).slice();reportV84();try{decorRows(notes,$$('.report .rrow',cur))}catch(e){}};
 const raroEndV85=raroEnd;raroEnd=function(){const notes=(G&&G.notes||[]).slice();raroEndV85();try{decorRows(notes,$$('.report .rrow',cur))}catch(e){}};
 const duelEndV85=duelEnd;duelEnd=function(){duelEndV85();try{const c=$$('.dcol',cur);if(c.length===2){const t=c.map(x=>parseFloat((($('.dtot',x)||{}).textContent||'0').replace(',','.'))||0);if(t[0]!==t[1]){const w=c[t[0]>t[1]?0:1];w.classList.add('dwin');$('h3',w)&&$('h3',w).insertAdjacentHTML('beforeend',' <span class="crown" aria-hidden="true">👑</span>')}}}catch(e){}};
+
+/* ================= v88: hucha al final de El bote ================= */
+function piggySVG(broken){return `<svg class="pig${broken?' broken':''}" viewBox="0 0 120 90" aria-hidden="true"><g stroke="#16295e" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+<path class="pbody" d="M22 52c0-20 18-32 40-32s40 12 40 30c0 10-6 18-14 22l-2 10h-12l-1-6c-8 2-16 2-24 0l-1 6H36l-2-10c-7-4-12-10-12-20z" fill="#ffb3cf"/>
+<path d="M98 44c6-2 10 2 10 6s-4 8-8 6" fill="#ffb3cf"/><path d="M40 24l-4-12 14 8" fill="#ff8fb8"/>
+<circle cx="44" cy="40" r="3" fill="#16295e" stroke="none"/><path d="M52 22h20" stroke-width="4"/>
+${broken?'<path d="M62 22l-6 14 8 8-6 12 6 10" fill="none" stroke-width="2.5"/>':''}</g>
+${broken?'':'<g class="pcoins"><circle cx="62" cy="6" r="6" fill="#ffd34d" stroke="#b08a00" stroke-width="2"/><circle cx="62" cy="6" r="6" fill="#ffd34d" stroke="#b08a00" stroke-width="2"/><circle cx="62" cy="6" r="6" fill="#ffd34d" stroke="#b08a00" stroke-width="2"/></g>'}</svg>`}
+const boteEndV87=boteEnd;boteEnd=function(v,planted,lost){boteEndV87(v,planted,lost);try{const w=$('.report .who',cur);if(w)w.insertAdjacentHTML('afterend',`<div class="pigwrap">${piggySVG(!planted||!v)}</div>`);if(planted&&v)setTimeout(()=>{try{SFX.cash&&SFX.cash()}catch(e){}},700)}catch(e){}};
 /* números que crecen al cambiar */
 (function(){if(typeof MutationObserver==='undefined')return;const mo=new MutationObserver(ms=>{if(RM())return;for(const m of ms){const t=m.target.nodeType===3?m.target.parentElement:m.target;const el=t&&t.closest&&t.closest('.streak,.prize,[data-sc],[data-vo]');if(el&&!el.__bq){el.__bq=1;requestAnimationFrame(()=>{el.classList.remove('bump');requestAnimationFrame(()=>{el.classList.add('bump');setTimeout(()=>{el.__bq=0},350)})})}
     m.addedNodes&&m.addedNodes.forEach(nd=>{if(nd.nodeType!==1)return;nd.querySelectorAll('.stamp b.num:not(.cu),.ch-amt:not(.cu)').forEach(countUp)})}});
@@ -2658,7 +2680,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v87</div></div>`);
+  <div class="foot">¡Clavado! v88</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

@@ -1239,6 +1239,21 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 .stopreal{margin-top:10px;font-size:15px;color:#16295e}.stopreal b{color:#14904a}
 .stopbtn.go{background:var(--pink);color:#fff;font-size:22px;animation:pulse 1s infinite}
 .stopq .qtitle small{font-size:.7em;color:var(--muted)}
+
+/* v246 Parejas */
+.pjgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0 0;perspective:900px}
+.pjc{position:relative;aspect-ratio:1/1.1;border:0;padding:0;background:none;cursor:pointer;animation:card .4s backwards;animation-delay:var(--d)}
+.pjin{position:absolute;inset:0;transition:transform .45s cubic-bezier(.3,1.4,.5,1);transform-style:preserve-3d}
+.pjc.up .pjin{transform:rotateY(180deg)}
+.pjback,.pjfront{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border:3px solid #16295e;border-radius:14px;box-shadow:0 4px 0 #16295e;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+.pjq .qsub{font-size:14px}.pjback{font-size:24px!important;background:repeating-linear-gradient(45deg,var(--pink) 0 10px,#ff8fb8 10px 20px);color:#fff;font-size:30px;font-weight:900;text-shadow:0 2px 0 #16295e}
+.pjfront{background:#fff;transform:rotateY(180deg);padding:4px;flex-direction:column}
+.pjc.ok .pjfront{background:#dff8e7;border-color:#14904a;box-shadow:0 4px 0 #14904a;animation:pop .4s}
+.pjc.no .pjfront{background:#ffe1e6;animation:shake .35s}
+.pjflag{width:86%;max-height:80%;object-fit:contain;border-radius:4px;box-shadow:0 0 0 1px rgba(0,0,0,.15)}
+.pjsym{font-size:28px;color:#16295e}.pjtxt{font-weight:800;font-size:12.5px;color:#16295e;line-height:1.1;text-align:center;overflow-wrap:break-word;hyphens:auto}.pjtxt.sm{font-size:10.5px}
+.pjtxt i{display:block;font-style:normal;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.pjstat{text-align:center;margin-top:12px;color:#16295e;font-size:15px}.pjstat .bad{color:#d8334a}.pjstat small{color:var(--muted)}
 </style>
 </head>
 <body>
@@ -1372,7 +1387,7 @@ const ANIM=[["Halcón peregrino",389,"aire","en picado"],["Águila real",320,"ai
 <script>'use strict';
 /* ================= utilidades ================= */
 /* v160: modos con cambios recientes (se marca «¡nuevo!» hasta que lo juegas) */
-const CHG={contador:'v245',quien:'v242',banderas:'v235',conex:'v244',trivial:'v244',dibuja:'v226',raro:'v220',intruso:'v220',vf:'v217',orden:'v244',anio:'v243',masmenos:'v244',bote:'v244',aojo:'v216',duelo:'v212',trivia:'v222',escribe:'v206',mapa:'v232',palabra:'v227'};
+const CHG={parejas:'v246',contador:'v245',quien:'v242',banderas:'v235',conex:'v244',trivial:'v244',dibuja:'v226',raro:'v220',intruso:'v220',vf:'v217',orden:'v244',anio:'v243',masmenos:'v244',bote:'v244',aojo:'v216',duelo:'v212',trivia:'v222',escribe:'v206',mapa:'v232',palabra:'v227'};
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const app=$('#app');
@@ -1483,7 +1498,7 @@ function show(html,cls=''){
 const SPIRAL='<div class="spiral"></div>';
 
 /* ================= menú ================= */
-const NM={contador:'¡Para el contador!',quien:'¿Quién soy?',animales:'Animales',espacio:'Planetas y espacio',deportes:'Deportes',dinero:'Dinero y bolsa',ciencia:'Ciencia',banderas:'Banderas',conex:'Conexiones',trivial:'Trivial',tmix:'Trivial mezclado',totros:'Pokémon, LEGO y más',concurso:'Concurso',diario:'Reto del día',dibuja:'Dibuja la gráfica',trivia:'Trivia musical',anio:'¿En qué año?',aojo:'Calcula a ojo',futbol:'Trivia de fútbol',cine:'Trivia de cine',masmenos:'¿Más o menos?',geo:'Geografía',jjoo:'Juegos Olímpicos',bote:'El bote',raro:'Lo más raro',escribe:'Escríbelo raro',cancion:'Adivina la canción',suena:'¿Qué suena?',orden:'Ordénalos',vf:'Verdadero o falso',intruso:'El intruso',palabra:'Palabra oculta',mapa:'¿Dónde está?'};
+const NM={parejas:'Parejas',contador:'¡Para el contador!',quien:'¿Quién soy?',animales:'Animales',espacio:'Planetas y espacio',deportes:'Deportes',dinero:'Dinero y bolsa',ciencia:'Ciencia',banderas:'Banderas',conex:'Conexiones',trivial:'Trivial',tmix:'Trivial mezclado',totros:'Pokémon, LEGO y más',concurso:'Concurso',diario:'Reto del día',dibuja:'Dibuja la gráfica',trivia:'Trivia musical',anio:'¿En qué año?',aojo:'Calcula a ojo',futbol:'Trivia de fútbol',cine:'Trivia de cine',masmenos:'¿Más o menos?',geo:'Geografía',jjoo:'Juegos Olímpicos',bote:'El bote',raro:'Lo más raro',escribe:'Escríbelo raro',cancion:'Adivina la canción',suena:'¿Qué suena?',orden:'Ordénalos',vf:'Verdadero o falso',intruso:'El intruso',palabra:'Palabra oculta',mapa:'¿Dónde está?'};
 
 const MODES=[
   {id:'dibuja',t:'Dibuja la gráfica',p:'Traza con el dedo cómo siguió',ic:'chart',c:'var(--pink)',tape:'rgba(255,94,168,.5)'},
@@ -1505,6 +1520,7 @@ const MODES=[
   {id:'geo',nu:1,t:'Geografía',p:'Capitales, habitantes, provincias y renovables',ic:'globe',c:'var(--cyan)',tape:'rgba(69,227,255,.55)'},
   {id:'jjoo',nu:1,t:'Juegos Olímpicos',p:'Todas las sedes, de 1896 a 2026',ic:'medal',c:'var(--green)',tape:'rgba(88,240,138,.55)'},
   {id:'aojo',t:'Calcula a ojo',p:'Pelis, Pokémon, LEGO, Steam, canciones… a ojo',ic:'globe',c:'var(--lila)',tape:'rgba(180,140,255,.5)',wide:1},
+  {id:'parejas',nu:1,t:'Parejas',p:'Juego de memoria: bandera con país, país con capital, símbolo con elemento',ic:'star',c:'var(--pink)',tape:'rgba(255,120,170,.5)'},
   {id:'contador',nu:1,t:'¡Para el contador!',p:'Reflejos y datos: para el número justo en el valor real',ic:'bolt',c:'var(--green)',tape:'rgba(88,240,138,.55)'},
   {id:'quien',nu:1,t:'¿Quién soy?',p:'Pistas que se destapan: país, planeta, elemento o animal',ic:'star',c:'var(--orange)',tape:'rgba(255,161,51,.55)'},
   {id:'banderas',nu:1,t:'Banderas',p:'¿De qué país es? 165 banderas de todo el mundo',ic:'globe',c:'var(--red)',tape:'rgba(255,94,168,.5)'},
@@ -1513,7 +1529,7 @@ const MODES=[
   {hide:1,id:'tmix',t:'Trivial mezclado'},{hide:1,id:'ciencia',t:'Ciencia'},{hide:1,id:'dinero',t:'Dinero y bolsa'},{hide:1,id:'deportes',t:'Deportes'},{hide:1,id:'espacio',t:'Planetas y espacio'},{hide:1,id:'animales',t:'Animales'},{hide:1,id:'totros',t:'Trivial: Pokémon, LEGO y más'},
   {id:'duelo',t:'Duelo a dos',p:'Pasaos el móvil: 5 preguntas cada uno, gana quien sume más',ic:'flame',c:'var(--red)',tape:'rgba(255,94,168,.5)',wide:1}
 ];
-const MSEC=[['Rápidos: contra el reloj',['contador','vf','masmenos','bote','intruso']],['Preguntas',['banderas','trivial','mapa','cancion']],['Para pensar',['quien','conex','palabra','dibuja','orden','anio','aojo','raro','escribe']]];
+const MSEC=[['Rápidos: contra el reloj',['contador','vf','masmenos','bote','intruso']],['Preguntas',['banderas','trivial','mapa','cancion']],['Para pensar',['parejas','quien','conex','palabra','dibuja','orden','anio','aojo','raro','escribe']]];
 const QUIPS=['¡Sin chuletas!','Examen sorpresa: hoy toca gráficas.','Dibuja con fe. Y con el dedo.','Yo siempre saco un 10. Bueno, casi.','¿A que no clavas la del oro?','Todo es real. Lo he mirado yo.','¿Te atreves con un duelo? Pásale el móvil a alguien.','El público casi siempre acierta. Casi.','La pregunta 15 da miedo. Avisado quedas.','¿Sabes qué peli ganó el Óscar en 2020?','Plantarse también es de listos.'];
 function bestTxt(id){const b=S.best[id];if(id==='duelo')return '<span>2 jugadores · 1 móvil</span>';if(id==='millon')return b==null?'<span>Aún no has cobrado nada</span>':`Tu récord <span class="ring">${euro(b)}</span>`;if(b==null)return '<span>Sin nota todavía</span>';if(id==='palabra'){const P=S.pal||{};return P.best?`Mejor racha <span class="ring">${P.best}</span>`:'<span>Sin racha todavía</span>'}if(id==='vf')return b==null?'<span>Sin récord todavía</span>':`Récord <span class="ring">${b} aciertos</span>`;if(id==='bote')return `Mejor bote <span class="ring">${fmt(b)}</span>`;if(id==='raro'||id==='escribe'||id==='cancion'||id==='suena')return `Récord <span class="ring">${b} pts</span>`;return id==='masmenos'?`Mejor racha <span class="ring">${b}</span>`:`Mejor nota <span class="ring">${nota(b)}</span>`}
 function factHTML(){try{if(Math.random()<.35){const F=[
@@ -1636,6 +1652,7 @@ function start(mode){try{if(!S.seenMode){S.seenMode=Object.assign({},CHG);save()
   else if(mode==='banderas')types=Array(10).fill('flag');
   else if(mode==='quien')types=Array(5).fill('who');
   else if(mode==='contador')types=Array(8).fill('stop');
+  else if(mode==='parejas')types=['pair','pair','pair'];
   else if(mode==='trivia')types=Array(10).fill('tmus');
   else if(mode==='tmix')types=Array(10).fill('tmix');
   else if(mode==='ciencia')types=Array(10).fill('tag:Ciencia');
@@ -1657,7 +1674,7 @@ function start(mode){try{if(!S.seenMode){S.seenMode=Object.assign({},CHG);save()
   else if(mode==='raro'||mode==='escribe'||mode==='cancion')types=[];
   else if(mode==='duelo')types=shuffle(['draw','trivia','year','vs','guess','vf','ord','song','raro','mapa','pal']).slice(0,5).flatMap(t=>[t,t]);
   if(mode==='duelo'){const tg=pick(['Cine','Fútbol','Geografía','JJ. OO.','Música']);types=types.map(t=>t==='trivia'&&tg!=='Música'?'tag:'+tg:t)}
-  let rounds=types.map((t,ti)=>t==='stop'?(genStop(ti)||genWho(ti)):t==='who'?genWho(ti):t==='flag'?genFlag(ti):t==='cx'?genConex():t==='tmus'||t==='tmix'||t==='totros'?genTrivK(t):t==='vf'?genVFm():t==='song'?genSongs(1)[0]:t==='raro'?genRaro(pick(RARO)):t==='intr'?genIntruso():t==='ord'?genOrd():t.startsWith('tag:')?genTag(t.slice(4)):t==='geo'?genTag('Geografía'):t==='mapa'?genMapa(4):t==='pal'?genPal():t==='jjoo'?genTag('JJ. OO.'):t==='bote'?genBote():t==='cine'?genCine():t==='fut'?genFut():t==='draw'?genDraw():t==='trivia'?genTrivia():t==='year'?genYear():t==='guess'?genGuess():genVS());
+  let rounds=types.map((t,ti)=>t==='pair'?genPair(ti):t==='stop'?(genStop(ti)||genWho(ti)):t==='who'?genWho(ti):t==='flag'?genFlag(ti):t==='cx'?genConex():t==='tmus'||t==='tmix'||t==='totros'?genTrivK(t):t==='vf'?genVFm():t==='song'?genSongs(1)[0]:t==='raro'?genRaro(pick(RARO)):t==='intr'?genIntruso():t==='ord'?genOrd():t.startsWith('tag:')?genTag(t.slice(4)):t==='geo'?genTag('Geografía'):t==='mapa'?genMapa(4):t==='pal'?genPal():t==='jjoo'?genTag('JJ. OO.'):t==='bote'?genBote():t==='cine'?genCine():t==='fut'?genFut():t==='draw'?genDraw():t==='trivia'?genTrivia():t==='year'?genYear():t==='guess'?genGuess():genVS());
   if(mode==='raro')rounds=shuffle(RARO).slice(0,5).map(genRaro);
   if(mode==='escribe')rounds=genWset();
   if(mode==='cancion')rounds=genSongs(6);
@@ -1684,7 +1701,7 @@ function duelTot(p){return G.notes.reduce((a,n,k)=>a+(k%2===p&&n!=null?n:0),0)}
 function duelHand(go){const p=G.i%2,c=p?'var(--pink)':'var(--cyan)';G.handShown=G.i;
   const el=show(`${SPIRAL}<button class="iconbtn ho-x" data-quit aria-label="Salir">${IC.x}</button><div class="hand-off" style="--pc:${c}"><div class="ho-glow" aria-hidden="true"></div><div class="ho-k hand">${G.i>=10?'¡Desempate!':`Ronda ${Math.floor(G.i/2)+1} de 5`}</div><div class="ho-p brush">${S.dn&&S.dn[p]?esc(S.dn[p]):'Jugador '+(p+1)}</div><div class="ho-l">${lapi(p?'cool':'happy')}</div><div class="ho-s hand">${G.i?`Pásale el móvil a ${esc(PN(p))}. ¡Sin mirar la respuesta de antes!`:`Empieza ${esc(PN(0))}. ${esc(PN(1))}, mira para otro lado.`}</div><div class="ho-sc"><span style="--pc:var(--cyan)">${esc(PN(0))} <b class="num">${nota(Math.round(duelTot(0)*10)/10)}</b></span><span style="--pc:var(--pink)">${esc(PN(1))} <b class="num">${nota(Math.round(duelTot(1)*10)/10)}</b></span></div>${G.i===0?`<div class="dnames"><input data-dn="0" maxlength="9" placeholder="Nombre J1" value="${esc((S.dn||[])[0]||'')}" autocomplete="off"><input data-dn="1" maxlength="9" placeholder="Nombre J2" value="${esc((S.dn||[])[1]||'')}" autocomplete="off"></div>`:''}<button class="btn wide" data-go>¡Listo! ${IC.arrow}</button></div>`);
   vib(20);try{bindQuit(el)}catch(e){}$$('[data-dn]',el).forEach(x=>{x.onclick=e=>e.stopPropagation()});$('[data-go]',el).onclick=()=>{SFX.tap();const ins=$$('[data-dn]',el);if(ins.length){S.dn=ins.map(x=>x.value.trim().slice(0,9));save()}go()}}
-function playRound(){if(G.millon&&G.i===14&&!G.finalShown){G.finalShown=1;return finalIntro(playRound)}if(G.duel&&G.handShown!==G.i)return duelHand(playRound);const r=G.rounds[G.i];({draw:roundDraw,trivia:roundTrivia,vs:roundVS,year:roundYear,guess:roundGuess,raro:roundRaro,raroW:roundRaroW,song:roundSong,cx:roundConex,flag:roundFlag,who:roundWho,stop:roundStop,suena:roundSuena,ord:roundOrd,vf:roundVFm,pal:roundPal,mapa:roundMapa})[r.type](r);if(G.millon){musicStart(G.i);document.body.classList.toggle('final',G.i===14)}}
+function playRound(){if(G.millon&&G.i===14&&!G.finalShown){G.finalShown=1;return finalIntro(playRound)}if(G.duel&&G.handShown!==G.i)return duelHand(playRound);const r=G.rounds[G.i];({draw:roundDraw,trivia:roundTrivia,vs:roundVS,year:roundYear,guess:roundGuess,raro:roundRaro,raroW:roundRaroW,song:roundSong,cx:roundConex,flag:roundFlag,who:roundWho,stop:roundStop,pair:roundPair,suena:roundSuena,ord:roundOrd,vf:roundVFm,pal:roundPal,mapa:roundMapa})[r.type](r);if(G.millon){musicStart(G.i);document.body.classList.toggle('final',G.i===14)}}
 function finishRound(n,extra){
   musicStop();
   if(cur)cur.classList.add('done');
@@ -2379,6 +2396,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v246','Juego nuevo de memoria: Parejas. Doce cartas boca abajo: levanta dos y, si van juntas (una bandera y su país, un país y su capital, un símbolo químico y su elemento), se quedan. Hay que acordarse de dónde estaba cada carta y además saber el dato. Está en «Para pensar». Pegatina nueva: «Memoria de elefante».'],
  ['v245','Juego nuevo de reflejos: ¡Para el contador! Te dicen un dato (la velocidad del guepardo, la altura del K2, el PIB de un país…), un número empieza a subir cada vez más rápido y tienes que pararlo justo en el valor real. Hace falta saber el dato y tener buenos reflejos. Está en «Rápidos». Pegatina nueva: «Reflejos de oro».'],
  ['v244','Tema nuevo: ríos y montañas. ¿Qué río es más largo, el Mekong o el Volga? ¿Cuánto mide el Everest? ¿Dónde está el K2? Está en Trivial › Geografía, ¿Más o menos?, El bote, Ordénalos y Conexiones. Datos de Wikipedia (consultados hoy). Ojo: el Nilo y el Amazonas se disputan el primer puesto según cómo se mida, así que nunca salen juntos en una pregunta de «cuál es más largo».'],
  ['v243','Tema nuevo: récords del mundo de atletismo (Usain Bolt, Isinbayeva, Sotomayor, Kipyegon…). En Trivial › Deportes: ¿quién tiene el récord de 100 metros?, ¿cuál es el más antiguo?; además en ¿En qué año?, Ordénalos y Conexiones. Datos de Wikipedia consultados hoy.'],
@@ -2909,6 +2927,26 @@ function mapaMenu(){SFX.page();const regs=[['mix','Mundo mezclado','Países de t
 
 
 
+
+/* ================= v246: juego nuevo, Parejas (memoria + saber el dato) ================= */
+function genPair(i){const kinds=['flag','cap','elem'];const kind=kinds[i%3];let pairs=[];
+  if(kind==='flag'){const P=shuffle(flPool().slice(0,i<3?45:80));for(const c of P){if(pairs.length>=6)break;if(pairs.every(p=>!flTwin(p.k,c.a3)))pairs.push({k:c.a3,a:{img:c.a3},b:{t:c.n}})}return{type:'pair',kind,n:'Bandera y país',pairs,src:'Banderas: flag-icons (MIT); países: datasets/country-codes'}}
+  if(kind==='cap'){const P=shuffle(CAPS.filter(c=>c[3]>=3e6&&c[0]!==c[1]&&c[0].length<=16&&c[1].length<=16));const seen=new Set();for(const c of P){if(pairs.length>=6)break;if(seen.has(c[1]))continue;seen.add(c[1]);pairs.push({k:c[0],a:{t:c[0]},b:{t:c[1],cap:1}})}return{type:'pair',kind,n:'País y capital',pairs,src:'datasets/country-codes y Banco Mundial'}}
+  const P=shuffle(ELEM.slice(0,i<3?30:46));pairs=P.slice(0,6).map(e=>({k:e[1],a:{sym:e[1]},b:{t:elN(e)}}));return{type:'pair',kind,n:'Símbolo y elemento',pairs,src:ELS}}
+function roundPair(r){let cards=shuffle(r.pairs.flatMap((p,pi)=>[{pi,f:p.a},{pi,f:p.b}]));let open=[],done=new Set(),miss=0,lock=false,flips=0;const FREE=4;
+  const face=f=>f.img?flagImg(f.img,'pjflag'):f.sym?`<b class="pjsym">${esc(f.sym)}</b>`:`<span class="pjtxt${f.t.length>8?' sm':''}">${f.cap?'<i>capital</i>':''}${esc(f.t)}</span>`;
+  const el=show(`${topbar()}<div class="card qcard pjq"><span class="tape" style="--tape:rgba(255,120,170,.5)"></span><span class="tag" style="--tag:var(--pink)">${IC.star} Parejas</span><h2 class="qtitle">Encuentra las parejas: <b>${esc(r.n.toLowerCase())}</b></h2><div class="qsub" data-msg>Da la vuelta a dos cartas. Si van juntas, se quedan. Acuérdate de dónde estaba cada una.</div></div>
+  <div class="pjgrid">${cards.map((c,i)=>`<button class="pjc" data-i="${i}" style="--d:${i*.03}s" aria-label="Carta ${i+1}"><span class="pjin"><span class="pjback">?</span><span class="pjfront">${face(c.f)}</span></span></button>`).join('')}</div>
+  <div class="pjstat" data-st></div><div class="bottom pjbot"></div>`);
+  bindQuit(el);$$('.tag svg *',el).forEach(p=>{p.style.fill='none';p.style.stroke='#16295e';p.style.strokeWidth=2.6});
+  const st=$('[data-st]',el),btns=$$('.pjc',el);
+  const paintS=()=>{st.innerHTML=`Parejas: <b>${done.size}/6</b> · Fallos: <b class="${miss>FREE?'bad':''}">${miss}</b> <small>(los ${FREE} primeros no restan)</small>`};paintS();
+  const end=()=>{lock=true;const nt=Math.max(1,Math.round((10-0.7*Math.max(0,miss-FREE))*10)/10);finishRound(nt);if(miss<=2)award('memoria');if(nt>=9)setTimeout(()=>{try{confetti()}catch(e){}},250);
+    $('.pjbot',el).innerHTML=`<div class="verdict">${stampHTML(nt)}<div><h3>${miss<=2?'¡Memoria de elefante!':nt>=8?'¡Muy bien!':nt>=5?'¡Conseguido!':'Uf, ¡cuántas vueltas!'}</h3><p>Has encontrado las 6 parejas con ${miss} ${miss===1?'fallo':'fallos'}.</p><span class="src">Fuente: ${esc(r.src)}</span></div></div>${nextBtn()}`;SFX.stamp();$('[data-next]',el).onclick=next;try{$('.pjbot',el).scrollIntoView({behavior:'smooth',block:'end'})}catch(e){}};
+  btns.forEach(b=>b.onclick=()=>{const i=+b.dataset.i;if(lock||done.has(cards[i].pi)||open.includes(i)||open.length>=2)return;b.classList.add('up');SFX.tick();vib(5);open.push(i);flips++;
+    if(open.length<2)return;const [x,y]=open;
+    if(cards[x].pi===cards[y].pi){done.add(cards[x].pi);open=[];setTimeout(()=>{btns[x].classList.add('ok');btns[y].classList.add('ok');SFX.ok();vib([8,30,8]);paintS();if(done.size===6)setTimeout(end,500)},250)}
+    else{miss++;paintS();lock=true;setTimeout(()=>{btns[x].classList.add('no');btns[y].classList.add('no')},350);setTimeout(()=>{btns[x].classList.remove('up','no');btns[y].classList.remove('up','no');open=[];lock=false},1100)}})}
 /* ================= v245: juego nuevo, ¡Para el contador! (reflejos + saber el dato) ================= */
 function genStop(i){for(let k=0;k<60;k++){const m=pick(VSM);let its;try{its=m.items().filter(x=>x&&x.v>0&&isFinite(x.v))}catch(e){continue}if(its.length<3)continue;const it=pick(its);const key='st'+m.id+it.n;if(usedQ.has(key)||usedQ.has('stm'+m.id))continue;usedQ.add(key);usedQ.add('stm'+m.id);
   const mx=it.v*(1.5+R()*1.2);return{type:'stop',m:{id:m.id,lbl:m.lbl,src:m.src,url:m.url,f:m.f},it,mx,dur:Math.max(2600,4600-i*250)}}return null}
@@ -3281,7 +3319,7 @@ function mapZoomTo(sv,k,cs){if(RM()||!cs.length)return;const vb=sv.viewBox.baseV
 
 const MGIC={trivia:['book','var(--yel)'],vs:['updown','var(--green)'],year:['cal','var(--orange)'],vf:['check','var(--cyan)'],guess:['target','var(--lila)'],draw:['chart','var(--pink)'],raro:['bolt','var(--lila)'],ord:['medal','var(--yel)'],song:['note','var(--cyan)'],raroW:['eraser','var(--orange)'],pal:['star','var(--green)'],mapa:['globe','var(--cyan)'],suena:['mic','var(--pink)']};
 /* ================= v80: boletín por minijuego ================= */
-const MODE_RT={contador:'stop',quien:'who',banderas:'flag',conex:'cx',dibuja:'draw',masmenos:'vs',mapa:'mapa',palabra:'pal',vf:'vf',orden:'ord',suena:'suena',cancion:'song',escribe:'raroW',raro:'raro',anio:'year',aojo:'guess',trivia:'trivia'};
+const MODE_RT={parejas:'pair',contador:'stop',quien:'who',banderas:'flag',conex:'cx',dibuja:'draw',masmenos:'vs',mapa:'mapa',palabra:'pal',vf:'vf',orden:'ord',suena:'suena',cancion:'song',escribe:'raroW',raro:'raro',anio:'year',aojo:'guess',trivia:'trivia'};
 function modeAvg(id){try{const o=(S.rt||{})[MODE_RT[id]];if(!o||!o.n)return '';const a=o.s/o.n;return `<span class="mavg"><small>media</small><span class="mbar" style="--w:${Math.max(4,a*10)}%;--c:${a>=8?'#58c97f':a>=5?'#ffd34d':'#ff7a8a'}"></span><b class="num">${nota(Math.round(a*10)/10)}</b></span>`}catch(e){return ''}}
 function rtAdd(rt,n){S.rt=S.rt||{};const o=S.rt[rt]=S.rt[rt]||{n:0,s:0,top:0};o.n++;o.s+=n;if(n>=9.5)o.top++}
 const RTNAME={trivia:'Trivia',vs:'¿Más o menos?',year:'¿En qué año?',vf:'Verdadero o falso',guess:'Calcula a ojo',draw:'Dibuja la gráfica',raro:'Lo más raro',ord:'Ordénalos',song:'Adivina la canción',raroW:'Escríbelo raro',pal:'Palabra oculta',mapa:'¿Dónde está?',geo:'Geografía',jjoo:'JJ. OO.',intr:'El intruso',bote:'El bote',suena:'¿Qué suena?'};
@@ -3458,7 +3496,7 @@ function cheque(amount,kind){
 }
 
 /* ================= boletín final ================= */
-function subject(r){if(r.type==='stop')return['¡Para el contador!',String(r.it.n).replace(/<[^>]+>/g,'')];if(r.type==='who')return['¿Quién soy?',r.cat+': '+r.ans];if(r.type==='flag')return['Banderas',r.c.n];if(r.type==='cx')return['Conexiones',r.g.map(g=>g.n).join(' · ')];if(r.type==='mapa')return['¿Dónde está?',r.c.n];if(r.type==='pal')return['Palabra oculta','5 letras, 6 intentos'];if(r.type==='vf')return['Verdadero o falso','Tres frases seguidas'];if(r.type==='song')return['Adivina la canción','Pista a pista'];if(r.type==='raroW')return['Escríbelo raro',r.d.q.replace(/<[^>]+>/g,'')];if(r.type==='guess'&&r.c.gk&&r.c.gk!=='pop')return['Calcula a ojo',r.c.n];if(r.type==='ord')return['Ordénalos',r.d.q.replace(/<[^>]+>/g,'')];if(r.type==='raro')return['Lo más raro',r.d.q.replace(/<[^>]+>/g,'')];if(r.type==='trivia'&&['Cine','Fútbol','Geografía','JJ. OO.','Intruso'].includes(r.q.tag))return[r.q.tag,r.q.q.replace(/<[^>]+>/g,'')];return r.type==='guess'?['Geografía','Habitantes de '+r.c.n]:r.type==='draw'?['Gráficas',r.s.t]:r.type==='trivia'?[r.q.tag,r.q.q.replace(/<[^>]+>/g,'')]:r.type==='year'?['Historia',r.e[0]]:['Más o menos',`${String(r.a.n).replace(/<[^>]+>/g,'')} o ${String(r.b.n).replace(/<[^>]+>/g,'')}: ${r.m.lbl}`]}
+function subject(r){if(r.type==='pair')return['Parejas',r.n];if(r.type==='stop')return['¡Para el contador!',String(r.it.n).replace(/<[^>]+>/g,'')];if(r.type==='who')return['¿Quién soy?',r.cat+': '+r.ans];if(r.type==='flag')return['Banderas',r.c.n];if(r.type==='cx')return['Conexiones',r.g.map(g=>g.n).join(' · ')];if(r.type==='mapa')return['¿Dónde está?',r.c.n];if(r.type==='pal')return['Palabra oculta','5 letras, 6 intentos'];if(r.type==='vf')return['Verdadero o falso','Tres frases seguidas'];if(r.type==='song')return['Adivina la canción','Pista a pista'];if(r.type==='raroW')return['Escríbelo raro',r.d.q.replace(/<[^>]+>/g,'')];if(r.type==='guess'&&r.c.gk&&r.c.gk!=='pop')return['Calcula a ojo',r.c.n];if(r.type==='ord')return['Ordénalos',r.d.q.replace(/<[^>]+>/g,'')];if(r.type==='raro')return['Lo más raro',r.d.q.replace(/<[^>]+>/g,'')];if(r.type==='trivia'&&['Cine','Fútbol','Geografía','JJ. OO.','Intruso'].includes(r.q.tag))return[r.q.tag,r.q.q.replace(/<[^>]+>/g,'')];return r.type==='guess'?['Geografía','Habitantes de '+r.c.n]:r.type==='draw'?['Gráficas',r.s.t]:r.type==='trivia'?[r.q.tag,r.q.q.replace(/<[^>]+>/g,'')]:r.type==='year'?['Historia',r.e[0]]:['Más o menos',`${String(r.a.n).replace(/<[^>]+>/g,'')} o ${String(r.b.n).replace(/<[^>]+>/g,'')}: ${r.m.lbl}`]}
 const COMMENTS=[[9.5,'Matrícula de honor. ¿Has hecho trampas?'],[9,'Sobresaliente. Que te pongan un marco.'],[7,'Notable. El profe está orgulloso.'],[6,'Bien. Se nota que has estudiado un poco.'],[5,'Aprobado raspado. ¡Por los pelos!'],[3,'Suspenso. Hay que repasar en verano.'],[0,'Muy deficiente. Lapi se ha comido el boli del disgusto.']];
 function duelEnd(){S.games++;award('primera');award('duelo');save();
   const a=Math.round(duelTot(0)*10)/10,b=Math.round(duelTot(1)*10)/10,w=a>b?0:b>a?1:-1;
@@ -3589,6 +3627,7 @@ const STK=[
   ['racha5','Fiel a ¡Clavado!','Juega 5 días seguidos (termina al menos una partida cada día)','cal','var(--green)'],
   ['infalible','Infalible','En Verdadero o falso, acierta 10 o más frases sin fallar ninguna','check','var(--cyan)'],
   ['futbolero','Vista de crack','Saca un 8 o más dibujando una gráfica de Ligas o Mundiales','ball','var(--green)'],
+  ['memoria','Memoria de elefante','En Parejas, encuentra las 6 parejas con 2 fallos o menos','star','var(--pink)'],
   ['reflejos','Reflejos de oro','En ¡Para el contador!, para el número casi exacto (un 9,5 o más)','bolt','var(--green)'],
   ['adivino','Adivino','En ¿Quién soy?, acierta con la primera pista','star','var(--orange)'],
   ['abanderado','Abanderado','Acierta 10 banderas seguidas en Banderas','globe','var(--red)'],
@@ -3640,7 +3679,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v245</div></div>`);
+  <div class="foot">¡Clavado! v246</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

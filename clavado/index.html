@@ -991,6 +991,13 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 .screen.kb .wtips{display:block;font-size:14px;margin:4px 2px 0;opacity:.85}
 /* v113 el dibujito de la tarjeta ya no tapa el subtítulo */
 .qcard:has(.doodle) .qsub{padding-right:52px}
+
+/* v114 barra del álbum */
+.albbar{position:relative;height:18px;margin:8px 0 14px;border:2.5px solid var(--ink,#16295e);border-radius:12px;background:#fff;overflow:hidden;box-shadow:0 2px 0 var(--ink,#16295e)}
+.albbar span{position:absolute;inset:0 auto 0 0;width:var(--p);background:repeating-linear-gradient(-45deg,var(--yel,#ffd34d) 0 10px,#ffe27a 10px 20px);animation:albGrow 1s var(--ease) .2s both}
+.albbar b{position:relative;display:block;text-align:center;font:800 12px/13px var(--ui,inherit);color:var(--ink,#16295e)}
+@keyframes albGrow{from{width:0}}
+@media (prefers-reduced-motion:reduce){.albbar span{animation:none}}
 </style>
 </head>
 <body>
@@ -2073,6 +2080,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v114','Dos pegatinas nuevas: «Sin chuleta» (adivina una palabra oculta tras 3 fallos sin usar la pista) y «Capitalino» (acierta un país por su capital en ¿Dónde está?). El álbum tiene ahora una barra que muestra cuánto llevas.'],
  ['v113','En Lo más raro, el dibujito de la tarjeta ya no tapa el final del texto. En Geografía, el minimapa ahora también marca Bangladés, la R. D. del Congo y Guinea-Bisáu cuando salen como opción (antes no aparecían).'],
  ['v112','Escríbelo raro ya no te pide escribir sets de LEGO: los nombres están en inglés y eran casi imposibles de acertar. Además, mientras escribes sigues viendo cuántas respuestas valen.'],
  ['v111','El intruso y Elige el más raro tienen una lista nueva de LEGO: sets de más de 2.000 piezas, con datos de Rebrickable. En Fútbol, las respuestas tienen ahora un fondo de césped que se difumina, en lugar de un corte brusco.'],
@@ -2330,7 +2338,7 @@ function startPal(cat){const C=palCats()[cat];R=rngFrom((Date.now()^(Math.random
   const el=show(`${SPIRAL}<div class="topbar"><button class="iconbtn" data-quit aria-label="Salir">${IC.x}</button><div class="grow"><div class="roundlbl">Palabra oculta · <b>${esc(C.t)}</b></div></div><button class="pbtn palhint" data-hint hidden>${IC.bulb||'💡'} Pista</button></div><div class="palhost"></div>`);
   const hb=$('[data-hint]',el);$('.palhost',el).addEventListener('palrow',e=>{if(e.detail>=3&&!hb.dataset.used){hb.hidden=false;hb.classList.add('pop')}});
   hb.onclick=()=>{if(hb.dataset.used||api.isDone())return;SFX.tap();const h=api.hint();hb.dataset.used=1;hb.hidden=true;lapiSays(el,h?`Te soplo una: la letra ${h[0]+1} es la <b>${h[1]}</b>.`:'¡Si ya las tienes todas en su sitio!','happy')};
-  const api=palGame(el,$('.palhost',el),ans,(win,n)=>{S.pal=S.pal||{run:0,best:0};try{rtAdd('pal',win?10:0)}catch(e){}if(win){S.pal.run++;S.pal.best=Math.max(S.pal.best,S.pal.run);S.games++;award('primera');if(n<=3)award('palabra3')}else S.pal.run=0;save();
+  const api=palGame(el,$('.palhost',el),ans,(win,n)=>{S.pal=S.pal||{run:0,best:0};try{rtAdd('pal',win?10:0)}catch(e){}if(win){S.pal.run++;S.pal.best=Math.max(S.pal.best,S.pal.run);S.games++;award('primera');if(n<=3)award('palabra3');try{if(n>=4&&!hb.dataset.used)award('sinpista')}catch(e){}}else S.pal.run=0;save();
     const sol=info?`${ans} · ${esc(info)}`:ans;if(win){SFX.fanfare();confetti()}else SFX.bad();
     $('.palkb',el).innerHTML=`<div class="verdict rv"><div><h3>${win?['¡A la primera!','¡Increíble!','¡Muy bien!','¡Bien!','¡Por los pelos!','¡Justito!'][n-1]:'¡Se acabaron los intentos!'}</h3><p>La palabra era <b>${sol}</b>. Racha: ${S.pal.run} (mejor: ${S.pal.best}).</p></div></div><div class="row" style="margin-top:10px"><button class="btn" data-again>${IC.redo} Otra</button><button class="btn white" data-menu>Temas</button></div>`;
     $('[data-again]',el).onclick=()=>{SFX.tap();startPal(cat)};$('[data-menu]',el).onclick=()=>{SFX.tap();palMenu()}});
@@ -2382,7 +2390,7 @@ function roundMapa(r){
   sv.addEventListener('pointerdown',e=>{if(locked)return;const [lo,la]=toLL(e);const q=mapPickAt(D,lo,la);if(!q){SFX.bad();sl.textContent='Ahí es mar: toca un país';return}
     if(v==='vec'&&q.a3===c.a3){SFX.bad();sl.innerHTML=`Ese es ${esc(c.n)}: toca uno de al lado`;return}
     sel=q;SFX.tick();vib(6);mapUnpaint(el,'sel');mapPaint(el,sv,q,'sel',true);sl.innerHTML=v==='n'?'Marcado. Si es ese, pulsa «Es este»':'Marcado. Si es ese, pulsa «Es este»';ok.disabled=false;ok.innerHTML=`Es este ${IC.check}`});
-  ok.onclick=()=>{if(locked||!sel)return;locked=true;SFX.tap();const right=OK.includes(sel.a3);try{mapPaint(el,sv,sel,'sel')}catch(e){}
+  ok.onclick=()=>{if(locked||!sel)return;locked=true;SFX.tap();const right=OK.includes(sel.a3);try{if(right&&v==='cap')award('capmap')}catch(e){}try{mapPaint(el,sv,sel,'sel')}catch(e){}
     const KM={eu:260,af:420,na:420,sa:420,asw:380,ase:460,oc:520}[reg]||400;
     const tg=mapData().filter(q=>OK.includes(q.a3));const a=mapCent(sel);let best=tg[0],bd=1e9;tg.forEach(q=>{const b=mapCent(q),dd=kmBetween(a[0],a[1],b[0],b[1]);if(dd<bd){bd=dd;best=q}});const b=mapCent(best),d=right?0:bd;
     let nt;if(v==='pop'){const rk=mapData().filter(q=>q.reg===reg&&q.q).sort((x,y)=>y.pop-x.pop).findIndex(q=>q.a3===sel.a3);nt=right?10:rk===1?7:rk===2?5:rk>=0&&rk<6?3:1}
@@ -2722,6 +2730,8 @@ function report(){
 const STK=[
   ['palabra3','Lince','Adivina una palabra oculta en 3 intentos o menos','book','var(--green)'],
   ['primera','Primer examen','Termina tu primera partida','book','var(--yel)'],
+  ['sinpista','Sin chuleta','Adivina una palabra oculta tras 3 fallos sin usar la pista','book','var(--lila)'],
+  ['capmap','Capitalino','Acierta un país por su capital en ¿Dónde está?','globe','var(--cyan,#55c8ff)'],
   ['v100','Versión 100','Estabas aquí cuando ¡Clavado! llegó a la versión 100','trophy','var(--orange)'],
   ['clavada','¡Clavada!','Saca 9,5 o más en una gráfica','chart','var(--pink)'],
   ['exacto','Ojo de halcón','Acierta un año exacto','target','var(--orange)'],
@@ -2765,7 +2775,7 @@ function tqNext(){const it=TOASTQ.shift();if(!it){tqBusy=false;return}tqBusy=tru
 function pageHead(t){return `${SPIRAL}<div class="pagehead"><button class="iconbtn" data-back aria-label="Volver">${IC.back}</button><h2>${t}</h2></div>`}
 function album(){
   const got=STK.filter(s=>S.stickers[s[0]]).length;
-  const el=show(`${pageHead('Pegatinas')}<div class="scroll"><div class="hand" style="font-size:17px;color:var(--muted)">Llevas ${got} de ${STK.length}. ¡Llena el álbum!</div>
+  const el=show(`${pageHead('Pegatinas')}<div class="scroll"><div class="hand" style="font-size:17px;color:var(--muted)">Llevas ${got} de ${STK.length}. ¡Llena el álbum!</div><div class="albbar" role="progressbar" aria-valuemin="0" aria-valuemax="${STK.length}" aria-valuenow="${got}"><span style="--p:${Math.round(got/STK.length*100)}%"></span><b>${Math.round(got/STK.length*100)} %</b></div>
   <div class="album">${STK.map(s=>`<div class="slot ${S.stickers[s[0]]?'':'off'}">${sticker(s[3],s[4])}<b>${s[1]}</b><span>${s[2]}</span></div>`).join('')}</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
 }
@@ -2792,7 +2802,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v113</div></div>`);
+  <div class="foot">¡Clavado! v114</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

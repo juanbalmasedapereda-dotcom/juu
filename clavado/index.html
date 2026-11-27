@@ -998,6 +998,16 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 .albbar b{position:relative;display:block;text-align:center;font:800 12px/13px var(--ui,inherit);color:var(--ink,#16295e)}
 @keyframes albGrow{from{width:0}}
 @media (prefers-reduced-motion:reduce){.albbar span{animation:none}}
+
+/* v118 escenario LEGO */
+.th-lego .qcard{background:radial-gradient(circle at 12px 12px,rgba(255,255,255,.35) 0 6px,rgba(0,0,0,.10) 6.5px 7.5px,transparent 8px) 0 0/24px 24px,#ffcf1f}
+.th-lego .qcard .qtitle,.th-lego .qcard .qtitle b{color:#16295e}
+.th-lego .qcard .timer{background:rgba(255,255,255,.85)}
+.th-lego .ans{background:#fff;box-shadow:var(--shadow-1),inset 6px 0 0 #e3262f}
+.th-lego .ans:nth-child(2){box-shadow:var(--shadow-1),inset 6px 0 0 #0a6fd8}
+.th-lego .ans:nth-child(3){box-shadow:var(--shadow-1),inset 6px 0 0 #1f9d55}
+.th-lego .ans:nth-child(4){box-shadow:var(--shadow-1),inset 6px 0 0 #ffb400}
+.th-lego .ans .k{border-radius:6px;background:#ffcf1f}
 </style>
 </head>
 <body>
@@ -1517,7 +1527,7 @@ function roundDraw(r){
 /* ---------- ronda: trivia ---------- */
 function roundTrivia(r){
   const q=r.q,T=15000;
-  const el=show(`${topbar()}<div class="card qcard"><span class="tape" style="--tape:rgba(69,227,255,.55)"></span><span class="tag" style="--tag:${q.tag==='Fútbol'?'var(--green)':q.tag==='Cine'?'var(--orange)':q.tag==='Geografía'?'var(--lila)':q.tag==='JJ. OO.'?'var(--yel)':q.tag==='Intruso'?'var(--pink)':'var(--cyan)'}">${(q.tag==='Fútbol'?IC.ball:q.tag==='Cine'?IC.star:q.tag==='Geografía'?IC.globe:q.tag==='JJ. OO.'?IC.medal:q.tag==='Intruso'?IC.target:IC.note).replace('<svg','<svg width="16" height="16" style="vertical-align:-3px"')} ${q.tag}</span><h2 class="qtitle">${q.q}</h2><div class="timer"><i></i></div></div>
+  const el=show(`${topbar()}<div class="card qcard"><span class="tape" style="--tape:rgba(69,227,255,.55)"></span><span class="tag" style="--tag:${q.tag==='Fútbol'?'var(--green)':q.tag==='Cine'?'var(--orange)':q.tag==='Geografía'?'var(--lila)':q.tag==='JJ. OO.'?'var(--yel)':q.tag==='Intruso'?'var(--pink)':'var(--cyan)'}">${(q.tag==='Fútbol'?IC.ball:q.tag==='Cine'?IC.star:q.tag==='Geografía'?IC.globe:q.tag==='JJ. OO.'?IC.medal:q.tag==='Intruso'?IC.target:q.tag==='LEGO'?IC.star:q.tag==='Videojuegos'?IC.bolt:IC.note).replace('<svg','<svg width="16" height="16" style="vertical-align:-3px"')} ${q.tag}</span><h2 class="qtitle">${q.q}</h2><div class="timer"><i></i></div></div>
   <div class="answers">${q.opts.map((o,k)=>`<button class="ans" data-k="${k}"><span class="k">${'ABCD'[k]}</span><span class="t">${esc(o.t)}${o.a?`<small>${esc(o.a)}</small>`:''}</span><span class="mark"></span></button>`).join('')}</div><div class="bottom"></div>`);themeTrivia(el,q);
   bindQuit(el);$$('.sticker svg',el);
   $$('.tag svg *',el).forEach(p=>{p.style.fill=p.classList.contains('f')?'#16295e':'none';p.style.stroke='#16295e';p.style.strokeWidth=2.6});
@@ -2080,6 +2090,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v118','Preguntas nuevas de LEGO en las trivias de Llega al millón y del concurso: «¿De qué colección es este set?» (Star Wars, Harry Potter, Minecraft, Super Mario…) y «¿Qué set tiene más piezas?». Datos de Rebrickable.'],
  ['v117','Repaso de erratas en las canciones de España en Eurovisión: títulos con las mayúsculas bien puestas («Quédate conmigo», no «Quédate Conmigo»), El Sueño de Morfeo con su nombre completo y Serafín Zubiri escrito igual en 1992 y en 2000 (antes parecían dos artistas distintos y podía confundir las opciones).'],
  ['v116','En el boletín de la trivia de música, cada fila dice qué te preguntaron (por ejemplo, «¿Quién representó a España en Eurovisión 2016?») en lugar de poner «Música» diez veces. Además, Eurovisión sale algo menos para que haya más variedad.'],
  ['v115','Trivia de música: preguntas nuevas de España en Eurovisión, «¿Quién representó a España en 2012?» o «¿Con qué canción fue Chanel?». Son 32 finales, de 1990 a 2022.'],
@@ -2197,6 +2208,14 @@ const pokeQ={
  heavy:()=>{const p4=shuffle(POKE.filter(p=>p[2]>=1)).slice(0,4),top=p4.slice().sort((a,b)=>b[2]-a[2])[0];return{tag:'Pokémon',q:'¿Cuál de estos Pokémon <b>pesa más</b>?',opts:shuffle(p4.map(p=>({t:p[0],ok:p===top}))),after:p4.map(p=>`${p[0]}: ${kgF(p[2])}`).join(' · '),src:'PokéAPI (vía TidyTuesday)',url:TTURL('2025/2025-04-01'),k:'pk'+p4.map(p=>p[0]).join()}},
  fast:()=>{const p4=shuffle(POKE).slice(0,4),top=p4.slice().sort((a,b)=>b[3]-a[3])[0];if(p4.filter(p=>p[3]===top[3]).length>1)return pokeQ.heavy();return{tag:'Pokémon',q:'¿Cuál de estos Pokémon es <b>más rápido</b> (estadística de velocidad)?',opts:shuffle(p4.map(p=>({t:p[0],ok:p===top}))),after:p4.map(p=>`${p[0]}: ${p[3]}`).join(' · '),src:'PokéAPI (vía TidyTuesday)',url:TTURL('2025/2025-04-01'),k:'pf'+p4.map(p=>p[0]).join()}}
 };
+/* v118: LEGO en la trivia general (solo elegir) */
+const LGSRC='Rebrickable (vía TidyTuesday, datos de 2022)',LGURL='https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-09-06';
+const legoQ=()=>{if(R()<.5){const c=LEGO.filter(x=>!x[0].toLowerCase().includes(x[2].toLowerCase().split(' ')[0])),x=pick(c);const th=[...new Set(LEGO.map(y=>y[2]))];
+    return{tag:'LEGO',q:`¿De qué colección de LEGO es el set <b>«${esc(x[0])}»</b> (${x[1]})?`,opts:opts4({t:x[2]},th.map(t=>({t}))),after:`Tiene ${numF(x[3])} piezas.`,src:LGSRC,url:LGURL,k:'lgt'+x[0]}}
+  const th=pick([...new Set(LEGO.map(y=>y[2]))].filter(t=>LEGO.filter(y=>y[2]===t).length>=8));const four=shuffle(LEGO.filter(y=>y[2]===th)).slice(0,4);const top=four.slice().sort((a,b)=>b[3]-a[3])[0];
+  if(four.filter(y=>y[3]===top[3]).length>1)return legoQ();
+  return{tag:'LEGO',q:`¿Qué set de LEGO ${esc(th)} tiene <b>más piezas</b>?`,opts:shuffle(four.map(y=>({t:y[0],ok:y===top}))),after:four.slice().sort((a,b)=>b[3]-a[3]).map(y=>`${y[0]}: ${numF(y[3])}`).join(' · '),src:LGSRC,url:LGURL,k:'lgp'+four.map(y=>y[0]).join()}};
+TQ.push({t:0,f:legoQ},{t:1,f:legoQ});
 const steamQ=()=>{const g4=shuffle(STEAMPK.slice(0,40)).slice(0,4),top=g4.slice().sort((a,b)=>b[1]-a[1])[0];return{tag:'Videojuegos',q:'¿Qué juego tuvo <b>más gente jugando a la vez</b> en Steam (récord)?',opts:shuffle(g4.map(g=>({t:g[0],ok:g===top}))),after:g4.map(g=>`${g[0]}: ${numF(g[1])}`).join(' · '),src:'SteamCharts (vía TidyTuesday, hasta feb-2021)',url:TTURL('2021/2021-03-16'),k:'sg'+g4.map(g=>g[0]).join()}};
 POOL['Cine'].push([FILMS,()=>filmQ.more()],[FILMS,()=>filmQ.cost()],[FILMS,()=>filmQ.year()]);
 TRIV.push(songQ,songQ,songQ);
@@ -2428,7 +2447,7 @@ function mapFind(name){mapData();if(!MAPIDX){MAPIDX={};MAPD.forEach(c=>{MAPIDX[m
 function geoMini(q){try{const names=[...String(q.q).matchAll(/<b>([^<]+)<\/b>/g)].map(m=>m[1]).concat(q.opts.map(o=>o.t));const cs=[...new Set(names.map(mapFind).filter(Boolean))];if(!cs.length)return '';
   const regs=[...new Set(cs.map(c=>c.reg))];const reg=regs.length===1?regs[0]:'w';const {svg}=mapSVG(reg,'mini');
   return `<div class="qmini" data-hl="${cs.map(c=>c.a3).join(',')}">${svg}</div>`}catch(e){return ''}}
-function themeTrivia(el,q){const th={'Fútbol':'fut','Cine':'cine','Geografía':'geo','JJ. OO.':'jjoo','Intruso':'intr'}[q.tag]||(q.tag==='F1'||q.tag==='Tenis'?'fut':'mus');el.classList.add('th-'+th);
+function themeTrivia(el,q){const th={'Fútbol':'fut','Cine':'cine','Geografía':'geo','JJ. OO.':'jjoo','Intruso':'intr','LEGO':'lego'}[q.tag]||(q.tag==='F1'||q.tag==='Tenis'?'fut':'mus');el.classList.add('th-'+th);
   const card=$('.qcard',el);if(!card)return;
   if(th==='geo'){const m=geoMini(q);if(m){card.insertAdjacentHTML('beforeend',m);const box=$('.qmini',card);box.dataset.hl.split(',').forEach(a=>$$(`.mland[data-a3="${a}"]`,box).forEach(p=>p.classList.add('hl')))}}
   card.insertAdjacentHTML('afterbegin',`<span class="thdeco" aria-hidden="true"></span>`)}
@@ -2810,7 +2829,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v117</div></div>`);
+  <div class="foot">¡Clavado! v118</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};

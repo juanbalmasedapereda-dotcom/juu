@@ -711,6 +711,31 @@ body.final .prize{color:var(--red);animation:fqpulse 1.2s ease-in-out infinite}
 @keyframes mLine{from{opacity:0}}
 .mapq .qtitle{margin-bottom:0}
 @media (prefers-reduced-motion:reduce){.mland.target,.mpin,.mline,.mapbox{animation:none}}
+
+/* v69 escenarios de trivia */
+.qcard{isolation:isolate}
+.thdeco{position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;overflow:hidden}
+.th-fut .qcard{background:repeating-linear-gradient(90deg,#3f9e57 0 34px,#47ab60 34px 68px);color:#fff}
+.th-fut .qcard .qtitle,.th-fut .qcard .qtitle b{color:#fff}
+.th-fut .thdeco{background:radial-gradient(circle at 50% 50%,transparent 0 38px,rgba(255,255,255,.55) 38px 40px,transparent 40px),linear-gradient(90deg,transparent calc(50% - 1px),rgba(255,255,255,.55) calc(50% - 1px) calc(50% + 1px),transparent calc(50% + 1px));box-shadow:inset 0 0 0 4px rgba(255,255,255,.5)}
+.th-fut .qcard .timer{background:rgba(255,255,255,.85)}
+.th-cine .qcard{background:#221c2e;color:#ffe9a8;padding-left:30px;padding-right:30px}
+.th-cine .qcard .qtitle,.th-cine .qcard .qtitle b{color:#ffe9a8}
+.th-cine .thdeco{background:radial-gradient(circle,#f3eddc 0 4px,transparent 4.5px) 6px 6px/100% 18px repeat-y,radial-gradient(circle,#f3eddc 0 4px,transparent 4.5px) calc(100% - 6px) 6px/100% 18px repeat-y;background-size:12px 18px,12px 18px;background-position:6px 4px,calc(100% - 6px) 4px;background-repeat:repeat-y}
+.th-cine .qcard .tag{color:#16295e}
+.th-jjoo .thdeco{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 56'%3E%3Cg fill='none' stroke-width='5' opacity='.22'%3E%3Ccircle cx='20' cy='20' r='15' stroke='%230081c8'/%3E%3Ccircle cx='60' cy='20' r='15' stroke='%23000'/%3E%3Ccircle cx='100' cy='20' r='15' stroke='%23ee334e'/%3E%3Ccircle cx='40' cy='36' r='15' stroke='%23fcb131'/%3E%3Ccircle cx='80' cy='36' r='15' stroke='%2300a651'/%3E%3C/g%3E%3C/svg%3E") right 8px bottom 6px/120px 56px no-repeat,repeating-linear-gradient(180deg,transparent 0 22px,rgba(214,88,60,.10) 22px 24px)}
+.th-mus .thdeco{background:repeating-linear-gradient(180deg,transparent 0 9px,rgba(31,63,148,.16) 9px 10.5px) 0 50%/100% 52px no-repeat}
+.th-mus .thdeco::after{content:"";position:absolute;right:-26px;top:-26px;width:86px;height:86px;border-radius:50%;background:radial-gradient(circle,#ff4f9a 0 9px,#111 9.5px 13px,#222 13px 40px,#111 40px);opacity:.85;animation:vinyl 3.2s linear infinite;will-change:transform}
+@keyframes vinyl{to{transform:rotate(360deg)}}
+.th-mus .qcard .qtitle{padding-right:46px}
+.th-geo .thdeco{background:radial-gradient(circle at calc(100% - 22px) 22px,transparent 0 13px,rgba(31,63,148,.25) 13px 14.5px,transparent 15px)}
+.qmini{margin-top:8px;height:92px;border-radius:8px;overflow:hidden;background:#dcebf7;box-shadow:0 0 0 1.5px rgba(31,63,148,.2) inset;animation:clueIn .4s ease both}
+.qmini .mapsvg{pointer-events:none}
+.qmini .mland{stroke-width:.5px}
+.qmini .mland.hl{fill:#ffd34d;animation:mTarget 1.6s ease-in-out infinite alternate}
+.screen.done .qmini{height:70px}
+@media (max-height:600px){.qmini{height:70px}}
+@media (prefers-reduced-motion:reduce){.th-mus .thdeco::after,.qmini .mland.hl{animation:none}}
 </style>
 </head>
 <body>
@@ -1001,7 +1026,7 @@ function menu(){
     </button>
     <button class="card fact" data-fact><span class="tape" style="--tape:rgba(88,240,138,.55)"></span><div class="fact-in">${factHTML()}</div></button>
     ${MSEC.map(([lbl,ids])=>{const ms=ids.map(id=>MODES.find(m=>m.id===id)).filter(m=>m&&!m.hide);return `<div class="section-label"><svg width="26" height="14" viewBox="0 0 26 14"><path d="M2 7c6-5 10 5 16 0l5-3M19 2l4 2-2 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>${lbl}</div>
-    <div class="grid2">${ms.map((m,i)=>`<button class="card mode${(ms.length%2&&i===ms.length-1)?' wide':''}" style="--i:${i}" data-go="${m.id}"><span class="tape" style="--tape:${m.tape}"></span>${m.nu?'<span class="nuevo">¡Nuevo!</span>':''}${sticker(m.ic,m.c,'sm')}<h3>${m.t}</h3><p>${m.p}</p>${modeCount(m.id)}<span class="best">${bestTxt(m.id)}</span></button>`).join('')}</div>`}).join('')}
+    <div class="grid2">${ms.map((m,i)=>`<button class="card mode${(ms.length%2&&i===ms.length-1)?' wide':''}" style="--i:${i}" data-go="${m.id}"><span class="tape" style="--tape:${m.tape}"></span>${sticker(m.ic,m.c,'sm')}<h3>${m.t}</h3><p>${m.p}</p>${modeCount(m.id)}<span class="best">${bestTxt(m.id)}</span></button>`).join('')}</div>`}).join('')}
     <div class="dock">
       <button data-go="album">${sticker('star','var(--lila)','sm')}Pegatinas</button>
       <button data-go="stats">${sticker('book','var(--orange)','sm')}Boletín</button>
@@ -1223,7 +1248,7 @@ function roundDraw(r){
 function roundTrivia(r){
   const q=r.q,T=15000;
   const el=show(`${topbar()}<div class="card qcard"><span class="tape" style="--tape:rgba(69,227,255,.55)"></span><span class="tag" style="--tag:${q.tag==='Fútbol'?'var(--green)':q.tag==='Cine'?'var(--orange)':q.tag==='Geografía'?'var(--lila)':q.tag==='JJ. OO.'?'var(--yel)':q.tag==='Intruso'?'var(--pink)':'var(--cyan)'}">${(q.tag==='Fútbol'?IC.ball:q.tag==='Cine'?IC.star:q.tag==='Geografía'?IC.globe:q.tag==='JJ. OO.'?IC.medal:q.tag==='Intruso'?IC.target:IC.note).replace('<svg','<svg width="16" height="16" style="vertical-align:-3px"')} ${q.tag}</span><h2 class="qtitle">${q.q}</h2><div class="timer"><i></i></div></div>
-  <div class="answers">${q.opts.map((o,k)=>`<button class="ans" data-k="${k}"><span class="k">${'ABCD'[k]}</span><span class="t">${esc(o.t)}${o.a?`<small>${esc(o.a)}</small>`:''}</span><span class="mark"></span></button>`).join('')}</div><div class="bottom"></div>`);
+  <div class="answers">${q.opts.map((o,k)=>`<button class="ans" data-k="${k}"><span class="k">${'ABCD'[k]}</span><span class="t">${esc(o.t)}${o.a?`<small>${esc(o.a)}</small>`:''}</span><span class="mark"></span></button>`).join('')}</div><div class="bottom"></div>`);themeTrivia(el,q);
   bindQuit(el);$$('.sticker svg',el);
   $$('.tag svg *',el).forEach(p=>{p.style.fill=p.classList.contains('f')?'#16295e':'none';p.style.stroke='#16295e';p.style.strokeWidth=2.6});
   const bar=$('.timer i',el);const t0=performance.now();let done=false,lastTick=0;
@@ -1777,6 +1802,7 @@ function genGuessX(tr){if(R()<.62){const y=genGuessY();if(y)return y}const r=R()
 
 /* ================= v52: novedades secretas (5 toques al lápiz del menú) ================= */
 const NOVEDADES=[
+ ['v69','Cada trivia tiene su escenario: Fútbol en un césped con sus líneas, Cine en un fotograma con perforaciones, JJ. OO. con anillas y pista, Música en un pentagrama con un disco girando y Geografía con un minimapa que marca el país del que se pregunta (o los cuatro países de las opciones). Quitada la etiqueta «¡Nuevo!» de las tarjetas del menú.'],
  ['v68','Juego nuevo: «¿Dónde está?». Te digo un país y lo tocas en un mapa de verdad (Natural Earth, 166 países en 7 regiones). Cuanto más cerca, mejor nota; dentro del país, un 10. Y Llega al millón ya no tiene orden fijo: cada partida reparte al azar los 12 minijuegos (también Palabra oculta y el mapa), sin repetir dos seguidos.'],
  ['v67','Más fluido: las pegatinas brillantes, Lapi y los cambios de página ya no obligan al móvil a redibujar la pantalla entera en cada fotograma, y los marcadores ya no hacen recálculos en bucle. No se ha quitado nada. Además, «Palabra oculta» ya sale en Llega al millón (pregunta 14), con su pista de Lapi.'],
  ['v66','Juego nuevo: «Palabra oculta». Adivina una palabra de 5 letras en 6 intentos (verde: en su sitio; amarillo: está en otro sitio). Tres temas: palabras de todos los días, apellidos de deportistas y Pokémon. Lleva racha y una pegatina nueva.'],
@@ -2027,6 +2053,20 @@ function roundMapa(r){
     finishRound(nt);
     setTimeout(()=>{$('.bottom',el).innerHTML=`<div class="verdict">${stampHTML(nt)}<div><h3>${d<=0?'¡Dentro! Clavado':nt>=7?'¡Muy cerca!':nt>=5?'Ni tan mal':'Uy, lejos'}</h3><p>${d<=0?`Has tocado dentro de <b>${esc(c.n)}</b>.`:`Te has quedado a <b>${fmt(Math.round(d))} km</b> de ${esc(c.n)}.`}</p><span class="src">Mapa: <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a> (1:110 millones, dominio público)</span></div></div>${nextBtn()}`;SFX.stamp();$('[data-next]',el).onclick=next},700)};
 }
+
+/* ================= v69: cada trivia con su escenario ================= */
+MAPR.w={n:'Mundo',b:[-170,-56,180,76]};
+const mapNorm=t=>String(t).replace(/<[^>]+>/g,'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z ]/g,' ').replace(/\s+/g,' ').trim();
+const MAP_ALIAS={'republica checa':'CZE','chequia':'CZE','estados unidos':'USA','eeuu':'USA','reino unido':'GBR','paises bajos':'NLD','holanda':'NLD','birmania':'MMR','myanmar':'MMR','esuatini':'SWZ','suazilandia':'SWZ','costa de marfil':'CIV','corea del sur':'KOR','corea del norte':'PRK','rd del congo':'COD','republica democratica del congo':'COD','congo':'COG','macedonia del norte':'MKD','taiwan':'TWN','emiratos arabes unidos':'ARE','arabia saudi':'SAU','arabia saudita':'SAU'};
+let MAPIDX=null;
+function mapFind(name){mapData();if(!MAPIDX){MAPIDX={};MAPD.forEach(c=>{MAPIDX[mapNorm(c.n)]=c;MAPIDX[mapNorm(c.n.replace(/ \(.*\)/,''))]=c})}const k=mapNorm(name);if(MAP_ALIAS[k])return MAPD.find(c=>c.a3===MAP_ALIAS[k])||null;return MAPIDX[k]||null}
+function geoMini(q){try{const names=[...String(q.q).matchAll(/<b>([^<]+)<\/b>/g)].map(m=>m[1]).concat(q.opts.map(o=>o.t));const cs=[...new Set(names.map(mapFind).filter(Boolean))];if(!cs.length)return '';
+  const regs=[...new Set(cs.map(c=>c.reg))];const reg=regs.length===1?regs[0]:'w';const {svg}=mapSVG(reg,'mini');
+  return `<div class="qmini" data-hl="${cs.map(c=>c.a3).join(',')}">${svg}</div>`}catch(e){return ''}}
+function themeTrivia(el,q){const th={'Fútbol':'fut','Cine':'cine','Geografía':'geo','JJ. OO.':'jjoo','Intruso':'intr'}[q.tag]||(q.tag==='F1'||q.tag==='Tenis'?'fut':'mus');el.classList.add('th-'+th);
+  const card=$('.qcard',el);if(!card)return;
+  if(th==='geo'){const m=geoMini(q);if(m){card.insertAdjacentHTML('beforeend',m);const box=$('.qmini',card);box.dataset.hl.split(',').forEach(a=>$$(`.mland[data-a3="${a}"]`,box).forEach(p=>p.classList.add('hl')))}}
+  card.insertAdjacentHTML('afterbegin',`<span class="thdeco" aria-hidden="true"></span>`)}
 /* números que crecen al cambiar */
 (function(){if(typeof MutationObserver==='undefined')return;const mo=new MutationObserver(ms=>{if(RM())return;for(const m of ms){const t=m.target.nodeType===3?m.target.parentElement:m.target;const el=t&&t.closest&&t.closest('.streak,.prize,[data-sc],[data-vo]');if(el&&!el.__bq){el.__bq=1;requestAnimationFrame(()=>{el.classList.remove('bump');requestAnimationFrame(()=>{el.classList.add('bump');setTimeout(()=>{el.__bq=0},350)})})}
     m.addedNodes&&m.addedNodes.forEach(nd=>{if(nd.nodeType!==1)return;nd.querySelectorAll('.stamp b.num:not(.cu),.ch-amt:not(.cu)').forEach(countUp)})}});
@@ -2273,7 +2313,7 @@ function ajustes(){
   <div class="sheet"><h3>Cómo se juega</h3><ul><li><b>Duelo a dos:</b> cada jugador hace 5 preguntas del mismo tipo que el otro, pero distintas, pasándose el móvil. Gana quien sume más nota.</li><li><b>Llega al millón:</b> 15 preguntas de todo tipo. En las de música y ¿más o menos? hay que acertar; en las de gráfica, año y a ojo hay que sacar la nota que se pide. Si fallas, te quedas con el último seguro: 1.000 € o 32.000 €. Puedes plantarte entre preguntas. Comodines: 50:50, el público (vota la clase; casi siempre acierta, pero no siempre), la pista de Lapi y cambiar la pregunta.</li><li><b>El intruso:</b> de 4 respuestas, 3 cumplen la condición y una no. Encuéntrala en 15 segundos.</li><li><b>Verdadero o falso:</b> tienes 60 segundos. Cada frase sale de las listas reales del juego; si fallas, te dice la respuesta.</li><li><b>¿En qué año?:</b> casi 180 sucesos, desde Colón hasta 2026. Si es anterior a 1960 te digo entre qué años fue.</li><li><b>Ordénalos:</b> sube y baja las 4 tarjetas con las flechas hasta dejarlas en orden. La nota depende de cuántas parejas estén bien colocadas.</li><li><b>El bote:</b> como ¿Más o menos?, pero cada acierto multiplica tu bote (×1,5, ×2 o ×3: cuanto más ajustada la pareja, más multiplica). Después de cada acierto eliges: seguir o plantarte. Si fallas, pierdes todo el bote.</li><li><b>¿Qué suena?:</b> como Songless. Toca el disco y escucha 1 segundo de la canción. Si no la sabes, salta o falla y se desbloquean 2, 4, 8 y 16 segundos (100, 70, 45, 25 y 10 puntos). Al escribir te sugiere títulos. El sonido son las vistas previas oficiales de Apple Music o Deezer: necesita internet y no funciona dentro de Claude (allí salen pistas escritas).</li><li><b>Adivina la canción:</b> te damos una pista y escribes el título. Si fallas o pides otra pista, sale la siguiente y vale menos (100, 70, 45, 25 y 10 puntos). Sin audio: las canciones tienen derechos de autor.</li><li><b>Escríbelo raro:</b> como Lo más raro, pero sin opciones: escribes tú la respuesta (sin tildes también vale; se perdona una letra mal). Si no está entre las que valen, 0.</li><li><b>Lo más raro:</b> (también sale como pregunta 7 del millón: necesitas una respuesta válida de 20 puntos o más)  elige una respuesta válida del tablero. Cuanto menos obvia (menos títulos, menos habitantes…), más puntos. Si eliges una que no vale, 0.</li><li><b>Capitales, Juegos Olímpicos, fútbol y cine:</b> 10 preguntas sueltas de cada tema con 15 segundos cada una.</li><li><b>Dibuja la gráfica:</b> desliza el dedo por la zona amarilla. Cuanto más se parezca tu línea a la real, mejor nota (de 0 a 10).</li><li><b>¿Más o menos?:</b> ¿el de abajo tiene más o menos que el de arriba?</li><li><b>Trivia musical:</b> 15 segundos por pregunta.</li><li><b>Calcula a ojo:</b> desliza hasta la población que creas. Si te pasas o te quedas corto el doble, sacas un 5.</li><li><b>¿En qué año?:</b> arrastra la regla. Cada año de diferencia te quita un punto.</li></ul></div>
   <div class="sheet"><h3>De dónde salen los datos</h3><p>Todo es real y está comprobado. Después de cada respuesta verás su fuente.</p><ul>${srcs.map(([s,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(s)}</a></li>`).join('')}<li>Música, Eurovisión y fechas: Wikipedia (consultada en noviembre de 2026).</li></ul><p style="font-size:14px;color:var(--muted)">No se usa audio de canciones reales.</p></div>
   <div class="sheet"><button class="btn white wide" data-reset>Borrar mi progreso</button></div>
-  <div class="foot">¡Clavado! v68</div></div>`);
+  <div class="foot">¡Clavado! v69</div></div>`);
   $('[data-back]',el).onclick=()=>{SFX.tap();menu()};
   $$('[data-t]',el).forEach(b=>b.onclick=()=>{S[b.dataset.t]=!S[b.dataset.t];b.classList.toggle('on');save();SFX.tap()});
   const rb=$('[data-reset]',el);let armed=false;rb.onclick=()=>{if(!armed){armed=true;rb.textContent='Toca otra vez para borrarlo todo';return}localStorage.removeItem(SKEY);location.reload()};
